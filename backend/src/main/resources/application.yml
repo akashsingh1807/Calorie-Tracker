@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: calorie-tracker-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5433/calorie_tracker
+    username: postgres
+    password: postgrespassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: localhost
+      port: 6380
+
+server:
+  port: 8081
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expirationMs: 86400000 # 24 hours
+
+minio:
+  url: http://localhost:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucketName: calorie-tracker-bucket
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:your_free_gemini_api_key_here}
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+
+nutrition:
+  api:
+    url: https://trackapi.nutritionix.com/v2/natural/nutrients
+    appId: ${NUTRITIONIX_APP_ID:}
+    appKey: ${NUTRITIONIX_APP_KEY:}
+
+logging:
+  level:
+    root: INFO
+    com.calorie.tracker: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
