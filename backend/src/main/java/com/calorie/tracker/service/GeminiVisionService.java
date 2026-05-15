@@ -94,6 +94,8 @@ public class GeminiVisionService {
         String requestBody = "";
         try {
             // Extract base64 data and mime type from data URI if present
+            String base64Image = "";
+            String mimeType = "image/jpeg";
             if (imageUrl.startsWith("data:") && imageUrl.contains(";base64,")) {
                 // Handle Data URI
                 mimeType = imageUrl.substring(imageUrl.indexOf(":") + 1, imageUrl.indexOf(";"));
