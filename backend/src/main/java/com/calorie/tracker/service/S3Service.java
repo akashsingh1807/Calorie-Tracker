@@ -41,8 +41,8 @@ public class S3Service {
             if (!isExist) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Error initializing MinIO client", e);
+        } catch (Throwable t) {
+            System.err.println("Warning: MinIO is unreachable or failed to initialize. S3 uploads will fail until MinIO is configured. Error: " + t.getMessage());
         }
     }
 
