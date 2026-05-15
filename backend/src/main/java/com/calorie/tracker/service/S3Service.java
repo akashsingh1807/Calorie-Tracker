@@ -60,9 +60,15 @@ public class S3Service {
                             .build()
             );
 
-            // In production, return a public CDN URL.
-            // For local MinIO, return the direct URL or a pre-signed URL.
-            return minioUrl + "/" + bucketName + "/" + fileName;
+            // Return a pre-signed URL that expires in 1 hour
+            return minioClient.getPresignedObjectUrl(
+                    io.minio.GetPresignedObjectUrlArgs.builder()
+                            .method(io.minio.http.Method.GET)
+                            .bucket(bucketName)
+                            .object(fileName)
+                            .expiry(3600)
+                            .build()
+            );
 
         } catch (Exception e) {
             throw new RuntimeException("Error uploading file to S3", e);
