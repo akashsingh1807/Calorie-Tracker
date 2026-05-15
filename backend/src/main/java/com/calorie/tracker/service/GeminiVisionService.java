@@ -34,7 +34,11 @@ public class GeminiVisionService {
     private UserRepository userRepository;
 
     public GeminiVisionService() {
-        this.webClient = WebClient.create();
+        this.webClient = WebClient.builder()
+                .exchangeStrategies(org.springframework.web.reactive.function.client.ExchangeStrategies.builder()
+                        .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
+                        .build())
+                .build();
         this.objectMapper = new ObjectMapper();
     }
 
@@ -90,14 +94,34 @@ public class GeminiVisionService {
         String requestBody = "";
         try {
             // Extract base64 data and mime type from data URI if present
-            String base64Image = imageUrl;
-            String mimeType = "image/jpeg"; // default
-            
             if (imageUrl.startsWith("data:") && imageUrl.contains(";base64,")) {
+                // Handle Data URI
                 mimeType = imageUrl.substring(imageUrl.indexOf(":") + 1, imageUrl.indexOf(";"));
                 base64Image = imageUrl.substring(imageUrl.indexOf(",") + 1);
+            } else if (imageUrl.startsWith("http")) {
+                // Handle public URL - Download image
+                System.out.println("Downloading image from URL: " + imageUrl);
+                byte[] imageBytes = webClient.get()
+                        .uri(java.net.URI.create(imageUrl))
+                        .retrieve()
+                        .bodyToMono(byte[].class)
+                        .block();
+                
+                if (imageBytes != null) {
+                    System.out.println("Image downloaded successfully, size: " + imageBytes.length);
+                    base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
+                    // Try to infer mime type from URL extension or just use jpeg
+                    if (imageUrl.toLowerCase().contains(".png")) mimeType = "image/png";
+                    else if (imageUrl.toLowerCase().contains(".webp")) mimeType = "image/webp";
+                } else {
+                    System.err.println("Image download returned null body");
+                }
             } else if (imageUrl.contains(",")) {
+                // Handle raw base64 if comma is present
                 base64Image = imageUrl.substring(imageUrl.indexOf(",") + 1);
+            } else {
+                // Assume it's raw base64
+                base64Image = imageUrl;
             }
 
             var textPart = java.util.Map.of("text", promptText);
@@ -115,10 +139,12 @@ public class GeminiVisionService {
             return callGeminiApi(requestBody);
             
         } catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {
-            System.err.println("Gemini Image API call failed: " + e.getResponseBodyAsString());
-            return List.of("Error: " + e.getResponseBodyAsString() + " | Request payload: " + requestBody);
+            String errorBody = e.getResponseBodyAsString();
+            System.err.println("Gemini Image API call failed with status " + e.getStatusCode() + ": " + errorBody);
+            return List.of("Error Status: " + e.getStatusCode() + " | Body: " + errorBody + " | URL: " + imageUrl);
         } catch (Exception e) {
-            System.err.println("Gemini Image API call failed: " + e.getMessage());
+            System.err.println("Gemini Image API call failed at: " + e.getClass().getName() + " - " + e.getMessage());
+            e.printStackTrace();
             return List.of("Error: " + e.getMessage());
         }
     }
