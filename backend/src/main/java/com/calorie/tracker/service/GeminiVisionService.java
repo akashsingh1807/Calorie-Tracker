@@ -87,6 +87,7 @@ public class GeminiVisionService {
                 "Return ONLY a raw JSON list of strings representing the identified food items, nothing else. " +
                 "Example: [\"Dal Tadka\", \"Jeera Rice\", \"Roti\"]";
 
+        String requestBody = "";
         try {
             // Remove data URI scheme prefix if present
             String base64Image = imageUrl;
@@ -104,13 +105,13 @@ public class GeminiVisionService {
             
             var parts = List.of(textPart, imagePart);
             var contents = List.of(java.util.Map.of("parts", parts));
-            String requestBody = objectMapper.writeValueAsString(java.util.Map.of("contents", contents));
+            requestBody = objectMapper.writeValueAsString(java.util.Map.of("contents", contents));
 
             return callGeminiApi(requestBody);
             
         } catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {
             System.err.println("Gemini Image API call failed: " + e.getResponseBodyAsString());
-            return List.of("Error: " + e.getResponseBodyAsString());
+            return List.of("Error: " + e.getResponseBodyAsString() + " | Request payload: " + requestBody);
         } catch (Exception e) {
             System.err.println("Gemini Image API call failed: " + e.getMessage());
             return List.of("Error: " + e.getMessage());
