@@ -108,6 +108,9 @@ public class GeminiVisionService {
 
             return callGeminiApi(requestBody);
             
+        } catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {
+            System.err.println("Gemini Image API call failed: " + e.getResponseBodyAsString());
+            return List.of("Error: " + e.getResponseBodyAsString());
         } catch (Exception e) {
             System.err.println("Gemini Image API call failed: " + e.getMessage());
             return List.of("Error: " + e.getMessage());
