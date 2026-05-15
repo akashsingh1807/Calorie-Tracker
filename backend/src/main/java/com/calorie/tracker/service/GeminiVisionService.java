@@ -89,16 +89,21 @@ public class GeminiVisionService {
 
         String requestBody = "";
         try {
-            // Remove data URI scheme prefix if present
+            // Extract base64 data and mime type from data URI if present
             String base64Image = imageUrl;
-            if (imageUrl.contains(",")) {
+            String mimeType = "image/jpeg"; // default
+            
+            if (imageUrl.startsWith("data:") && imageUrl.contains(";base64,")) {
+                mimeType = imageUrl.substring(imageUrl.indexOf(":") + 1, imageUrl.indexOf(";"));
+                base64Image = imageUrl.substring(imageUrl.indexOf(",") + 1);
+            } else if (imageUrl.contains(",")) {
                 base64Image = imageUrl.substring(imageUrl.indexOf(",") + 1);
             }
 
             var textPart = java.util.Map.of("text", promptText);
             var imagePart = java.util.Map.of(
                 "inlineData", java.util.Map.of(
-                    "mimeType", "image/jpeg",
+                    "mimeType", mimeType,
                     "data", base64Image
                 )
             );
