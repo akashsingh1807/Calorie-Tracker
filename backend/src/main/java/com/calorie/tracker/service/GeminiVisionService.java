@@ -110,7 +110,7 @@ public class GeminiVisionService {
             
         } catch (Exception e) {
             System.err.println("Gemini Image API call failed: " + e.getMessage());
-            return List.of("Error detecting food");
+            return List.of("Error: " + e.getMessage());
         }
     }
 
