@@ -96,8 +96,8 @@ public class GeminiVisionService {
 
             var textPart = java.util.Map.of("text", promptText);
             var imagePart = java.util.Map.of(
-                "inline_data", java.util.Map.of(
-                    "mime_type", "image/jpeg",
+                "inlineData", java.util.Map.of(
+                    "mimeType", "image/jpeg",
                     "data", base64Image
                 )
             );
