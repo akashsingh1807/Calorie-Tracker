@@ -68,7 +68,10 @@ jobs:
       # 8. Build Frontend Docker Image
       - name: Build Frontend Docker Image
         working-directory: ./frontend
-        run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/calorie-tracker-frontend .
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=${{ steps.deploy-backend.outputs.url }} \
+            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/calorie-tracker-frontend .
 
       # 9. Push Frontend Docker Image
       - name: Push Frontend Docker Image
