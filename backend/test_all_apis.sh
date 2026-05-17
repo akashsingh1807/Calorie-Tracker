@@ -6,7 +6,7 @@ EMAIL="testuser_${TIMESTAMP}@example.com"
 PASSWORD="password123"
 
 echo "=== 1. Auth: Signup ==="
-SIGNUP_RES=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "${BASE_URL}/auth/signup" -H "Content-Type: application/json" -d "{\"name\": \"Test User\", \"email\": \"${EMAIL}\", \"password\": \"${PASSWORD}\"}")
+SIGNUP_RES=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "${BASE_URL}/auth/register" -H "Content-Type: application/json" -d "{\"name\": \"Test User\", \"email\": \"${EMAIL}\", \"password\": \"${PASSWORD}\"}")
 echo "$SIGNUP_RES" | head -n 1
 echo ""
 
@@ -24,7 +24,7 @@ curl -s -X GET "${BASE_URL}/users/me" -H "$HEADER"
 echo -e "\n"
 
 echo "=== 4. Water: Log Water ==="
-curl -s -X POST "${BASE_URL}/water" -H "$HEADER" -H "Content-Type: application/json" -d '{"amountMl": 500}'
+curl -s -X POST "${BASE_URL}/water/log" -H "$HEADER" -H "Content-Type: application/json" -d '{"amountMl": 500}'
 echo -e "\n"
 
 echo "=== 5. Meals: Log Meal ==="

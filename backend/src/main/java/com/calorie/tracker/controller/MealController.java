@@ -41,14 +41,15 @@ public class MealController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/daily")
-    public ResponseEntity<List<MealResponse>> getDailyMeals(
+    @GetMapping
+    public ResponseEntity<List<MealResponse>> getMeals(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         
+        LocalDate targetDate = (date != null) ? date : LocalDate.now();
         List<MealResponse> meals = mealService.getDailyMeals(userDetails.getId(), 
-                date.atStartOfDay(), 
-                date.plusDays(1).atStartOfDay());
+                targetDate.atStartOfDay(), 
+                targetDate.plusDays(1).atStartOfDay());
         return ResponseEntity.ok(meals);
     }
 

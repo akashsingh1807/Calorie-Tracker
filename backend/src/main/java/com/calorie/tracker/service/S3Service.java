@@ -48,6 +48,9 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file) {
         try {
+            if (minioClient == null) {
+                throw new RuntimeException("MinIO client is not initialized");
+            }
             String fileName = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
             InputStream is = file.getInputStream();
 
@@ -60,7 +63,6 @@ public class S3Service {
                             .build()
             );
 
-            // Return a pre-signed URL that expires in 1 hour
             return minioClient.getPresignedObjectUrl(
                     io.minio.GetPresignedObjectUrlArgs.builder()
                             .method(io.minio.http.Method.GET)
@@ -71,7 +73,14 @@ public class S3Service {
             );
 
         } catch (Exception e) {
-            throw new RuntimeException("Error uploading file to S3", e);
+            System.err.println("S3 upload failed, falling back to Base64: " + e.getMessage());
+            try {
+                byte[] bytes = file.getBytes();
+                String base64 = java.util.Base64.getEncoder().encodeToString(bytes);
+                return "data:" + file.getContentType() + ";base64," + base64;
+            } catch (Exception ex) {
+                throw new RuntimeException("Error falling back to Base64 upload", ex);
+            }
         }
     }
 }

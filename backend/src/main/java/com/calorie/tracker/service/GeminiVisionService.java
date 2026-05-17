@@ -1,27 +1,35 @@
 package com.calorie.tracker.service;
 
+import com.calorie.tracker.dto.FoodItemDto;
 import com.calorie.tracker.model.AiRequest;
 import com.calorie.tracker.repository.AiRequestRepository;
 import com.calorie.tracker.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GeminiVisionService {
 
+    private static final Logger logger = LoggerFactory.getLogger(GeminiVisionService.class);
+
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    @Value("${gemini.api.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent}")
+    @Value("${gemini.api.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent}")
     private String apiUrl;
 
     private final WebClient webClient;
@@ -56,53 +64,83 @@ public class GeminiVisionService {
         }
     }
 
-    private List<String> callGeminiApi(String requestBody) throws Exception {
-        String response = webClient.post()
-                .uri(apiUrl + "?key=" + apiKey)
-                .header("Content-Type", "application/json")
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+    private List<FoodItemDto> callGeminiApi(String requestBody) {
+        logger.info("Calling Gemini API. URL: {}, API Key length: {}", apiUrl, apiKey != null ? apiKey.length() : 0);
+        try {
+            String response = webClient.post()
+                    .uri(apiUrl + "?key=" + apiKey)
+                    .header("Content-Type", "application/json")
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        JsonNode rootNode = objectMapper.readTree(response);
-        JsonNode candidates = rootNode.path("candidates");
-        if (candidates.isArray() && candidates.size() > 0) {
-            JsonNode parts = candidates.get(0).path("content").path("parts");
-            if (parts.isArray() && parts.size() > 0) {
-                String textResponse = parts.get(0).path("text").asText();
-                
-                // Clean up markdown block if present
-                textResponse = textResponse.replace("```json", "").replace("```", "").trim();
-                
-                // Parse the JSON array string into a List of Strings
-                return objectMapper.readValue(textResponse, new TypeReference<List<String>>() {});
+            JsonNode rootNode = objectMapper.readTree(response);
+            
+            // Handle API errors in response body
+            if (rootNode.has("error")) {
+                logger.error("Gemini API returned error: {}", rootNode.path("error").path("message").asText());
+                return new ArrayList<>();
             }
+
+            JsonNode candidates = rootNode.path("candidates");
+            if (candidates.isArray() && candidates.size() > 0) {
+                JsonNode parts = candidates.get(0).path("content").path("parts");
+                if (parts.isArray() && parts.size() > 0) {
+                    String textResponse = parts.get(0).path("text").asText();
+                    
+                    // Clean up markdown block if present
+                    textResponse = textResponse.replaceAll("```json", "").replaceAll("```", "").trim();
+                    
+                    try {
+                        // Parse the JSON array of objects into List<FoodItemDto>
+                        return objectMapper.readValue(textResponse, new TypeReference<List<FoodItemDto>>() {});
+                    } catch (Exception e) {
+                        logger.warn("Failed to parse Gemini response as JSON array of objects, trying as strings: {}", e.getMessage());
+                        // Fallback: If it's just a list of strings, convert to DTOs
+                        List<String> foodNames = objectMapper.readValue(textResponse, new TypeReference<List<String>>() {});
+                        List<FoodItemDto> items = new ArrayList<>();
+                        for (String name : foodNames) {
+                            FoodItemDto dto = new FoodItemDto();
+                            dto.setName(name);
+                            dto.setCalories(0.0); // Will be filled by NutritionService if needed
+                            items.add(dto);
+                        }
+                        return items;
+                    }
+                }
+            }
+        } catch (WebClientResponseException e) {
+            logger.error("WebClientResponseException calling Gemini API: Status: {}, Body: {}", e.getStatusCode(), e.getResponseBodyAsString());
+        } catch (Exception e) {
+            logger.error("Error calling or parsing Gemini API: {}", e.getMessage(), e);
         }
         return new ArrayList<>();
     }
 
-    public List<String> identifyFoodFromImage(Long userId, String imageUrl) {
-        logAiRequest(userId, "IMAGE_DETECTION", 500);
-        
-        String promptText = "Analyze this image and identify the food items. Pay special attention to Indian cuisine. " +
-                "Distinguish between regional breads (Roti, Naan, Paratha) and specify the type of curry. " +
-                "Break down complex thalis into individual items. " +
-                "Return ONLY a raw JSON list of strings representing the identified food items, nothing else. " +
-                "Example: [\"Dal Tadka\", \"Jeera Rice\", \"Roti\"]";
+    public List<FoodItemDto> identifyFoodFromImage(Long userId, String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            logger.warn("identifyFoodFromImage called with empty imageUrl");
+            return new ArrayList<>();
+        }
 
-        String requestBody = "";
+        logAiRequest(userId, "IMAGE_DETECTION", 1000);
+        
+        String promptText = "Analyze this image and identify all food items. " +
+                "For each item, estimate the nutritional values (calories, protein, carbs, fat) and a typical serving size. " +
+                "Pay special attention to Indian cuisine accuracy. " +
+                "Return ONLY a JSON array of objects with the following keys: 'name', 'servingSize', 'calories', 'protein', 'carbs', 'fat'. " +
+                "Return NOTHING else but the raw JSON array.";
+
         try {
-            // Extract base64 data and mime type from data URI if present
             String base64Image = "";
             String mimeType = "image/jpeg";
+
             if (imageUrl.startsWith("data:") && imageUrl.contains(";base64,")) {
-                // Handle Data URI
                 mimeType = imageUrl.substring(imageUrl.indexOf(":") + 1, imageUrl.indexOf(";"));
                 base64Image = imageUrl.substring(imageUrl.indexOf(",") + 1);
             } else if (imageUrl.startsWith("http")) {
-                // Handle public URL - Download image
-                System.out.println("Downloading image from URL: " + imageUrl);
+                logger.info("Downloading image for AI analysis: {}", imageUrl);
                 byte[] imageBytes = webClient.get()
                         .uri(java.net.URI.create(imageUrl))
                         .retrieve()
@@ -110,64 +148,56 @@ public class GeminiVisionService {
                         .block();
                 
                 if (imageBytes != null) {
-                    System.out.println("Image downloaded successfully, size: " + imageBytes.length);
-                    base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
-                    // Try to infer mime type from URL extension or just use jpeg
+                    base64Image = Base64.getEncoder().encodeToString(imageBytes);
                     if (imageUrl.toLowerCase().contains(".png")) mimeType = "image/png";
                     else if (imageUrl.toLowerCase().contains(".webp")) mimeType = "image/webp";
-                } else {
-                    System.err.println("Image download returned null body");
                 }
-            } else if (imageUrl.contains(",")) {
-                // Handle raw base64 if comma is present
-                base64Image = imageUrl.substring(imageUrl.indexOf(",") + 1);
             } else {
-                // Assume it's raw base64
-                base64Image = imageUrl;
+                // Try treating as raw base64
+                base64Image = imageUrl.contains(",") ? imageUrl.substring(imageUrl.indexOf(",") + 1) : imageUrl;
             }
 
-            var textPart = java.util.Map.of("text", promptText);
-            var imagePart = java.util.Map.of(
-                "inlineData", java.util.Map.of(
+            if (base64Image.isEmpty()) {
+                logger.error("Failed to extract image data from: {}", imageUrl);
+                return new ArrayList<>();
+            }
+
+            var textPart = Map.of("text", promptText);
+            var imagePart = Map.of(
+                "inlineData", Map.of(
                     "mimeType", mimeType,
                     "data", base64Image
                 )
             );
             
-            var parts = List.of(textPart, imagePart);
-            var contents = List.of(java.util.Map.of("parts", parts));
-            requestBody = objectMapper.writeValueAsString(java.util.Map.of("contents", contents));
+            var contents = List.of(Map.of("parts", List.of(textPart, imagePart)));
+            String requestBody = objectMapper.writeValueAsString(Map.of("contents", contents));
 
             return callGeminiApi(requestBody);
             
-        } catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {
-            String errorBody = e.getResponseBodyAsString();
-            System.err.println("Gemini Image API call failed with status " + e.getStatusCode() + ": " + errorBody);
-            return List.of("Error Status: " + e.getStatusCode() + " | Body: " + errorBody + " | URL: " + imageUrl);
         } catch (Exception e) {
-            System.err.println("Gemini Image API call failed at: " + e.getClass().getName() + " - " + e.getMessage());
-            e.printStackTrace();
-            return List.of("Error: " + e.getMessage());
+            logger.error("Gemini Image API preparation failed: {}", e.getMessage());
+            return new ArrayList<>();
         }
     }
 
-    public List<String> analyzeText(Long userId, String text) {
-        logAiRequest(userId, "TEXT_ANALYSIS", text.length() / 4);
+    public List<FoodItemDto> analyzeText(Long userId, String text) {
+        if (text == null || text.trim().isEmpty()) return new ArrayList<>();
+
+        logAiRequest(userId, "TEXT_ANALYSIS", text.length() / 2);
         
-        String promptText = "Extract the food items from the following text: '" + text + "'. " +
-                "Return ONLY a raw JSON list of strings representing the identified food items, nothing else. " +
-                "Example: [\"Roti\", \"Dal\"]";
+        String promptText = "Extract food items from this text: '" + text + "'. " +
+                "For each item, estimate the nutritional values (calories, protein, carbs, fat) and serving size. " +
+                "Return ONLY a JSON array of objects with keys: 'name', 'servingSize', 'calories', 'protein', 'carbs', 'fat'.";
 
         try {
-            var parts = List.of(java.util.Map.of("text", promptText));
-            var contents = List.of(java.util.Map.of("parts", parts));
-            String requestBody = objectMapper.writeValueAsString(java.util.Map.of("contents", contents));
+            var contents = List.of(Map.of("parts", List.of(Map.of("text", promptText))));
+            String requestBody = objectMapper.writeValueAsString(Map.of("contents", contents));
 
             return callGeminiApi(requestBody);
-            
         } catch (Exception e) {
-            System.err.println("Gemini Text API call failed: " + e.getMessage());
-            return List.of("Error parsing text");
+            logger.error("Gemini Text API preparation failed: {}", e.getMessage());
+            return new ArrayList<>();
         }
     }
 
@@ -175,19 +205,32 @@ public class GeminiVisionService {
         logAiRequest(userId, "MEAL_SUGGESTION", 300);
         
         String promptText = "Provide 3 healthy meal suggestions for a user whose fitness goal is " + goal + ". " +
-                "Return ONLY a raw JSON list of strings representing the meal names, nothing else. " +
-                "Example: [\"Grilled Chicken Salad\", \"Oats with Berries\", \"Quinoa Bowl\"]";
+                "Return ONLY a JSON list of strings.";
 
+        logger.info("Calling Gemini getMealSuggestions. URL: {}, API Key length: {}", apiUrl, apiKey != null ? apiKey.length() : 0);
         try {
-            var parts = List.of(java.util.Map.of("text", promptText));
-            var contents = List.of(java.util.Map.of("parts", parts));
-            String requestBody = objectMapper.writeValueAsString(java.util.Map.of("contents", contents));
+            var contents = List.of(Map.of("parts", List.of(Map.of("text", promptText))));
+            String requestBody = objectMapper.writeValueAsString(Map.of("contents", contents));
 
-            return callGeminiApi(requestBody);
+            String response = webClient.post()
+                    .uri(apiUrl + "?key=" + apiKey)
+                    .header("Content-Type", "application/json")
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            JsonNode rootNode = objectMapper.readTree(response);
+            String textResponse = rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
+            textResponse = textResponse.replaceAll("```json", "").replaceAll("```", "").trim();
             
+            return objectMapper.readValue(textResponse, new TypeReference<List<String>>() {});
+        } catch (WebClientResponseException e) {
+            logger.error("WebClientResponseException in getMealSuggestions: Status: {}, Body: {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return List.of("Grilled Chicken Salad", "Oats with Berries", "Quinoa Bowl");
         } catch (Exception e) {
-            System.err.println("Gemini Suggestion API call failed: " + e.getMessage());
-            return List.of("Error generating suggestions");
+            logger.error("Gemini Suggestion API failed: {}", e.getMessage(), e);
+            return List.of("Grilled Chicken Salad", "Oats with Berries", "Quinoa Bowl");
         }
     }
 }

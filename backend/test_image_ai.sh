@@ -6,7 +6,7 @@ EMAIL="testuser_${TIMESTAMP}@example.com"
 PASSWORD="password123"
 
 echo "=== 1. Auth: Signup ==="
-SIGNUP_RES=$(curl -s -X POST "${BASE_URL}/auth/signup" -H "Content-Type: application/json" -d "{\"name\": \"Test User\", \"email\": \"${EMAIL}\", \"password\": \"${PASSWORD}\"}")
+SIGNUP_RES=$(curl -s -X POST "${BASE_URL}/auth/register" -H "Content-Type: application/json" -d "{\"name\": \"Test User\", \"email\": \"${EMAIL}\", \"password\": \"${PASSWORD}\"}")
 echo "Signup result: $SIGNUP_RES"
 echo ""
 

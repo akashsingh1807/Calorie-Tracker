@@ -4,6 +4,7 @@ import com.calorie.tracker.model.Meal;
 import com.calorie.tracker.model.User;
 import com.calorie.tracker.repository.MealRepository;
 import com.calorie.tracker.repository.UserRepository;
+import com.calorie.tracker.repository.WeightLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ public class AnalyticsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WeightLogRepository weightLogRepository;
 
     public Map<String, Object> getDailyAnalytics(Long userId, LocalDateTime date) {
         User user = userRepository.findById(userId)
@@ -45,5 +49,33 @@ public class AnalyticsService {
                 "carbs", totalCarbs,
                 "fats", totalFats
         );
+    }
+
+    public Map<String, Object> getWeeklyAnalytics(Long userId) {
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusDays(7);
+        List<Meal> meals = mealRepository.findMealsByUserAndDate(userId, start, end);
+        
+        double avgCalories = meals.stream().mapToDouble(Meal::getTotalCalories).average().orElse(0.0);
+        return Map.of("averageCalories", avgCalories, "mealCount", meals.size());
+    }
+
+    public Map<String, Object> getCalorieTrend(Long userId, int days) {
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusDays(days);
+        List<Meal> meals = mealRepository.findMealsByUserAndDate(userId, start, end);
+        
+        // Group by date and sum calories
+        Map<String, Double> trend = meals.stream()
+            .collect(java.util.stream.Collectors.groupingBy(
+                m -> m.getTimestamp().toLocalDate().toString(),
+                java.util.stream.Collectors.summingDouble(Meal::getTotalCalories)
+            ));
+        return Map.of("trend", trend);
+    }
+
+    public Map<String, Object> getWeightTrend(Long userId) {
+        List<com.calorie.tracker.model.WeightLog> logs = weightLogRepository.findByUserIdOrderByDateAsc(userId);
+        return Map.of("trend", logs);
     }
 }

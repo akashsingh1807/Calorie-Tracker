@@ -27,8 +27,7 @@ public class AnalyticsController {
 
     @GetMapping("/weekly")
     public ResponseEntity<Map<String, Object>> getWeeklyAnalytics(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        // Placeholder for weekly logic
-        return ResponseEntity.ok(Map.of("message", "Weekly analytics coming soon"));
+        return ResponseEntity.ok(analyticsService.getWeeklyAnalytics(userDetails.getId()));
     }
 
     @GetMapping("/monthly")
@@ -38,14 +37,14 @@ public class AnalyticsController {
     }
 
     @GetMapping("/calorie-trend")
-    public ResponseEntity<Map<String, Object>> getCalorieTrend(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        // Placeholder
-        return ResponseEntity.ok(Map.of("message", "Calorie trend coming soon"));
+    public ResponseEntity<Map<String, Object>> getCalorieTrend(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "7") int days) {
+        return ResponseEntity.ok(analyticsService.getCalorieTrend(userDetails.getId(), days));
     }
 
     @GetMapping("/weight-trend")
     public ResponseEntity<Map<String, Object>> getWeightTrend(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        // Placeholder
-        return ResponseEntity.ok(Map.of("message", "Weight trend coming soon"));
+        return ResponseEntity.ok(analyticsService.getWeightTrend(userDetails.getId()));
     }
 }
