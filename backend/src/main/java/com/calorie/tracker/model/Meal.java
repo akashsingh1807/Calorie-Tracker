@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "meals")
+@Table(name = "meals", indexes = {
+    @Index(name = "idx_meals_user_timestamp", columnList = "user_id, timestamp")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

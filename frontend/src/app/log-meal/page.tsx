@@ -32,6 +32,59 @@ function estimateMacros(name: string): Omit<FoodItem, 'name'> {
   return { calories: 150, protein: 5, carbs: 20, fat: 5, servingSize: '1 serving' };
 }
 
+function compressImage(file: File, maxWidth = 1080, quality = 0.8): Promise<File> {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      resolve(file);
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
+                type: 'image/webp',
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            } else {
+              resolve(file);
+            }
+          },
+          'image/webp',
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+}
+
 export default function LogMealPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -143,10 +196,11 @@ export default function LogMealPage() {
     setUploadLoading(true);
     setError('');
     try {
-      const res = await mediaAPI.upload(file);
+      const compressed = await compressImage(file);
+      const res = await mediaAPI.upload(compressed);
       const url = res.data.imageUrl || res.data.url;
       setImageUrl(url);
-      setPreview(URL.createObjectURL(file));
+      setPreview(URL.createObjectURL(compressed));
     } catch {
       setError('Image upload failed. Please try again.');
     } finally {
