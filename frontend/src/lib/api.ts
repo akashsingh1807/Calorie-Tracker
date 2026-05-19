@@ -57,6 +57,7 @@ export const mealAPI = {
       name: string; calories: number; protein: number;
       carbs: number; fat: number; servingSize?: string;
     }>;
+    timestamp?: string;
   }) => api.post('/api/v1/meals', data),
   getMeals: (date?: string) =>
     api.get('/api/v1/meals', { params: date ? { date } : {} }),
@@ -90,6 +91,7 @@ export const analyticsAPI = {
   getDaily: (date?: string) =>
     api.get('/api/v1/analytics/daily', { params: date ? { date } : {} }),
   getWeekly: () => api.get('/api/v1/analytics/weekly'),
+  getMonthly: () => api.get('/api/v1/analytics/monthly'),
   getProgress: () => api.get('/api/v1/analytics/progress'),
 };
 

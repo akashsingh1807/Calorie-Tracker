@@ -1,12 +1,14 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { aiAPI, mediaAPI, mealAPI } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import {
   Camera, Type, Sparkles, Plus, Trash2, Upload,
-  CheckCircle2, AlertCircle, ChevronDown, X, Loader2
+  CheckCircle2, AlertCircle, ChevronDown, X, Loader2,
+  Mic, Calendar
 } from 'lucide-react';
+
 
 type FoodItem = {
   name: string; calories: number; protein: number; carbs: number; fat: number; servingSize: string;
@@ -47,6 +49,95 @@ export default function LogMealPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+
+  // Retroactive Date State & Voice Input States
+  const [mealDate, setMealDate] = useState(() => {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  });
+
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const dateParam = params.get('date');
+      if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+        setMealDate(dateParam);
+      }
+    }
+  }, []);
+
+  const startSpeechToText = () => {
+    if (typeof window === 'undefined') return;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setError('Speech recognition is not supported in this browser. Please try Chrome or Safari.');
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsRecording(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            transcript += event.results[i][0].transcript;
+          }
+        }
+        if (transcript) {
+          setTextInput(prev => prev ? `${prev} ${transcript.trim()}` : transcript.trim());
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        if (event.error !== 'no-speech') {
+          setError(`Speech recognition error: ${event.error}`);
+        }
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (e: any) {
+      console.error(e);
+      setError('Failed to start speech recognition.');
+      setIsRecording(false);
+    }
+  };
+
+  const stopSpeechToText = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const toggleSpeechToText = () => {
+    if (isRecording) {
+      stopSpeechToText();
+    } else {
+      startSpeechToText();
+    }
+  };
+
 
   const handleFileUpload = async (file: File) => {
     setUploadLoading(true);
@@ -105,6 +196,11 @@ export default function LogMealPage() {
     setSaving(true);
     setError('');
     try {
+      // Build retroactive timestamp: blend selected mealDate with current client time
+      const currentDate = new Date();
+      const timeString = currentDate.toTimeString().split(' ')[0]; // HH:MM:SS
+      const timestamp = mealDate ? `${mealDate}T${timeString}` : undefined;
+
       await mealAPI.logMeal({
         mealType,
         imageUrl: imageUrl || undefined,
@@ -112,6 +208,7 @@ export default function LogMealPage() {
           name: f.name, calories: Number(f.calories), protein: Number(f.protein),
           carbs: Number(f.carbs), fat: Number(f.fat), servingSize: f.servingSize,
         })),
+        timestamp,
       });
       setSuccess(true);
       setTimeout(() => router.push('/dashboard'), 1500);
@@ -138,6 +235,28 @@ export default function LogMealPage() {
 
   return (
     <div className="page-wrapper">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes micPulse {
+          0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+          }
+          70% {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+          }
+          100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+          }
+        }
+        .mic-pulse-active {
+          animation: micPulse 1.5s infinite ease-in-out !important;
+          background: var(--accent-red, #ef4444) !important;
+          color: white !important;
+          border: none !important;
+        }
+      `}} />
       <div className="dashboard-main" style={{ maxWidth: 760, margin: '0 auto' }}>
         <div style={{ marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '1.6rem', marginBottom: '0.25rem' }}>Log a Meal</h1>
@@ -146,15 +265,30 @@ export default function LogMealPage() {
 
         {error && <div className="alert alert-error" style={{ marginBottom: '1rem' }}><AlertCircle size={16} />{error}</div>}
 
-        {/* Meal Type Selector */}
-        <div className="glass-card" style={{ padding: '1.25rem', marginBottom: '1.25rem' }}>
-          <label className="input-label" style={{ marginBottom: '0.6rem', display: 'block' }}>Meal Type</label>
-          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-            {MEAL_TYPES.map(t => (
-              <button key={t} onClick={() => setMealType(t)} className={`btn ${mealType === t ? 'btn-primary' : 'btn-ghost'} btn-sm`}>
-                {t === 'BREAKFAST' ? '☀️' : t === 'LUNCH' ? '🌞' : t === 'DINNER' ? '🌙' : '🍎'} {t.charAt(0) + t.slice(1).toLowerCase()}
-              </button>
-            ))}
+        {/* Meal Type & Date Selectors */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '1.25rem' }}>
+          <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <label className="input-label" style={{ marginBottom: '0.6rem', display: 'block' }}>Meal Type</label>
+            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+              {MEAL_TYPES.map(t => (
+                <button key={t} onClick={() => setMealType(t)} className={`btn ${mealType === t ? 'btn-primary' : 'btn-ghost'} btn-sm`}>
+                  {t === 'BREAKFAST' ? '☀️' : t === 'LUNCH' ? '🌞' : t === 'DINNER' ? '🌙' : '🍎'} {t.charAt(0) + t.slice(1).toLowerCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <label className="input-label" style={{ marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Calendar size={14} /> Meal Date
+            </label>
+            <input
+              type="date"
+              className="input"
+              value={mealDate}
+              onChange={(e) => setMealDate(e.target.value)}
+              style={{ width: '100%', padding: '0.4rem 0.75rem' }}
+            />
           </div>
         </div>
 
@@ -203,14 +337,41 @@ export default function LogMealPage() {
               <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); }} />
             </>
           ) : (
-            <textarea
-              className="input"
-              placeholder="Describe what you ate… e.g. '2 rotis with dal makhani and a glass of lassi'"
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              rows={4}
-              style={{ resize: 'vertical' }}
-            />
+            <div style={{ position: 'relative' }}>
+              <textarea
+                className="input"
+                placeholder="Describe what you ate… e.g. '2 rotis with dal makhani and a glass of lassi'"
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                rows={4}
+                style={{ resize: 'vertical', paddingRight: '3.5rem' }}
+              />
+              <button
+                type="button"
+                onClick={toggleSpeechToText}
+                className={`btn btn-icon ${isRecording ? 'mic-pulse-active' : ''}`}
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  bottom: '0.75rem',
+                  borderRadius: '50%',
+                  width: '2.2rem',
+                  height: '2.2rem',
+                  padding: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: isRecording ? 'var(--accent-red, #ef4444)' : 'rgba(255, 255, 255, 0.08)',
+                  border: isRecording ? 'none' : '1px solid var(--border-subtle)',
+                  color: isRecording ? '#fff' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                title={isRecording ? 'Stop recording' : 'Start voice input'}
+              >
+                <Mic size={16} />
+              </button>
+            </div>
           )}
 
           <button

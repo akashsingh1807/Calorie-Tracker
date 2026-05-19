@@ -25,14 +25,18 @@ export default function AnalyticsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await analyticsAPI.getWeekly();
-      setWeekly(Array.isArray(res.data) ? res.data : []);
+      const res = range === 7 ? await analyticsAPI.getWeekly() : await analyticsAPI.getMonthly();
+      let data = Array.isArray(res.data) ? res.data : [];
+      if (range === 14) {
+        data = data.slice(16); // Since monthly returns 30 days, get the last 14 days (30 - 14 = 16)
+      }
+      setWeekly(data);
     } catch {
       setWeekly([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [range]);
 
   useEffect(() => { load(); }, [load]);
 

@@ -51,14 +51,46 @@ public class AnalyticsService {
         );
     }
 
-    public Map<String, Object> getWeeklyAnalytics(Long userId) {
-        LocalDateTime end = LocalDateTime.now();
-        LocalDateTime start = end.minusDays(7);
-        List<Meal> meals = mealRepository.findMealsByUserAndDate(userId, start, end);
-        
-        double avgCalories = meals.stream().mapToDouble(Meal::getTotalCalories).average().orElse(0.0);
-        return Map.of("averageCalories", avgCalories, "mealCount", meals.size());
+    public List<Map<String, Object>> getWeeklyAnalytics(Long userId) {
+        return getAnalyticsForDays(userId, 7);
     }
+
+    public List<Map<String, Object>> getMonthlyAnalytics(Long userId) {
+        return getAnalyticsForDays(userId, 30);
+    }
+
+    public List<Map<String, Object>> getAnalyticsForDays(Long userId, int days) {
+        List<Map<String, Object>> data = new java.util.ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        
+        for (int i = days - 1; i >= 0; i--) {
+            LocalDateTime targetDate = now.minusDays(i);
+            LocalDateTime startOfDay = targetDate.toLocalDate().atStartOfDay();
+            LocalDateTime endOfDay = startOfDay.plusDays(1);
+            
+            List<Meal> dailyMeals = mealRepository.findMealsByUserAndDate(userId, startOfDay, endOfDay);
+            
+            double totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0;
+            for (Meal meal : dailyMeals) {
+                totalCalories += meal.getTotalCalories() != null ? meal.getTotalCalories() : 0;
+                totalProtein += meal.getTotalProtein() != null ? meal.getTotalProtein() : 0;
+                totalCarbs += meal.getTotalCarbs() != null ? meal.getTotalCarbs() : 0;
+                totalFats += meal.getTotalFat() != null ? meal.getTotalFat() : 0;
+            }
+            
+            Map<String, Object> dayMap = new java.util.HashMap<>();
+            dayMap.put("date", startOfDay.toLocalDate().toString());
+            dayMap.put("totalCalories", totalCalories);
+            dayMap.put("protein", totalProtein);
+            dayMap.put("carbs", totalCarbs);
+            dayMap.put("fats", totalFats);
+            
+            data.add(dayMap);
+        }
+        
+        return data;
+    }
+
 
     public Map<String, Object> getCalorieTrend(Long userId, int days) {
         LocalDateTime end = LocalDateTime.now();

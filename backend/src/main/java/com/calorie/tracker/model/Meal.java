@@ -28,7 +28,7 @@ public class Meal {
     @Column(name = "meal_type", nullable = false)
     private MealType mealType;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
     @Column(nullable = false)

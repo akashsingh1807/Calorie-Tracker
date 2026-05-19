@@ -7,7 +7,7 @@ import { analyticsAPI, mealAPI, waterAPI } from '@/lib/api';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import {
   UtensilsCrossed, Droplets, Flame, Zap, TrendingUp,
-  Plus, ChevronRight, Target, Coffee, Sun, Moon, Cookie
+  Plus, ChevronRight, ChevronLeft, Target, Coffee, Sun, Moon, Cookie, Calendar
 } from 'lucide-react';
 
 interface DailyAnalytics {
@@ -37,20 +37,29 @@ const mealColors: Record<string, string> = {
   DINNER: 'var(--accent-blue)', SNACK: 'var(--accent-purple)',
 };
 
+const getLocalDateString = (date: Date) => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [analytics, setAnalytics] = useState<DailyAnalytics | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [waterMl, setWaterMl] = useState(0);
   const [dataLoading, setDataLoading] = useState(true);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (date: Date) => {
     setDataLoading(true);
+    const dateStr = getLocalDateString(date);
     try {
       const [analyticsRes, mealsRes, waterRes] = await Promise.allSettled([
-        analyticsAPI.getDaily(),
-        mealAPI.getMeals(),
+        analyticsAPI.getDaily(dateStr),
+        mealAPI.getMeals(dateStr),
         waterAPI.getToday(),
       ]);
       if (analyticsRes.status === 'fulfilled') setAnalytics(analyticsRes.value.data);
@@ -63,8 +72,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!loading && !user) router.replace('/auth/login');
-    if (!loading && user) loadData();
-  }, [loading, user, router, loadData]);
+    if (!loading && user) loadData(selectedDate);
+  }, [loading, user, router, loadData, selectedDate]);
 
   if (loading || !user) {
     return (
@@ -95,22 +104,88 @@ export default function DashboardPage() {
     return 'Good evening';
   };
 
+  const formatDateLabel = (date: Date) => {
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    const dateStr = getLocalDateString(date);
+    const todayStr = getLocalDateString(today);
+    const yesterdayStr = getLocalDateString(yesterday);
+    const tomorrowStr = getLocalDateString(tomorrow);
+
+    if (dateStr === todayStr) return 'Today';
+    if (dateStr === yesterdayStr) return 'Yesterday';
+    if (dateStr === tomorrowStr) return 'Tomorrow';
+
+    return date.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const prevDay = () => {
+    const d = new Date(selectedDate);
+    d.setDate(d.getDate() - 1);
+    setSelectedDate(d);
+  };
+
+  const nextDay = () => {
+    const d = new Date(selectedDate);
+    d.setDate(d.getDate() + 1);
+    setSelectedDate(d);
+  };
+
   const progressColor = pct >= 100 ? 'over' : pct >= 85 ? 'warning' : '';
 
   return (
     <div className="page-wrapper">
       <div className="dashboard-main">
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h1 style={{ fontSize: '1.6rem', marginBottom: '0.25rem' }}>
               {greet()}, {user.name.split(' ')[0]} 👋
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-              {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.35rem 0.75rem', width: 'fit-content' }}>
+              <button onClick={prevDay} className="btn-icon" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-secondary)', padding: '2px' }} title="Previous Day">
+                <ChevronLeft size={18} />
+              </button>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer' }} title="Select date from calendar">
+                <Calendar size={15} style={{ color: 'var(--accent-green)' }} />
+                <span style={{ fontSize: '0.9rem', fontWeight: 600, minWidth: '110px', textAlign: 'center', color: 'var(--text-primary)' }}>
+                  {formatDateLabel(selectedDate)}
+                </span>
+                <input
+                  type="date"
+                  value={getLocalDateString(selectedDate)}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      const [yyyy, mm, dd] = e.target.value.split('-').map(Number);
+                      setSelectedDate(new Date(yyyy, mm - 1, dd));
+                    }
+                  }}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    opacity: 0,
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+              <button onClick={nextDay} className="btn-icon" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-secondary)', padding: '2px' }} title="Next Day">
+                <ChevronRight size={18} />
+              </button>
+              {getLocalDateString(selectedDate) !== getLocalDateString(new Date()) && (
+                <button onClick={() => setSelectedDate(new Date())} style={{ background: 'rgba(77,159,255,0.15)', border: '1px solid var(--accent-blue)', color: 'var(--accent-blue)', fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '12px', cursor: 'pointer', marginLeft: '0.25rem', fontWeight: 600 }}>
+                  Today
+                </button>
+              )}
+            </div>
           </div>
-          <Link href="/log-meal" className="btn btn-primary">
+          <Link href={`/log-meal?date=${getLocalDateString(selectedDate)}`} className="btn btn-primary">
             <Plus size={16} /> Log Meal
           </Link>
         </div>
@@ -230,7 +305,7 @@ export default function DashboardPage() {
                 <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Quick Actions</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                   {[
-                    { href: '/log-meal', label: 'Log a meal', icon: UtensilsCrossed, color: 'var(--accent-green)' },
+                    { href: `/log-meal?date=${getLocalDateString(selectedDate)}`, label: 'Log a meal', icon: UtensilsCrossed, color: 'var(--accent-green)' },
                     { href: '/ai', label: 'AI food scan', icon: Zap, color: 'var(--accent-purple)' },
                     { href: '/analytics', label: 'View analytics', icon: TrendingUp, color: 'var(--accent-blue)' },
                   ].map(({ href, label, icon: Icon, color }) => (
@@ -248,19 +323,21 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Today's Meals */}
+            {/* Meals */}
             <div className="glass-card" style={{ padding: '1.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                <h3 style={{ fontSize: '1rem' }}>Today&apos;s Meals</h3>
-                <Link href="/log-meal" className="btn btn-primary btn-sm">
+                <h3 style={{ fontSize: '1rem' }}>
+                  {getLocalDateString(selectedDate) === getLocalDateString(new Date()) ? "Today's Meals" : `${formatDateLabel(selectedDate)}'s Meals`}
+                </h3>
+                <Link href={`/log-meal?date=${getLocalDateString(selectedDate)}`} className="btn btn-primary btn-sm">
                   <Plus size={14} /> Add
                 </Link>
               </div>
               {meals.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)' }}>
                   <UtensilsCrossed size={36} style={{ marginBottom: '0.75rem', opacity: 0.4 }} />
-                  <p>No meals logged yet today</p>
-                  <Link href="/log-meal" className="btn btn-primary btn-sm" style={{ marginTop: '1rem' }}>Log your first meal</Link>
+                  <p>No meals logged yet on this day</p>
+                  <Link href={`/log-meal?date=${getLocalDateString(selectedDate)}`} className="btn btn-primary btn-sm" style={{ marginTop: '1rem' }}>Log your first meal</Link>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

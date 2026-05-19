@@ -3,13 +3,17 @@ package com.calorie.tracker.controller;
 import com.calorie.tracker.security.CustomUserDetails;
 import com.calorie.tracker.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,26 +24,28 @@ public class AnalyticsController {
     private AnalyticsService analyticsService;
 
     @GetMapping("/daily")
-    public ResponseEntity<Map<String, Object>> getDailyAnalytics(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        Map<String, Object> analytics = analyticsService.getDailyAnalytics(userDetails.getId(), LocalDateTime.now());
+    public ResponseEntity<Map<String, Object>> getDailyAnalytics(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        LocalDateTime targetDateTime = (date != null) ? date.atStartOfDay() : LocalDateTime.now();
+        Map<String, Object> analytics = analyticsService.getDailyAnalytics(userDetails.getId(), targetDateTime);
         return ResponseEntity.ok(analytics);
     }
 
     @GetMapping("/weekly")
-    public ResponseEntity<Map<String, Object>> getWeeklyAnalytics(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<Map<String, Object>>> getWeeklyAnalytics(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(analyticsService.getWeeklyAnalytics(userDetails.getId()));
     }
 
     @GetMapping("/monthly")
-    public ResponseEntity<Map<String, Object>> getMonthlyAnalytics(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        // Placeholder for monthly logic
-        return ResponseEntity.ok(Map.of("message", "Monthly analytics coming soon"));
+    public ResponseEntity<List<Map<String, Object>>> getMonthlyAnalytics(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(analyticsService.getMonthlyAnalytics(userDetails.getId()));
     }
 
     @GetMapping("/calorie-trend")
     public ResponseEntity<Map<String, Object>> getCalorieTrend(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "7") int days) {
+            @RequestParam(defaultValue = "7") int days) {
         return ResponseEntity.ok(analyticsService.getCalorieTrend(userDetails.getId(), days));
     }
 
@@ -48,3 +54,4 @@ public class AnalyticsController {
         return ResponseEntity.ok(analyticsService.getWeightTrend(userDetails.getId()));
     }
 }
+

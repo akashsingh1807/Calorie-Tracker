@@ -30,11 +30,13 @@ public class MealService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        LocalDateTime mealTimestamp = request.getTimestamp() != null ? request.getTimestamp() : LocalDateTime.now();
+
         Meal meal = Meal.builder()
                 .user(user)
                 .mealType(request.getMealType())
                 .imageUrl(request.getImageUrl())
-                .timestamp(LocalDateTime.now())
+                .timestamp(mealTimestamp)
                 .build();
 
         double totalCal = 0, totalPro = 0, totalCarb = 0, totalFat = 0;
