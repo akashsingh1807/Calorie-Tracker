@@ -1,0 +1,155 @@
+Picked up JAVA_TOOL_OPTIONS: --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForCommonMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:generateActualResourceCollectorsForIosSimulatorArm64Main UP-TO-DATE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:compileKotlinIosSimulatorArm64 FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':composeApp:compileKotlinIosSimulatorArm64'.
+> Could not resolve all files for configuration ':composeApp:iosSimulatorArm64CompileKlibraries'.
+   > Could not resolve androidx.lifecycle:lifecycle-runtime-compose:2.8.0.
+     Required by:
+         project :composeApp
+      > No matching variant of androidx.lifecycle:lifecycle-runtime-compose:2.8.5 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidxSourcesElements':
+              - Incompatible because this component declares documentation for use during 'androidx-multiplatform-docs' and the consumer needed a library for use during 'kotlin-api'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+                  - Doesn't say anything about org.jetbrains.kotlin.platform.type (required 'native')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'libraryVersionMetadata':
+              - Incompatible because this component declares documentation for use during 'library-version-metadata' and the consumer needed a library for use during 'kotlin-api'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+                  - Doesn't say anything about org.jetbrains.kotlin.platform.type (required 'native')
+          - Variant 'metadataApiElements' declares a library:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'metadataSourcesElements':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'releaseApiElements-published' declares a library for use during compile-time:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'releaseRuntimeElements-published' declares a library for use during runtime:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'releaseSourcesElements-published' declares a component for use during runtime:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+   > Could not resolve androidx.lifecycle:lifecycle-runtime-compose:2.8.0.
+     Required by:
+         project :composeApp > androidx.lifecycle:lifecycle-viewmodel:2.8.5 > androidx.lifecycle:lifecycle-viewmodel-iossimulatorarm64:2.8.5 > androidx.lifecycle:lifecycle-common:2.8.5 > androidx.lifecycle:lifecycle-common-iossimulatorarm64:2.8.5
+         project :composeApp > org.jetbrains.compose.ui:ui:1.7.0 > org.jetbrains.compose.ui:ui-uikitsimarm64:1.7.0 > org.jetbrains.androidx.lifecycle:lifecycle-runtime:2.8.3 > androidx.lifecycle:lifecycle-runtime:2.8.5 > androidx.lifecycle:lifecycle-runtime-iossimulatorarm64:2.8.5
+         project :composeApp > androidx.lifecycle:lifecycle-viewmodel:2.8.5 > androidx.lifecycle:lifecycle-viewmodel-iossimulatorarm64:2.8.5
+      > No matching variant of androidx.lifecycle:lifecycle-runtime-compose:2.8.5 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidxSourcesElements':
+              - Incompatible because this component declares documentation for use during 'androidx-multiplatform-docs' and the consumer needed a library for use during 'kotlin-api'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+                  - Doesn't say anything about org.jetbrains.kotlin.platform.type (required 'native')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'libraryVersionMetadata':
+              - Incompatible because this component declares documentation for use during 'library-version-metadata' and the consumer needed a library for use during 'kotlin-api'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+                  - Doesn't say anything about org.jetbrains.kotlin.platform.type (required 'native')
+          - Variant 'metadataApiElements' declares a library:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'metadataSourcesElements':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'releaseApiElements-published' declares a library for use during compile-time:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'releaseRuntimeElements-published' declares a library for use during runtime:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+          - Variant 'releaseSourcesElements-published' declares a component for use during runtime:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java environment (preferred optimized for non-jvm)
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_simulator_arm64')
+
+* Try:
+> No matching variant errors are explained in more detail at https://docs.gradle.org/8.10/userguide/variant_model.html#sub:variant-no-match.
+> Review the variant matching algorithm at https://docs.gradle.org/8.10/userguide/variant_attributes.html#sec:abm_algorithm.
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.10/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 2s
+4 actionable tasks: 1 executed, 3 up-to-date

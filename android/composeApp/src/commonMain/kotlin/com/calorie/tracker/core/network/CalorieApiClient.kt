@@ -1,0 +1,89 @@
+package com.calorie.tracker.core.network
+
+import com.calorie.tracker.model.AuthResponse
+import com.calorie.tracker.model.LoginRequest
+import com.calorie.tracker.model.Meal
+import com.calorie.tracker.model.RegisterRequest
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
+
+class CalorieApiClient(
+    private val baseUrl: String,
+    private val httpClient: HttpClient = HttpClient {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                prettyPrint = true
+                isLenient = true
+            })
+        }
+    }
+) {
+    private var authToken: String? = null
+
+    fun setAuthToken(token: String) {
+        authToken = token
+    }
+
+    fun clearAuthToken() {
+        authToken = null
+    }
+
+    private fun HttpRequestBuilder.withAuth() {
+        authToken?.let {
+            header(HttpHeaders.Authorization, "Bearer $it")
+        }
+    }
+
+    // ── Auth ────────────────────────────────────────────────────
+    suspend fun login(request: LoginRequest): Result<AuthResponse> = runCatching {
+        httpClient.post("$baseUrl/api/v1/auth/login") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body<AuthResponse>()
+    }
+
+    suspend fun register(request: RegisterRequest): Result<AuthResponse> = runCatching {
+        httpClient.post("$baseUrl/api/v1/auth/register") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body<AuthResponse>()
+    }
+
+    // ── Meals ────────────────────────────────────────────────────
+    suspend fun getDailyMeals(date: String): HttpResponse {
+        return httpClient.get("$baseUrl/api/v1/meals/daily") {
+            withAuth()
+            parameter("date", date)
+        }
+    }
+
+    suspend fun addMeal(requestBody: String): HttpResponse {
+        return httpClient.post("$baseUrl/api/v1/meals") {
+            withAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+    }
+
+    suspend fun analyzeMealImage(imageBytes: ByteArray, fileName: String): HttpResponse {
+        return httpClient.submitFormWithBinaryData(
+            url = "$baseUrl/api/v1/ai/analyze-image",
+            formData = formData {
+                append("file", imageBytes, Headers.build {
+                    append(HttpHeaders.ContentType, "image/jpeg")
+                    append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
+                })
+            }
+        ) {
+            withAuth()
+        }
+    }
+}

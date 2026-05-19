@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "CalorieTracker"
-include(":app")
+include(":composeApp")
