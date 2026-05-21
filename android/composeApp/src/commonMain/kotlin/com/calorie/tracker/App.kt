@@ -34,13 +34,13 @@ sealed class Screen {
     object Streak : Screen()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
     authRepository: AuthRepository,
     mealRepository: MealRepository,
     apiClient: CalorieApiClient? = null,
-    bookmarkRepository: BookmarkRepository? = null
+    bookmarkRepository: BookmarkRepository? = null,
+    onGoogleSignInClick: (onTokenReceived: (String) -> Unit, onError: (String) -> Unit) -> Unit = { _, _ -> }
 ) {
     val authViewModel = remember { AuthViewModel(authRepository) }
     val dashboardViewModel = remember { DashboardViewModel(mealRepository, apiClient, bookmarkRepository) }
@@ -67,7 +67,13 @@ fun App(
             if (currentScreen == Screen.Auth) {
                 AuthScreen(
                     viewModel = authViewModel,
-                    onAuthenticated = { currentScreen = Screen.Dashboard }
+                    onAuthenticated = { currentScreen = Screen.Dashboard },
+                    onGoogleSignInClick = {
+                        onGoogleSignInClick(
+                            { idToken -> authViewModel.loginWithGoogle(idToken) },
+                            { error -> authViewModel.setError(error) }
+                        )
+                    }
                 )
             } else {
                 ModalNavigationDrawer(

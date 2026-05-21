@@ -14,7 +14,7 @@ import com.calorie.tracker.feature_journal.domain.MealRepository
 class CalorieApp : Application() {
 
     // ── Backend URL — change to your deployed URL for prod ──
-    private val BASE_URL = "http://10.0.2.2:8081"   // Emulator → host machine localhost
+    private val BASE_URL = "https://calorie-tracker-backend-878280965690.us-central1.run.app"
 
     val apiClient: CalorieApiClient by lazy {
         CalorieApiClient(baseUrl = BASE_URL)

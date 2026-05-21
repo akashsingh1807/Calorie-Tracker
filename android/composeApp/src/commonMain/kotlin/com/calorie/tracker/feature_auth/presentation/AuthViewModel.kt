@@ -39,6 +39,20 @@ class AuthViewModel(
         }
     }
 
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            authRepository.loginWithGoogle(idToken)
+                .onSuccess { token ->
+                    authRepository.saveToken(token)
+                    _uiState.value = AuthUiState(isAuthenticated = true)
+                }
+                .onFailure { e ->
+                    _uiState.value = AuthUiState(error = e.message ?: "Google login failed")
+                }
+        }
+    }
+
     fun register(name: String, email: String, password: String) {
         if (name.isBlank() || email.isBlank() || password.isBlank()) {
             _uiState.value = _uiState.value.copy(error = "Please fill all fields")
@@ -63,5 +77,9 @@ class AuthViewModel(
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
+    }
+
+    fun setError(error: String) {
+        _uiState.value = _uiState.value.copy(error = error, isLoading = false)
     }
 }

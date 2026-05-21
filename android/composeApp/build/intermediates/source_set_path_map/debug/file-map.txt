@@ -1,56 +1,62 @@
-com.calorie.tracker.composeApp-foundation-layout-release-0 /Users/akashsingh/.gradle/caches/8.10/transforms/05b2a49b3f12931bc77d281d2a9245fa/transformed/foundation-layout-release/res
-com.calorie.tracker.composeApp-runtime-release-1 /Users/akashsingh/.gradle/caches/8.10/transforms/072f2ac2d94f6dda6e087ffa40d88c4a/transformed/runtime-release/res
-com.calorie.tracker.composeApp-sqlite-framework-2.4.0-2 /Users/akashsingh/.gradle/caches/8.10/transforms/0b8a375f3de0dc35940f04cec0cee96f/transformed/sqlite-framework-2.4.0/res
-com.calorie.tracker.composeApp-savedstate-1.2.1-3 /Users/akashsingh/.gradle/caches/8.10/transforms/120127ae640d02eec427c0fc2f559c8a/transformed/savedstate-1.2.1/res
-com.calorie.tracker.composeApp-lifecycle-process-2.8.5-4 /Users/akashsingh/.gradle/caches/8.10/transforms/189339269589a730de843b526a469e02/transformed/lifecycle-process-2.8.5/res
-com.calorie.tracker.composeApp-appcompat-resources-1.7.0-5 /Users/akashsingh/.gradle/caches/8.10/transforms/1fe9477d519b6f01ea7a1b2c8d4ed125/transformed/appcompat-resources-1.7.0/res
-com.calorie.tracker.composeApp-core-runtime-2.2.0-6 /Users/akashsingh/.gradle/caches/8.10/transforms/219bc2bb55f37f81254d31baa5023187/transformed/core-runtime-2.2.0/res
-com.calorie.tracker.composeApp-lifecycle-runtime-ktx-release-7 /Users/akashsingh/.gradle/caches/8.10/transforms/21ee78e859e17215510cacc96ac8222d/transformed/lifecycle-runtime-ktx-release/res
-com.calorie.tracker.composeApp-ui-release-8 /Users/akashsingh/.gradle/caches/8.10/transforms/294ce70afd09d0eb00d50ac5fc72fc8a/transformed/ui-release/res
-com.calorie.tracker.composeApp-material-icons-extended-release-9 /Users/akashsingh/.gradle/caches/8.10/transforms/3621dd51493836993df2b3a015a8998a/transformed/material-icons-extended-release/res
-com.calorie.tracker.composeApp-emoji2-views-helper-1.3.0-10 /Users/akashsingh/.gradle/caches/8.10/transforms/398dac2d458d29692caeaaeae87f0b41/transformed/emoji2-views-helper-1.3.0/res
-com.calorie.tracker.composeApp-ui-graphics-release-11 /Users/akashsingh/.gradle/caches/8.10/transforms/3d72624797e692bf4d6be9a9111a14e9/transformed/ui-graphics-release/res
-com.calorie.tracker.composeApp-room-runtime-2.6.0-12 /Users/akashsingh/.gradle/caches/8.10/transforms/41f07ecadbbbbc4fecff651d07ec3e36/transformed/room-runtime-2.6.0/res
-com.calorie.tracker.composeApp-startup-runtime-1.1.1-13 /Users/akashsingh/.gradle/caches/8.10/transforms/4999fbdef44d6e06dc7d6a1562dba751/transformed/startup-runtime-1.1.1/res
-com.calorie.tracker.composeApp-activity-ktx-1.9.1-14 /Users/akashsingh/.gradle/caches/8.10/transforms/4b88ab3252e1d9760b7a1b2a82588faf/transformed/activity-ktx-1.9.1/res
-com.calorie.tracker.composeApp-ui-unit-release-15 /Users/akashsingh/.gradle/caches/8.10/transforms/4d5c4039723bcb6c86b578f58f746354/transformed/ui-unit-release/res
-com.calorie.tracker.composeApp-lifecycle-runtime-compose-release-16 /Users/akashsingh/.gradle/caches/8.10/transforms/4d7d54c0fe3d54e0097ca412da22ee7f/transformed/lifecycle-runtime-compose-release/res
-com.calorie.tracker.composeApp-profileinstaller-1.3.1-17 /Users/akashsingh/.gradle/caches/8.10/transforms/4ed71396d66f4faf24574315bd88d33c/transformed/profileinstaller-1.3.1/res
-com.calorie.tracker.composeApp-room-ktx-2.6.0-18 /Users/akashsingh/.gradle/caches/8.10/transforms/7557d9caf0a487a83559c8c1ec783b8d/transformed/room-ktx-2.6.0/res
-com.calorie.tracker.composeApp-emoji2-1.3.0-19 /Users/akashsingh/.gradle/caches/8.10/transforms/763968be33f10e4fc36cbd1701957be6/transformed/emoji2-1.3.0/res
-com.calorie.tracker.composeApp-ui-geometry-release-20 /Users/akashsingh/.gradle/caches/8.10/transforms/78a56b2ab786505a1b42230b1a028ec4/transformed/ui-geometry-release/res
-com.calorie.tracker.composeApp-lifecycle-runtime-release-21 /Users/akashsingh/.gradle/caches/8.10/transforms/8201ce8ca64c3eef675546fd920df818/transformed/lifecycle-runtime-release/res
-com.calorie.tracker.composeApp-ui-text-release-22 /Users/akashsingh/.gradle/caches/8.10/transforms/832ef63d8a6271af06ae42c3a6ea5a30/transformed/ui-text-release/res
-com.calorie.tracker.composeApp-lifecycle-viewmodel-release-23 /Users/akashsingh/.gradle/caches/8.10/transforms/854874778652ee860777e3441096af75/transformed/lifecycle-viewmodel-release/res
-com.calorie.tracker.composeApp-material-ripple-release-24 /Users/akashsingh/.gradle/caches/8.10/transforms/8bc9fa98eb73c79fe9930ce4d49c9b86/transformed/material-ripple-release/res
-com.calorie.tracker.composeApp-ui-util-release-25 /Users/akashsingh/.gradle/caches/8.10/transforms/9b64aa27b510844021c13b6239e1941a/transformed/ui-util-release/res
-com.calorie.tracker.composeApp-lifecycle-viewmodel-savedstate-2.8.5-26 /Users/akashsingh/.gradle/caches/8.10/transforms/9ddc31071ebcad911fb89c22c973deba/transformed/lifecycle-viewmodel-savedstate-2.8.5/res
-com.calorie.tracker.composeApp-activity-1.9.1-27 /Users/akashsingh/.gradle/caches/8.10/transforms/a1945164b38106825a326afcfc4269ba/transformed/activity-1.9.1/res
-com.calorie.tracker.composeApp-lifecycle-livedata-core-2.8.5-28 /Users/akashsingh/.gradle/caches/8.10/transforms/a3bf969b2de8453005642d84238a36fa/transformed/lifecycle-livedata-core-2.8.5/res
-com.calorie.tracker.composeApp-activity-compose-1.9.1-29 /Users/akashsingh/.gradle/caches/8.10/transforms/af10a10f28640bfe72f73a22c5aee37a/transformed/activity-compose-1.9.1/res
-com.calorie.tracker.composeApp-foundation-release-30 /Users/akashsingh/.gradle/caches/8.10/transforms/b832e4ebe36b8bf3517f0f7fcfe9b38a/transformed/foundation-release/res
-com.calorie.tracker.composeApp-customview-poolingcontainer-1.0.0-31 /Users/akashsingh/.gradle/caches/8.10/transforms/b84821fd8d383932bce942410f436c05/transformed/customview-poolingcontainer-1.0.0/res
-com.calorie.tracker.composeApp-lifecycle-livedata-2.8.5-32 /Users/akashsingh/.gradle/caches/8.10/transforms/bf17f1f24ef712b48e0d89b18ed1b0ff/transformed/lifecycle-livedata-2.8.5/res
-com.calorie.tracker.composeApp-animation-release-33 /Users/akashsingh/.gradle/caches/8.10/transforms/ca207dc03823298d9dd3778fe959443a/transformed/animation-release/res
-com.calorie.tracker.composeApp-annotation-experimental-1.4.1-34 /Users/akashsingh/.gradle/caches/8.10/transforms/ca96f9c452e377c56b2593849d4d5a22/transformed/annotation-experimental-1.4.1/res
-com.calorie.tracker.composeApp-material-icons-core-release-35 /Users/akashsingh/.gradle/caches/8.10/transforms/caadd36037763478ebe73c8cb983e698/transformed/material-icons-core-release/res
-com.calorie.tracker.composeApp-core-1.13.1-36 /Users/akashsingh/.gradle/caches/8.10/transforms/da927106ebdc43980a2371bc5d605e53/transformed/core-1.13.1/res
-com.calorie.tracker.composeApp-lifecycle-viewmodel-ktx-2.8.5-37 /Users/akashsingh/.gradle/caches/8.10/transforms/df8adbc87ac559391c3142805eb77b6d/transformed/lifecycle-viewmodel-ktx-2.8.5/res
-com.calorie.tracker.composeApp-core-ktx-1.13.1-38 /Users/akashsingh/.gradle/caches/8.10/transforms/e6c0db7108dd59e8b6f77234a784c679/transformed/core-ktx-1.13.1/res
-com.calorie.tracker.composeApp-material3-release-39 /Users/akashsingh/.gradle/caches/8.10/transforms/ecfa4fd9e1aa420fc723945f99b80bcc/transformed/material3-release/res
-com.calorie.tracker.composeApp-fragment-1.5.4-40 /Users/akashsingh/.gradle/caches/8.10/transforms/eda7e882b7bcf49c5ba2e9cc529d6cba/transformed/fragment-1.5.4/res
-com.calorie.tracker.composeApp-savedstate-ktx-1.2.1-41 /Users/akashsingh/.gradle/caches/8.10/transforms/efbabcf4cbf880165abe2a508b41b0ad/transformed/savedstate-ktx-1.2.1/res
-com.calorie.tracker.composeApp-animation-core-release-42 /Users/akashsingh/.gradle/caches/8.10/transforms/f050a9971db342298d32d17762c5dd6a/transformed/animation-core-release/res
-com.calorie.tracker.composeApp-sqlite-2.4.0-43 /Users/akashsingh/.gradle/caches/8.10/transforms/f0cd7282ddf9f137f2eab82a397545fd/transformed/sqlite-2.4.0/res
-com.calorie.tracker.composeApp-runtime-saveable-release-44 /Users/akashsingh/.gradle/caches/8.10/transforms/f199d5932d1de3798958744e7e8c899e/transformed/runtime-saveable-release/res
-com.calorie.tracker.composeApp-appcompat-1.7.0-45 /Users/akashsingh/.gradle/caches/8.10/transforms/fbdc45b5a296e8dce7f91df5718e92d0/transformed/appcompat-1.7.0/res
-com.calorie.tracker.composeApp-lifecycle-livedata-core-ktx-2.8.5-46 /Users/akashsingh/.gradle/caches/8.10/transforms/ff01b170c5c8db69c877f7caf9ac8474/transformed/lifecycle-livedata-core-ktx-2.8.5/res
-com.calorie.tracker.composeApp-graphics-path-1.0.1-47 /Users/akashsingh/.gradle/caches/8.10/transforms/ff6ac81f6e852ffb4bfa0b0a25f751c8/transformed/graphics-path-1.0.1/res
-com.calorie.tracker.composeApp-pngs-48 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/pngs/debug
-com.calorie.tracker.composeApp-resValues-49 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/resValues/debug
-com.calorie.tracker.composeApp-packageDebugResources-50 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/merged.dir
-com.calorie.tracker.composeApp-packageDebugResources-51 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
-com.calorie.tracker.composeApp-merged_res-52 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/merged_res/debug
-com.calorie.tracker.composeApp-androidMain-53 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/res
-com.calorie.tracker.composeApp-debug-54 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/debug/res
-com.calorie.tracker.composeApp-main-55 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/main/res
+com.calorie.tracker.composeApp-core-ktx-1.13.1-0 /Users/akashsingh/.gradle/caches/8.10/transforms/0724ba72b65602c3ff4fe36f0672ef4d/transformed/core-ktx-1.13.1/res
+com.calorie.tracker.composeApp-appcompat-1.7.0-1 /Users/akashsingh/.gradle/caches/8.10/transforms/0788c89878af599d88fe8880885ccf3e/transformed/appcompat-1.7.0/res
+com.calorie.tracker.composeApp-animation-release-2 /Users/akashsingh/.gradle/caches/8.10/transforms/099773d557da0b1a68bc425b68f857fd/transformed/animation-release/res
+com.calorie.tracker.composeApp-ui-util-release-3 /Users/akashsingh/.gradle/caches/8.10/transforms/10295b985f399a44328ba3301a3f914e/transformed/ui-util-release/res
+com.calorie.tracker.composeApp-foundation-release-4 /Users/akashsingh/.gradle/caches/8.10/transforms/148b0dbec66b7e556e507dae40a102d2/transformed/foundation-release/res
+com.calorie.tracker.composeApp-lifecycle-viewmodel-ktx-2.8.5-5 /Users/akashsingh/.gradle/caches/8.10/transforms/1c658d498c5eb01415c99f4e8e7a7798/transformed/lifecycle-viewmodel-ktx-2.8.5/res
+com.calorie.tracker.composeApp-lifecycle-runtime-ktx-release-6 /Users/akashsingh/.gradle/caches/8.10/transforms/1e4bf8f859a56947f84dab6adc838ad2/transformed/lifecycle-runtime-ktx-release/res
+com.calorie.tracker.composeApp-activity-compose-1.9.1-7 /Users/akashsingh/.gradle/caches/8.10/transforms/222cd0715837dc3761b035a76d04a998/transformed/activity-compose-1.9.1/res
+com.calorie.tracker.composeApp-sqlite-framework-2.4.0-8 /Users/akashsingh/.gradle/caches/8.10/transforms/25f54d94f05b4875f41395389f9faa95/transformed/sqlite-framework-2.4.0/res
+com.calorie.tracker.composeApp-play-services-basement-18.3.0-9 /Users/akashsingh/.gradle/caches/8.10/transforms/3102325c51102a736286c7113a48ad5c/transformed/play-services-basement-18.3.0/res
+com.calorie.tracker.composeApp-play-services-auth-21.1.1-10 /Users/akashsingh/.gradle/caches/8.10/transforms/39a4f70704b2345024b941355a8c787c/transformed/play-services-auth-21.1.1/res
+com.calorie.tracker.composeApp-profileinstaller-1.3.1-11 /Users/akashsingh/.gradle/caches/8.10/transforms/3e952acf02bd67f798b48a40cd67c94c/transformed/profileinstaller-1.3.1/res
+com.calorie.tracker.composeApp-foundation-layout-release-12 /Users/akashsingh/.gradle/caches/8.10/transforms/41b4cb551f6c05c3d9ba6253c3055e18/transformed/foundation-layout-release/res
+com.calorie.tracker.composeApp-fragment-1.5.7-13 /Users/akashsingh/.gradle/caches/8.10/transforms/41f4197772e09b1caa157fb9c2d4d854/transformed/fragment-1.5.7/res
+com.calorie.tracker.composeApp-lifecycle-process-2.8.5-14 /Users/akashsingh/.gradle/caches/8.10/transforms/4ad5288234ed6c4b83c882fe1f4c0ec8/transformed/lifecycle-process-2.8.5/res
+com.calorie.tracker.composeApp-graphics-path-1.0.1-15 /Users/akashsingh/.gradle/caches/8.10/transforms/4ad8e4d9ef440aedfeef6e426d185577/transformed/graphics-path-1.0.1/res
+com.calorie.tracker.composeApp-sqlite-2.4.0-16 /Users/akashsingh/.gradle/caches/8.10/transforms/4ef1b7772f27791511b63dc1a5df6cee/transformed/sqlite-2.4.0/res
+com.calorie.tracker.composeApp-activity-1.9.1-17 /Users/akashsingh/.gradle/caches/8.10/transforms/56940041c71818691836ce5ad690218a/transformed/activity-1.9.1/res
+com.calorie.tracker.composeApp-material-ripple-release-18 /Users/akashsingh/.gradle/caches/8.10/transforms/576186496963dc68083443ea3d387a94/transformed/material-ripple-release/res
+com.calorie.tracker.composeApp-core-1.13.1-19 /Users/akashsingh/.gradle/caches/8.10/transforms/5830c4048b237d8058d3b39fbe655c2c/transformed/core-1.13.1/res
+com.calorie.tracker.composeApp-annotation-experimental-1.4.1-20 /Users/akashsingh/.gradle/caches/8.10/transforms/5b1d801cc3ee87ef388478fc109a1445/transformed/annotation-experimental-1.4.1/res
+com.calorie.tracker.composeApp-lifecycle-livedata-2.8.5-21 /Users/akashsingh/.gradle/caches/8.10/transforms/6272d89c68c61e279f3a931c868e727e/transformed/lifecycle-livedata-2.8.5/res
+com.calorie.tracker.composeApp-room-ktx-2.6.0-22 /Users/akashsingh/.gradle/caches/8.10/transforms/656395c90f2060a5112fc8d6feaea0b5/transformed/room-ktx-2.6.0/res
+com.calorie.tracker.composeApp-animation-core-release-23 /Users/akashsingh/.gradle/caches/8.10/transforms/65d60c9e4d8e435d37f8b71754363b00/transformed/animation-core-release/res
+com.calorie.tracker.composeApp-ui-geometry-release-24 /Users/akashsingh/.gradle/caches/8.10/transforms/7b99b59bb8e820085158734a18d3ad8c/transformed/ui-geometry-release/res
+com.calorie.tracker.composeApp-savedstate-1.2.1-25 /Users/akashsingh/.gradle/caches/8.10/transforms/8102326d824db393c88800344b6c2c6e/transformed/savedstate-1.2.1/res
+com.calorie.tracker.composeApp-material3-release-26 /Users/akashsingh/.gradle/caches/8.10/transforms/8308decf7de57d8cf5c1134511f0cf6c/transformed/material3-release/res
+com.calorie.tracker.composeApp-room-runtime-2.6.0-27 /Users/akashsingh/.gradle/caches/8.10/transforms/93e8634fbe71f7d2835db2ddffdd95d3/transformed/room-runtime-2.6.0/res
+com.calorie.tracker.composeApp-runtime-release-28 /Users/akashsingh/.gradle/caches/8.10/transforms/992b22e393fda9f84528079393345034/transformed/runtime-release/res
+com.calorie.tracker.composeApp-customview-poolingcontainer-1.0.0-29 /Users/akashsingh/.gradle/caches/8.10/transforms/9c7d663bdf0a9f49b102ececdd689acb/transformed/customview-poolingcontainer-1.0.0/res
+com.calorie.tracker.composeApp-appcompat-resources-1.7.0-30 /Users/akashsingh/.gradle/caches/8.10/transforms/9cef7df4a67a65bff2b610207a78b99b/transformed/appcompat-resources-1.7.0/res
+com.calorie.tracker.composeApp-lifecycle-viewmodel-savedstate-2.8.5-31 /Users/akashsingh/.gradle/caches/8.10/transforms/a00dbc60ae1cec95fc0f8ec3a76b90f4/transformed/lifecycle-viewmodel-savedstate-2.8.5/res
+com.calorie.tracker.composeApp-ui-graphics-release-32 /Users/akashsingh/.gradle/caches/8.10/transforms/a6d4b23919da52efea61e3e65210e231/transformed/ui-graphics-release/res
+com.calorie.tracker.composeApp-lifecycle-livedata-core-2.8.5-33 /Users/akashsingh/.gradle/caches/8.10/transforms/ad1e2782089802f3b072ef636b9b4c80/transformed/lifecycle-livedata-core-2.8.5/res
+com.calorie.tracker.composeApp-emoji2-1.3.0-34 /Users/akashsingh/.gradle/caches/8.10/transforms/b14fd9381cc3dd9a0f3d125fa532f81c/transformed/emoji2-1.3.0/res
+com.calorie.tracker.composeApp-emoji2-views-helper-1.3.0-35 /Users/akashsingh/.gradle/caches/8.10/transforms/b3852022b28c7598cc8e9f508ef217df/transformed/emoji2-views-helper-1.3.0/res
+com.calorie.tracker.composeApp-runtime-saveable-release-36 /Users/akashsingh/.gradle/caches/8.10/transforms/ba1b7cccf7f3c836e37f5abbdfc3b8ad/transformed/runtime-saveable-release/res
+com.calorie.tracker.composeApp-play-services-base-18.3.0-37 /Users/akashsingh/.gradle/caches/8.10/transforms/beb8039edc4baf9b76151c6d2746e477/transformed/play-services-base-18.3.0/res
+com.calorie.tracker.composeApp-savedstate-ktx-1.2.1-38 /Users/akashsingh/.gradle/caches/8.10/transforms/bf57e5f667b3388a7679678bc789f9af/transformed/savedstate-ktx-1.2.1/res
+com.calorie.tracker.composeApp-ui-release-39 /Users/akashsingh/.gradle/caches/8.10/transforms/c0b942608d4d1152e5078eba723741f0/transformed/ui-release/res
+com.calorie.tracker.composeApp-core-runtime-2.2.0-40 /Users/akashsingh/.gradle/caches/8.10/transforms/cb72436a5f9a8891bde4aa31094b259e/transformed/core-runtime-2.2.0/res
+com.calorie.tracker.composeApp-lifecycle-runtime-release-41 /Users/akashsingh/.gradle/caches/8.10/transforms/cdc5a9619c9edc8b7f7f85ada701b8dc/transformed/lifecycle-runtime-release/res
+com.calorie.tracker.composeApp-credentials-1.3.0-42 /Users/akashsingh/.gradle/caches/8.10/transforms/cdfa7a9031fc0f77bd595b1894cc8078/transformed/credentials-1.3.0/res
+com.calorie.tracker.composeApp-activity-ktx-1.9.1-43 /Users/akashsingh/.gradle/caches/8.10/transforms/d11ea5de4427ddc066f055098fc4db38/transformed/activity-ktx-1.9.1/res
+com.calorie.tracker.composeApp-credentials-play-services-auth-1.3.0-44 /Users/akashsingh/.gradle/caches/8.10/transforms/d26ce1fbd5eb5b1a3ddd874776108e2b/transformed/credentials-play-services-auth-1.3.0/res
+com.calorie.tracker.composeApp-lifecycle-livedata-core-ktx-2.8.5-45 /Users/akashsingh/.gradle/caches/8.10/transforms/d4e0d8ad2aaa87d07df352a39572f211/transformed/lifecycle-livedata-core-ktx-2.8.5/res
+com.calorie.tracker.composeApp-ui-text-release-46 /Users/akashsingh/.gradle/caches/8.10/transforms/d64621539e965f7ff800a0c8838ca25c/transformed/ui-text-release/res
+com.calorie.tracker.composeApp-lifecycle-runtime-compose-release-47 /Users/akashsingh/.gradle/caches/8.10/transforms/d79dd84368904f9a3772711b0260e91c/transformed/lifecycle-runtime-compose-release/res
+com.calorie.tracker.composeApp-lifecycle-viewmodel-release-48 /Users/akashsingh/.gradle/caches/8.10/transforms/d8822bcd77f50076aa39def62c076022/transformed/lifecycle-viewmodel-release/res
+com.calorie.tracker.composeApp-material-icons-core-release-49 /Users/akashsingh/.gradle/caches/8.10/transforms/e4156cc2c3f0fbe7c3ce0d3f4a09f3f9/transformed/material-icons-core-release/res
+com.calorie.tracker.composeApp-ui-unit-release-50 /Users/akashsingh/.gradle/caches/8.10/transforms/e937ef028089dd62f5f8430d1549bfcc/transformed/ui-unit-release/res
+com.calorie.tracker.composeApp-material-icons-extended-release-51 /Users/akashsingh/.gradle/caches/8.10/transforms/fcfa631d832bb84ea3c86163760d707d/transformed/material-icons-extended-release/res
+com.calorie.tracker.composeApp-startup-runtime-1.1.1-52 /Users/akashsingh/.gradle/caches/8.10/transforms/ff9522d1361285d6998b867f9e014575/transformed/startup-runtime-1.1.1/res
+com.calorie.tracker.composeApp-pngs-53 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/pngs/debug
+com.calorie.tracker.composeApp-res-54 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/processDebugGoogleServices
+com.calorie.tracker.composeApp-resValues-55 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/resValues/debug
+com.calorie.tracker.composeApp-packageDebugResources-56 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.calorie.tracker.composeApp-packageDebugResources-57 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.calorie.tracker.composeApp-merged_res-58 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/merged_res/debug
+com.calorie.tracker.composeApp-androidMain-59 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/res
+com.calorie.tracker.composeApp-debug-60 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/debug/res
+com.calorie.tracker.composeApp-main-61 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/main/res

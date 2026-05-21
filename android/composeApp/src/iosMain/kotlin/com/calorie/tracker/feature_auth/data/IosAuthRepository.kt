@@ -18,7 +18,17 @@ class IosAuthRepository(
 
     override suspend fun login(email: String, password: String): Result<String> {
         return apiClient.login(LoginRequest(email, password)).map { it.token }.also { result ->
-            result.getOrNull()?.let { token -> apiClient.setAuthToken(token) }
+            result.getOrNull()?.let { token ->
+                apiClient.setAuthToken(token)
+            }
+        }
+    }
+
+    override suspend fun loginWithGoogle(idToken: String): Result<String> {
+        return apiClient.loginWithGoogle(idToken).map { it.token }.also { result ->
+            result.getOrNull()?.let { token ->
+                apiClient.setAuthToken(token)
+            }
         }
     }
 

@@ -14,6 +14,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.calorie.tracker.model.AuthProvider;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -29,6 +37,9 @@ public class AuthService {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Value("${google.clientId}")
+    private String googleClientId;
 
     public AuthResponse authenticateUser(AuthRequest loginRequest) {
 
@@ -75,5 +86,55 @@ public class AuthService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public AuthResponse authenticateWithGoogle(String idTokenString) {
+        try {
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    new NetHttpTransport(), GsonFactory.getDefaultInstance())
+                    .setAudience(Collections.singletonList(googleClientId))
+                    .build();
+
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            if (idToken != null) {
+                GoogleIdToken.Payload payload = idToken.getPayload();
+                String email = payload.getEmail();
+                String name = (String) payload.get("name");
+                String subjectId = payload.getSubject();
+
+                Optional<User> optionalUser = userRepository.findByEmail(email);
+                User user;
+                if (optionalUser.isPresent()) {
+                    user = optionalUser.get();
+                    if (user.getAuthProvider() == AuthProvider.LOCAL) {
+                        user.setAuthProvider(AuthProvider.GOOGLE);
+                        user.setGoogleId(subjectId);
+                        userRepository.save(user);
+                    }
+                } else {
+                    user = User.builder()
+                            .name(name != null ? name : "User")
+                            .email(email)
+                            .passwordHash("GOOGLE_OAUTH") // Dummy password hash
+                            .authProvider(AuthProvider.GOOGLE)
+                            .googleId(subjectId)
+                            .dailyCalorieGoal(2000)
+                            .build();
+                    user = userRepository.save(user);
+                }
+
+                CustomUserDetails userDetails = CustomUserDetails.build(user);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                String jwt = jwtUtils.generateJwtToken(authentication);
+                return new AuthResponse(jwt, "dummy_refresh_token", 86400);
+            } else {
+                throw new RuntimeException("Invalid Google ID token.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Google authentication failed: " + e.getMessage());
+        }
     }
 }

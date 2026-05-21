@@ -5,8 +5,8 @@ import com.calorie.tracker.core.network.CalorieApiClient
 import com.calorie.tracker.feature_auth.data.IosAuthRepository
 import platform.UIKit.UIViewController
 
-// Change this to your server URL for device testing
-private const val BASE_URL = "http://localhost:8080"
+// Use your deployed URL for prod
+private const val BASE_URL = "https://calorie-tracker-backend-878280965690.us-central1.run.app"
 
 fun MainViewController(): UIViewController {
     val apiClient = CalorieApiClient(baseUrl = BASE_URL)

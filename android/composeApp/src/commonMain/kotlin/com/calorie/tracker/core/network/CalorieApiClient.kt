@@ -59,6 +59,13 @@ class CalorieApiClient(
         }.body<SignupResponse>()
     }
 
+    suspend fun loginWithGoogle(idToken: String): Result<AuthResponse> = runCatching {
+        httpClient.post("$baseUrl/api/v1/auth/google") {
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("idToken" to idToken))
+        }.body<AuthResponse>()
+    }
+
     // ── Meals ────────────────────────────────────────────────────
     suspend fun getDailyMeals(date: String): HttpResponse {
         return httpClient.get("$baseUrl/api/v1/meals/daily") {

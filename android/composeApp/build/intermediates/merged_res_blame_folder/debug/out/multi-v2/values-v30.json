@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-50:/values-v30/values-v30.xml",
+            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-56:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "/Users/akashsingh/.gradle/caches/8.10/transforms/ecfa4fd9e1aa420fc723945f99b80bcc/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "source": "/Users/akashsingh/.gradle/caches/8.10/transforms/8308decf7de57d8cf5c1134511f0cf6c/transformed/material3-release/res/values-v30/values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

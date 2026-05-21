@@ -31,7 +31,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel,
-    onAuthenticated: () -> Unit
+    onAuthenticated: () -> Unit,
+    onGoogleSignInClick: () -> Unit = {} // Add default to not break iOS yet
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var isLoginMode by remember { mutableStateOf(true) }
@@ -153,6 +154,37 @@ fun AuthScreen(
                                 }
                             )
                         }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.White.copy(alpha = 0.2f))
+                        Text(
+                            text = "OR",
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = Color.White.copy(alpha = 0.5f),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.White.copy(alpha = 0.2f))
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = onGoogleSignInClick,
+                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                        enabled = !uiState.isLoading,
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Text("Continue with Google", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
 
                     // Error message

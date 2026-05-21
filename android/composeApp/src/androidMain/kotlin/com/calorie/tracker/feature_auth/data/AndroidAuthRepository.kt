@@ -27,6 +27,14 @@ class AndroidAuthRepository(
         }
     }
 
+    override suspend fun loginWithGoogle(idToken: String): Result<String> {
+        return apiClient.loginWithGoogle(idToken).map { it.token }.also { result ->
+            result.getOrNull()?.let { token ->
+                apiClient.setAuthToken(token)
+            }
+        }
+    }
+
     override suspend fun register(name: String, email: String, password: String): Result<String> {
         return apiClient.register(RegisterRequest(name, email, password)).map {
             it.token ?: throw IllegalStateException("Registration failed: ${it.message}")

@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.firebaseAppDistribution)
     kotlin("kapt")
 }
 
@@ -63,6 +65,11 @@ kotlin {
                 // Room (Android specific implementation)
                 implementation(libs.androidx.room.runtime)
                 implementation(libs.androidx.room.ktx)
+                
+                // Credential Manager for Google Sign-In
+                implementation(libs.androidx.credentials)
+                implementation(libs.androidx.credentials.play.services.auth)
+                implementation(libs.googleid)
             }
         }
         
@@ -93,6 +100,21 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    
+    buildTypes {
+        getByName("debug") {
+            firebaseAppDistribution {
+                artifactType = "APK"
+                testers = "youremail@example.com" // Update this to your actual email
+            }
+        }
+        getByName("release") {
+            firebaseAppDistribution {
+                artifactType = "APK"
+                testers = "youremail@example.com" // Update this to your actual email
+            }
+        }
     }
 }
 

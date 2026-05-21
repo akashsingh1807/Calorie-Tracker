@@ -27,6 +27,17 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/google")
+    @Operation(summary = "Authenticate user via Google ID Token and return JWT token")
+    public ResponseEntity<?> authenticateWithGoogle(@Valid @RequestBody com.calorie.tracker.dto.GoogleAuthRequest googleAuthRequest) {
+        try {
+            AuthResponse response = authService.authenticateWithGoogle(googleAuthRequest.getIdToken());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
     @PostMapping("/register")
     @Operation(summary = "Register a new user account")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest signUpRequest) {
