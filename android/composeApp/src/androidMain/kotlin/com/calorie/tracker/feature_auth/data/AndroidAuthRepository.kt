@@ -28,7 +28,9 @@ class AndroidAuthRepository(
     }
 
     override suspend fun register(name: String, email: String, password: String): Result<String> {
-        return apiClient.register(RegisterRequest(name, email, password)).map { it.token }.also { result ->
+        return apiClient.register(RegisterRequest(name, email, password)).map {
+            it.token ?: throw IllegalStateException("Registration failed: ${it.message}")
+        }.also { result ->
             result.getOrNull()?.let { token ->
                 apiClient.setAuthToken(token)
             }

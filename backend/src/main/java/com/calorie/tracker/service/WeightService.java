@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 @Service
 public class WeightService {
@@ -27,10 +28,12 @@ public class WeightService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        LocalDate logDate = request.getDate() != null ? request.getDate() : LocalDate.now();
+
         WeightLog log = WeightLog.builder()
                 .user(user)
                 .weight(request.getWeight())
-                .date(request.getDate())
+                .date(logDate)
                 .build();
 
         // Also update current weight in user profile

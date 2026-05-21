@@ -1,220 +1,1267 @@
 package com.calorie.tracker.feature_journal.presentation.dashboard
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.*
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import com.calorie.tracker.model.BookmarkedMeal
+import com.calorie.tracker.model.FoodItemDto
+import com.calorie.tracker.model.Meal
+import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlin.math.min
+import kotlin.math.roundToInt
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
-    onAddMealClick: () -> Unit,
-    onLogout: () -> Unit = {}
+    calorieGoal: Int,
+    carbsGoalPct: Int,
+    proteinGoalPct: Int,
+    fatGoalPct: Int,
+    onMenuClick: () -> Unit,
+    onStreakClick: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val meals by viewModel.meals.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
-    var showDatePicker by remember { mutableStateOf(false) }
+    val analysisState by viewModel.analysisState.collectAsState()
+    val bookmarks by viewModel.bookmarks.collectAsState()
+    val feedbackMessage by viewModel.feedbackMessage.collectAsState()
 
-    if (showDatePicker) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
-        )
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    val selectedMillis = datePickerState.selectedDateMillis
-                    if (selectedMillis != null) {
-                        val date = Instant.fromEpochMilliseconds(selectedMillis)
-                            .toLocalDateTime(TimeZone.UTC).date
-                        viewModel.selectDate(date)
-                    }
-                    showDatePicker = false
-                }) { Text("OK") }
+    val focusManager = LocalFocusManager.current
+    var queryText by remember { mutableStateOf("") }
+    var showBookmarkSheet by remember { mutableStateOf(false) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    // Show snackbar when ViewModel posts a feedback message
+    LaunchedEffect(feedbackMessage) {
+        feedbackMessage?.let {
+            snackbarHostState.showSnackbar(message = it, duration = SnackbarDuration.Short)
+            viewModel.clearFeedback()
+        }
+    }
+
+    // Static dates matching the screenshot (May 14 - May 20, 2026)
+    val dates = listOf(
+        LocalDate(2026, 5, 14),
+        LocalDate(2026, 5, 15),
+        LocalDate(2026, 5, 16),
+        LocalDate(2026, 5, 17),
+        LocalDate(2026, 5, 18),
+        LocalDate(2026, 5, 19),
+        LocalDate(2026, 5, 20)
+    )
+
+    // Interactive Water Trackers
+    var waterCupsToday by remember { mutableStateOf(0) }
+    var waterCupsYesterday by remember { mutableStateOf(0) }
+
+    val currentWaterCups = if (selectedDate == LocalDate(2026, 5, 20)) waterCupsToday else waterCupsYesterday
+    val setWaterCups: (Int) -> Unit = { newCups ->
+        if (selectedDate == LocalDate(2026, 5, 20)) {
+            waterCupsToday = newCups.coerceIn(0, 16)
+        } else {
+            waterCupsYesterday = newCups.coerceIn(0, 16)
+        }
+    }
+
+    var dropdownExpanded by remember { mutableStateOf(false) }
+
+    // Gram targets based on percentages
+    val carbsGoalGrams = (calorieGoal * (carbsGoalPct / 100.0) / 4.0).roundToInt()
+    val proteinGoalGrams = (calorieGoal * (proteinGoalPct / 100.0) / 4.0).roundToInt()
+    val fatGoalGrams = (calorieGoal * (fatGoalPct / 100.0) / 9.0).roundToInt()
+
+    // Helper to analyze and log meal — delegates to AI via ViewModel
+    val submitMealText: (String) -> Unit = { query ->
+        if (query.isNotBlank()) {
+            viewModel.analyzeAndLogMeal(query)
+            queryText = ""
+            focusManager.clearFocus()
+        }
+    }
+
+    // ── Bookmark Bottom Sheet ─────────────────────────────────
+    if (showBookmarkSheet) {
+        BookmarkBottomSheet(
+            bookmarks = bookmarks,
+            onDismiss = { showBookmarkSheet = false },
+            onLogBookmark = { bookmark ->
+                viewModel.logBookmark(bookmark)
+                showBookmarkSheet = false
             },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+            onDeleteBookmark = { id -> viewModel.deleteBookmark(id) }
+        )
+    }
+
+
+    // ── AI Analysis Dialogs ──────────────────────────────────
+    when (val state = analysisState) {
+        is MealAnalysisState.Analyzing -> {
+            Dialog(onDismissRequest = {}) {
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        CircularProgressIndicator(color = Color(0xFF1976D2))
+                        Text(
+                            text = "Analyzing your food...",
+                            fontWeight = FontWeight.Medium,
+                            color = Color.DarkGray
+                        )
+                        Text(
+                            text = "Getting accurate nutrition data",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
             }
-        ) { DatePicker(state = datePickerState) }
+        }
+        is MealAnalysisState.PendingConfirmation -> {
+            FoodConfirmationDialog(
+                originalText = state.originalText,
+                initialFoodItems = state.foodItems,
+                onConfirm = { items, saveBookmark, bookmarkName ->
+                    viewModel.confirmAndLogMeals(items, saveBookmark, bookmarkName)
+                },
+                onDismiss = { viewModel.dismissAnalysis() }
+            )
+        }
+        is MealAnalysisState.Error -> {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissAnalysis() },
+                title = { Text("Could not analyze") },
+                text = { Text(state.message) },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissAnalysis() }) { Text("OK") }
+                }
+            )
+        }
+        else -> {}
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { dropdownExpanded = true }
+                    ) {
                         Text(
-                            text = "CalTrack",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                            text = if (selectedDate == LocalDate(2026, 5, 20)) "Today" else if (selectedDate == LocalDate(2026, 5, 19)) "Yesterday" else "${selectedDate.dayOfMonth} ${selectedDate.month.name.lowercase().replaceFirstChar { it.uppercase() }}",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp,
+                            color = Color.Black
                         )
-                        val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-                        val dateText = when (selectedDate) {
-                            today -> "Today"
-                            today.minus(DatePeriod(days = 1)) -> "Yesterday"
-                            else -> "${selectedDate.dayOfMonth} ${
-                                selectedDate.month.name.lowercase().replaceFirstChar { it.uppercase() }
-                            } ${selectedDate.year}"
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Date dropdown",
+                            tint = Color.Black
+                        )
+
+                        DropdownMenu(
+                            expanded = dropdownExpanded,
+                            onDismissRequest = { dropdownExpanded = false },
+                            modifier = Modifier.background(Color.White)
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Today") },
+                                onClick = {
+                                    viewModel.selectDate(LocalDate(2026, 5, 20))
+                                    dropdownExpanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Yesterday") },
+                                onClick = {
+                                    viewModel.selectDate(LocalDate(2026, 5, 19))
+                                    dropdownExpanded = false
+                                }
+                            )
                         }
-                        Text(
-                            text = dateText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onMenuClick) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        viewModel.selectDate(selectedDate.minus(DatePeriod(days = 1)))
-                    }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Previous Day") }
-
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.DateRange, "Select Date")
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Default.People,
+                            contentDescription = "Groups",
+                            tint = Color.DarkGray
+                        )
                     }
 
-                    IconButton(onClick = {
-                        viewModel.selectDate(selectedDate.plus(DatePeriod(days = 1)))
-                    }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Next Day") }
+                    // Streak lightning bolt item
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable { onStreakClick() }
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "⚡",
+                            fontSize = 18.sp
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "27",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    }
 
-                    IconButton(onClick = onLogout) {
-                        Icon(Icons.AutoMirrored.Filled.Logout, "Logout")
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share",
+                            tint = Color.DarkGray
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+            )
+        },
+        bottomBar = {
+            // Bottom chat input bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .navigationBarsPadding()
+                    .imePadding(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = queryText,
+                    onValueChange = { queryText = it },
+                    placeholder = { Text("What did you eat or exercise?", color = Color.Gray, fontSize = 14.sp) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(26.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFF1F3F4),
+                        unfocusedContainerColor = Color(0xFFF1F3F4),
+                        disabledContainerColor = Color(0xFFF1F3F4),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Send
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSend = {
+                            submitMealText(queryText)
+                        }
+                    ),
+                    trailingIcon = {
+                        if (queryText.isNotBlank()) {
+                            IconButton(onClick = { submitMealText(queryText) }) {
+                                Icon(Icons.Default.Send, contentDescription = "Send", tint = Color(0xFF1976D2))
+                            }
+                        }
+                    }
                 )
-            )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { showBookmarkSheet = true }) {
+                        Icon(
+                            imageVector = if (bookmarks.isNotEmpty()) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                            contentDescription = "Saved Meals",
+                            tint = if (bookmarks.isNotEmpty()) Color(0xFF1976D2) else Color.DarkGray,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Default.Image,
+                            contentDescription = "Gallery",
+                            tint = Color.DarkGray,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Default.PhotoCamera,
+                            contentDescription = "Camera",
+                            tint = Color.DarkGray,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            }
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onAddMealClick,
-                icon = { Icon(Icons.Default.Add, "Add") },
-                text = { Text("Add Meal") },
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = Color(0xFFFAFAFA)
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 24.dp)
         ) {
+            // Horizontal calendar day selector row
             item {
-                // ── Summary Card ─────────────────────────────────────
-                val totalCal = meals.sumOf { it.totalCalories }
-                val totalProtein = meals.sumOf { it.totalProtein }
-                val totalCarbs = meals.sumOf { it.totalCarbs }
-                val totalFat = meals.sumOf { it.totalFat }
-                val calGoal = 2000.0
-                val progress = (totalCal / calGoal).coerceAtMost(1.0).toFloat()
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    for (date in dates) {
+                        val isSelected = selectedDate == date
+                        val isLogged = date <= LocalDate(2026, 5, 19)
+                        val dayName = when (date.dayOfWeek.name) {
+                            "MONDAY" -> "Mon"
+                            "TUESDAY" -> "Tue"
+                            "WEDNESDAY" -> "Wed"
+                            "THURSDAY" -> "Thu"
+                            "FRIDAY" -> "Fri"
+                            "SATURDAY" -> "Sat"
+                            else -> "Sun"
+                        }
+                        val dayNum = date.dayOfMonth.toString()
 
+                        val bgColor = if (isLogged) Color(0xFFFFF1F0) else Color.Transparent
+                        val borderColor = if (isSelected) {
+                            if (isLogged) Color(0xFFD32F2F) else Color.Black
+                        } else {
+                            Color.Transparent
+                        }
+                        val borderStroke = if (isSelected) BorderStroke(1.dp, borderColor) else null
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .width(42.dp)
+                                .height(52.dp)
+                                .background(color = bgColor, shape = RoundedCornerShape(12.dp))
+                                .let {
+                                    if (borderStroke != null) {
+                                        it.border(borderStroke, RoundedCornerShape(12.dp))
+                                    } else {
+                                        it
+                                    }
+                                }
+                                .clickable {
+                                    viewModel.selectDate(date)
+                                }
+                        ) {
+                            Text(
+                                text = dayName,
+                                fontSize = 11.sp,
+                                color = if (isLogged) Color(0xFFD32F2F) else Color.Gray
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = dayNum,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isLogged) Color(0xFFD32F2F) else Color.Black
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Calorie and Macro Cards row
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Calories Card
+                    Card(
+                        modifier = Modifier.weight(1f).height(105.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFEAF1FB))
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(12.dp),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text("🔥", fontSize = 16.sp)
+                                Text(
+                                    text = "Calories",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    color = Color.Black
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(horizontalAlignment = Alignment.Start) {
+                                    val foodVal = if (selectedDate == LocalDate(2026, 5, 20)) {
+                                        meals.sumOf { it.totalCalories }.roundToInt()
+                                    } else {
+                                        1650
+                                    }
+                                    Text(
+                                        text = "$foodVal",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Black
+                                    )
+                                    Text("Food", fontSize = 10.sp, color = Color.Gray)
+                                }
+                                Column(horizontalAlignment = Alignment.Start) {
+                                    Text(
+                                        text = "0",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Black
+                                    )
+                                    Text("Exercise", fontSize = 10.sp, color = Color.Gray)
+                                }
+                                Column(horizontalAlignment = Alignment.Start) {
+                                    val remaining = if (selectedDate == LocalDate(2026, 5, 20)) {
+                                        calorieGoal - meals.sumOf { it.totalCalories }.roundToInt()
+                                    } else {
+                                        -150
+                                    }
+                                    Text(
+                                        text = "$remaining",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Black
+                                    )
+                                    Text("Remaining", fontSize = 10.sp, color = Color.Gray)
+                                }
+                            }
+                        }
+                    }
+
+                    // Macros Card
+                    Card(
+                        modifier = Modifier.weight(1f).height(105.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFEAF1FB))
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(12.dp),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Box(modifier = Modifier.size(16.dp)) {
+                                    Canvas(modifier = Modifier.fillMaxSize()) {
+                                        drawArc(
+                                            color = Color(0xFFEC407A),
+                                            startAngle = 0f,
+                                            sweepAngle = 120f,
+                                            useCenter = false,
+                                            style = Stroke(width = 3.dp.toPx())
+                                        )
+                                        drawArc(
+                                            color = Color(0xFF42A5F5),
+                                            startAngle = 120f,
+                                            sweepAngle = 120f,
+                                            useCenter = false,
+                                            style = Stroke(width = 3.dp.toPx())
+                                        )
+                                        drawArc(
+                                            color = Color(0xFF66BB6A),
+                                            startAngle = 240f,
+                                            sweepAngle = 120f,
+                                            useCenter = false,
+                                            style = Stroke(width = 3.dp.toPx())
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(2.dp))
+                                Text(
+                                    text = "Macros",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    color = Color.Black
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(horizontalAlignment = Alignment.Start) {
+                                    val carbsVal = if (selectedDate == LocalDate(2026, 5, 20)) {
+                                        meals.sumOf { it.totalCarbs }.roundToInt()
+                                    } else {
+                                        202
+                                    }
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 13.sp)) {
+                                                append("$carbsVal")
+                                            }
+                                            withStyle(SpanStyle(color = Color.Gray, fontSize = 10.sp)) {
+                                                append("/$carbsGoalGrams")
+                                            }
+                                        }
+                                    )
+                                    Text("Carbs (g)", fontSize = 10.sp, color = Color.Gray)
+                                }
+                                Column(horizontalAlignment = Alignment.Start) {
+                                    val proteinVal = if (selectedDate == LocalDate(2026, 5, 20)) {
+                                        meals.sumOf { it.totalProtein }.roundToInt()
+                                    } else {
+                                        98
+                                    }
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 13.sp)) {
+                                                append("$proteinVal")
+                                            }
+                                            withStyle(SpanStyle(color = Color.Gray, fontSize = 10.sp)) {
+                                                append("/$proteinGoalGrams")
+                                            }
+                                        }
+                                    )
+                                    Text("Protein (g)", fontSize = 10.sp, color = Color.Gray)
+                                }
+                                Column(horizontalAlignment = Alignment.Start) {
+                                    val fatVal = if (selectedDate == LocalDate(2026, 5, 20)) {
+                                        meals.sumOf { it.totalFat }.roundToInt()
+                                    } else {
+                                        46
+                                    }
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 13.sp)) {
+                                                append("$fatVal")
+                                            }
+                                            withStyle(SpanStyle(color = Color.Gray, fontSize = 10.sp)) {
+                                                append("/$fatGoalGrams")
+                                            }
+                                        }
+                                    )
+                                    Text("Fat (g)", fontSize = 10.sp, color = Color.Gray)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── Micronutrients card (daily totals) ────────────────────────────
+            item {
+                if (meals.isNotEmpty()) {
+                    MicronutrientsCard(meals = meals)
+                }
+            }
+
+            // Water Tracker Card
+            item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    border = BorderStroke(1.dp, Color(0xFFEEEEEE))
                 ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 16.dp)) {
+                        Text(
+                            text = "Water: ${currentWaterCups * 0.25}L",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        HorizontalDivider(color = Color(0xFFF5F5F5))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column {
-                                Text(
-                                    text = "${totalCal.toInt()}",
-                                    style = MaterialTheme.typography.headlineMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                                Text(
-                                    text = "/ ${calGoal.toInt()} kcal",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                            IconButton(
+                                onClick = { setWaterCups(currentWaterCups - 1) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Remove,
+                                    contentDescription = "Remove water",
+                                    tint = Color.Gray
                                 )
                             }
-                            Text("🔥", style = MaterialTheme.typography.headlineLarge)
-                        }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "$currentWaterCups Cups",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    text = "${16 - currentWaterCups} Cups Remaining",
+                                    fontSize = 11.sp,
+                                    color = Color.Gray
+                                )
+                            }
 
-                        LinearProgressIndicator(
-                            progress = { progress },
-                            modifier = Modifier.fillMaxWidth().height(8.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            trackColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f)
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Macros row
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            MacroChip("💪 Protein", "${totalProtein.toInt()}g", Color(0xFF64B5F6))
-                            MacroChip("🌾 Carbs", "${totalCarbs.toInt()}g", Color(0xFFFFB74D))
-                            MacroChip("🫙 Fat", "${totalFat.toInt()}g", Color(0xFFAED581))
+                            IconButton(
+                                onClick = { setWaterCups(currentWaterCups + 1) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add water",
+                                    tint = Color.Black
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            item {
-                Text(
-                    text = "Today's Meals",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            if (meals.isEmpty()) {
+            // Logged items or simulated Yesterday details
+            if (selectedDate == LocalDate(2026, 5, 19)) {
+                // Yesterday meals simulation from screenshot 2
                 item {
-                    Card(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(32.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        // Card 1: Daal ke Farae (100 g)
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = BorderStroke(1.dp, Color(0xFFEEEEEE))
                         ) {
-                            Text("🍽️", style = MaterialTheme.typography.headlineLarge)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("No meals logged yet", style = MaterialTheme.typography.bodyLarge)
-                            Text(
-                                "Tap + to log your first meal",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "Daal ke Farae (100 g)",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 16.sp,
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text("Calories", fontSize = 11.sp, color = Color.Gray)
+                                        Text("150", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        LinearProgressIndicator(
+                                            progress = { 0.10f },
+                                            modifier = Modifier.fillMaxWidth().height(4.dp),
+                                            color = Color(0xFF1976D2),
+                                            trackColor = Color(0xFFE3F2FD)
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text("10%", fontSize = 10.sp, color = Color.Gray)
+                                    }
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text("Carbs", fontSize = 11.sp, color = Color.Gray)
+                                        Text("20g", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        LinearProgressIndicator(
+                                            progress = { 0.12f },
+                                            modifier = Modifier.fillMaxWidth().height(4.dp),
+                                            color = Color(0xFF1976D2),
+                                            trackColor = Color(0xFFE3F2FD)
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text("12%", fontSize = 10.sp, color = Color.Gray)
+                                    }
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text("Protein", fontSize = 11.sp, color = Color.Gray)
+                                        Text("8g", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        LinearProgressIndicator(
+                                            progress = { 0.05f },
+                                            modifier = Modifier.fillMaxWidth().height(4.dp),
+                                            color = Color(0xFF1976D2),
+                                            trackColor = Color(0xFFE3F2FD)
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text("5%", fontSize = 10.sp, color = Color.Gray)
+                                    }
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text("Fat", fontSize = 11.sp, color = Color.Gray)
+                                        Text("4g", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        LinearProgressIndicator(
+                                            progress = { 0.20f },
+                                            modifier = Modifier.fillMaxWidth().height(4.dp),
+                                            color = Color(0xFF1976D2),
+                                            trackColor = Color(0xFFE3F2FD)
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text("20%", fontSize = 10.sp, color = Color.Gray)
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("11:53 am", fontSize = 11.sp, color = Color.Gray)
+                                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Edit",
+                                            tint = Color.Gray,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.MoreVert,
+                                            contentDescription = "More",
+                                            tint = Color.Gray,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        // Card 2: AI parsed list
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = BorderStroke(1.dp, Color(0xFFEEEEEE))
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "120 gm dahi 200 gm daal cooked and 200 gm brown rice cooked",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray,
+                                    modifier = Modifier.padding(bottom = 12.dp)
+                                )
+
+                                FoodItemDetailRow(
+                                    name = "Dahi (120 g)",
+                                    calories = "72",
+                                    carbs = "4g",
+                                    protein = "6g",
+                                    fat = "4g"
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                FoodItemDetailRow(
+                                    name = "Cooked Daal (200 g)",
+                                    calories = "230",
+                                    carbs = "35g",
+                                    protein = "14g",
+                                    fat = "2g"
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                FoodItemDetailRow(
+                                    name = "Cooked Brown Rice (200 g)",
+                                    calories = "220",
+                                    carbs = "45g",
+                                    protein = "5g",
+                                    fat = "2g"
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(color = Color(0xFFF5F5F5))
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    TotalsColumnItem(title = "Calories", value = "522")
+                                    TotalsColumnItem(title = "Carbs", value = "84g")
+                                    TotalsColumnItem(title = "Protein", value = "25g")
+                                    TotalsColumnItem(title = "Fat", value = "8g")
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                items(meals) { meal ->
-                    MealCard(meal = meal)
+                // Today's list of meals
+                if (meals.isNotEmpty()) {
+                    items(meals) { meal ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = BorderStroke(1.dp, Color(0xFFEEEEEE))
+                        ) {
+                            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = meal.mealType,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 15.sp,
+                                            color = Color.Black
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "Carbs: ${meal.totalCarbs.roundToInt()}g  Protein: ${meal.totalProtein.roundToInt()}g  Fat: ${meal.totalFat.roundToInt()}g",
+                                            fontSize = 12.sp,
+                                            color = Color.Gray
+                                        )
+                                    }
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = "${meal.totalCalories.roundToInt()} kcal",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 15.sp,
+                                            color = Color.Black
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        // Bookmark icon — tap to save this meal as a bookmark
+                                        IconButton(
+                                            onClick = { viewModel.saveLoggedMealAsBookmark(meal) },
+                                            modifier = Modifier.size(32.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.BookmarkBorder,
+                                                contentDescription = "Save meal",
+                                                tint = Color(0xFF1976D2),
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Dialog that shows detected food items with quantities and lets user
+ * review/adjust quantities before confirming the log.
+ */
+@Composable
+private fun FoodConfirmationDialog(
+    originalText: String,
+    initialFoodItems: List<FoodItemDto>,
+    onConfirm: (List<FoodItemDto>, Boolean, String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var items by remember { mutableStateOf(initialFoodItems) }
+    var saveAsBookmark by remember { mutableStateOf(false) }
+    var bookmarkName by remember {
+        mutableStateOf(
+            initialFoodItems.firstOrNull()?.name?.take(25) ?: originalText.take(25)
+        )
+    }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(12.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                // Header
+                Text(
+                    text = "Food Analysis",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "\"$originalText\"",
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    maxLines = 2
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(color = Color(0xFFEEEEEE))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Food items list
+                items.forEachIndexed { index, item ->
+                    FoodItemConfirmRow(
+                        item = item,
+                        onQuantityChange = { newQty ->
+                            val original = initialFoodItems[index]
+                            val ratio = newQty / (original.calories.takeIf { it > 0 } ?: 1.0)
+                            items = items.toMutableList().also { list ->
+                                list[index] = item.copy(
+                                    servingSize = newQty.toString(),
+                                    calories = "%.1f".format(original.calories * ratio).toDouble(),
+                                    protein = "%.1f".format(original.protein * ratio).toDouble(),
+                                    carbs = "%.1f".format(original.carbs * ratio).toDouble(),
+                                    fat = "%.1f".format(original.fat * ratio).toDouble()
+                                )
+                            }
+                        }
+                    )
+                    if (index < items.lastIndex) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        HorizontalDivider(color = Color(0xFFF5F5F5))
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(color = Color(0xFFEEEEEE))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Totals row
+                val totalCal = items.sumOf { it.calories }.roundToInt()
+                val totalProt = items.sumOf { it.protein }.roundToInt()
+                val totalCarbs = items.sumOf { it.carbs }.roundToInt()
+                val totalFat = items.sumOf { it.fat }.roundToInt()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TotalsColumnItem("Total Cal", "${totalCal} kcal")
+                    TotalsColumnItem("Carbs", "${totalCarbs}g")
+                    TotalsColumnItem("Protein", "${totalProt}g")
+                    TotalsColumnItem("Fat", "${totalFat}g")
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider(color = Color(0xFFEEEEEE))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // ── Micronutrients collapsible section ─────────────────────
+                var showMicronutrients by remember { mutableStateOf(false) }
+                val totalFiber     = items.sumOf { it.fiber }
+                val totalSugar     = items.sumOf { it.sugar }
+                val totalSodium    = items.sumOf { it.sodium }
+                val totalPotassium = items.sumOf { it.potassium }
+                val totalCalcium   = items.sumOf { it.calcium }
+                val totalIron      = items.sumOf { it.iron }
+                val totalVitaminC  = items.sumOf { it.vitaminC }
+                val totalVitaminD  = items.sumOf { it.vitaminD }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showMicronutrients = !showMicronutrients }
+                        .background(Color(0xFFF5F3FF), RoundedCornerShape(8.dp)) // Soft violet background
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Science,
+                            contentDescription = null,
+                            tint = Color(0xFF7C3AED), // Rich violet
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Micronutrients",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1E293B) // Slate 800
+                        )
+                    }
+                    Icon(
+                        imageVector = if (showMicronutrients) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        contentDescription = null,
+                        tint = Color(0xFF94A3B8), // Slate 400
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = showMicronutrients,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                        val microRows = listOf(
+                            Triple("Fiber",      "${totalFiber.roundToInt()}g",     Color(0xFF059669)), // Emerald
+                            Triple("Sugar",      "${totalSugar.roundToInt()}g",     Color(0xFFE11D48)), // Rose
+                            Triple("Sodium",     "${totalSodium.roundToInt()}mg",   Color(0xFF4F46E5)), // Indigo
+                            Triple("Potassium",  "${totalPotassium.roundToInt()}mg",Color(0xFF7C3AED)), // Violet
+                            Triple("Calcium",    "${totalCalcium.roundToInt()}mg",  Color(0xFF0D9488)), // Teal
+                            Triple("Iron",       "${totalIron.roundToInt()}mg",     Color(0xFFEA580C)), // Orange
+                            Triple("Vitamin C",  "${totalVitaminC.roundToInt()}mg", Color(0xFFD97706)), // Amber
+                            Triple("Vitamin D",  "${totalVitaminD.roundToInt()}µg", Color(0xFF0284C7))  // Sky Blue
+                        )
+                        microRows.chunked(2).forEach { pair ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                pair.forEach { (label, value, color) ->
+                                    Row(
+                                        modifier = Modifier.weight(1f)
+                                            .background(color.copy(alpha = 0.05f), RoundedCornerShape(8.dp))
+                                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier.size(6.dp)
+                                                .background(color, androidx.compose.foundation.shape.CircleShape)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Column {
+                                            Text(label, fontSize = 11.sp, fontWeight = FontWeight.Medium, color = Color(0xFF475569)) // Slate 600
+                                            Spacer(modifier = Modifier.height(2.dp))
+                                            Text(value, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = color)
+                                        }
+                                    }
+                                }
+                                // pad if odd number
+                                if (pair.size == 1) Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { saveAsBookmark = !saveAsBookmark }
+                        .background(
+                            if (saveAsBookmark) Color(0xFFEAF1FB) else Color.Transparent,
+                            RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = if (saveAsBookmark) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                            contentDescription = null,
+                            tint = if (saveAsBookmark) Color(0xFF1976D2) else Color.Gray,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Save as bookmark",
+                            fontSize = 13.sp,
+                            color = if (saveAsBookmark) Color(0xFF1976D2) else Color.Gray,
+                            fontWeight = if (saveAsBookmark) FontWeight.SemiBold else FontWeight.Normal
+                        )
+                    }
+                    Switch(
+                        checked = saveAsBookmark,
+                        onCheckedChange = { saveAsBookmark = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = Color(0xFF1976D2)
+                        )
+                    )
+                }
+
+                // Bookmark name field — shown when toggle is on
+                if (saveAsBookmark) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = bookmarkName,
+                        onValueChange = { bookmarkName = it },
+                        label = { Text("Bookmark name", fontSize = 12.sp) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF1976D2),
+                            unfocusedBorderColor = Color(0xFFDDDDDD)
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Action buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("Cancel", color = Color.Gray)
+                    }
+                    Button(
+                        onClick = { onConfirm(items, saveAsBookmark, bookmarkName) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF1976D2)
+                        )
+                    ) {
+                        Text("Log It ✓", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Bottom sheet showing all saved/bookmarked meals for quick re-logging.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BookmarkBottomSheet(
+    bookmarks: List<BookmarkedMeal>,
+    onDismiss: () -> Unit,
+    onLogBookmark: (BookmarkedMeal) -> Unit,
+    onDeleteBookmark: (Long) -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = Color.White,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 32.dp)
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Saved Meals",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "Tap \"Log Now\" to instantly add to today",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Default.Bookmark,
+                    contentDescription = null,
+                    tint = Color(0xFF1976D2),
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(color = Color(0xFFEEEEEE))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (bookmarks.isEmpty()) {
+                // Empty state
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.BookmarkBorder,
+                        contentDescription = null,
+                        tint = Color(0xFFBBBBBB),
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "No saved meals yet",
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Gray,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Log a meal and tap 🔖 to save it as a bookmark for quick daily reuse.",
+                        fontSize = 13.sp,
+                        color = Color(0xFFAAAAAA),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                bookmarks.forEach { bookmark ->
+                    BookmarkCard(
+                        bookmark = bookmark,
+                        onLog = { onLogBookmark(bookmark) },
+                        onDelete = { onDeleteBookmark(bookmark.id) }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -222,66 +1269,313 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun MacroChip(label: String, value: String, color: Color) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+private fun BookmarkCard(
+    bookmark: BookmarkedMeal,
+    onLog: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F8FF)),
+        border = BorderStroke(1.dp, Color(0xFFD0E4FF))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Bookmark,
+                        contentDescription = null,
+                        tint = Color(0xFF1976D2),
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = bookmark.name,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp,
+                        color = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${bookmark.totalCalories.roundToInt()} kcal  ·  C: ${bookmark.totalCarbs.roundToInt()}g  P: ${bookmark.totalProtein.roundToInt()}g  F: ${bookmark.totalFat.roundToInt()}g",
+                    fontSize = 11.sp,
+                    color = Color.Gray
+                )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                // Log Now button
+                Button(
+                    onClick = onLog,
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                ) {
+                    Text("Log Now", fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.SemiBold)
+                }
+                // Delete button
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteOutline,
+                        contentDescription = "Remove bookmark",
+                        tint = Color(0xFFE53935),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FoodItemConfirmRow(
+    item: FoodItemDto,
+    onQuantityChange: (Double) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = item.name,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+                Text(
+                    text = item.servingSize,
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+            }
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "${item.calories.roundToInt()} kcal",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color(0xFF1976D2)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            MacroBadge("C", "${item.carbs.roundToInt()}g")
+            MacroBadge("P", "${item.protein.roundToInt()}g")
+            MacroBadge("F", "${item.fat.roundToInt()}g")
+        }
+    }
+}
+
+@Composable
+private fun FoodItemDetailRow(
+    name: String,
+    calories: String,
+    carbs: String,
+    protein: String,
+    fat: String
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            color = color
+            text = name,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Black
         )
+        Spacer(modifier = Modifier.height(6.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            MacroBadge(label = "Calories", value = calories)
+            MacroBadge(label = "Carbs", value = carbs)
+            MacroBadge(label = "Protein", value = protein)
+            MacroBadge(label = "Fat", value = fat)
+        }
+    }
+}
+
+@Composable
+private fun MacroBadge(label: String, value: String) {
+    Box(
+        modifier = Modifier
+            .background(color = Color(0xFFF2F2F2), shape = RoundedCornerShape(6.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
         Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+            text = "$label: $value",
+            fontSize = 11.sp,
+            color = Color.DarkGray
         )
     }
 }
 
 @Composable
-private fun MealCard(meal: com.calorie.tracker.model.Meal) {
-    val mealEmoji = when (meal.mealType.lowercase()) {
-        "breakfast" -> "🌅"
-        "lunch" -> "☀️"
-        "dinner" -> "🌙"
-        "snack" -> "🍎"
-        else -> "🍽️"
+private fun TotalsColumnItem(title: String, value: String) {
+    Column(horizontalAlignment = Alignment.Start) {
+        Text(
+            text = title,
+            fontSize = 11.sp,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = value,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
     }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Micronutrients Dashboard Card
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+private fun MicronutrientsCard(meals: List<Meal>) {
+    val fiber     = meals.sumOf { it.totalFiber }
+    val sugar     = meals.sumOf { it.totalSugar }
+    val sodium    = meals.sumOf { it.totalSodium }
+    val potassium = meals.sumOf { it.totalPotassium }
+    val calcium   = meals.sumOf { it.totalCalcium }
+    val iron      = meals.sumOf { it.totalIron }
+    val vitaminC  = meals.sumOf { it.totalVitaminC }
+    val vitaminD  = meals.sumOf { it.totalVitaminD }
+
+    var expanded by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(2.dp)
+        colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+            // Header row — tap to expand/collapse
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(mealEmoji, style = MaterialTheme.typography.headlineSmall)
-                Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(Color(0xFFF5F3FF), androidx.compose.foundation.shape.CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Science,
+                            contentDescription = null,
+                            tint = Color(0xFF7C3AED), // Rich violet
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = meal.mealType.replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
-                    )
-                    Text(
-                        text = "P:${meal.totalProtein.toInt()}g  C:${meal.totalCarbs.toInt()}g  F:${meal.totalFat.toInt()}g",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Micronutrients",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = Color(0xFF1E293B) // Slate 800
                     )
                 }
+                Icon(
+                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    tint = Color(0xFF94A3B8), // Slate 400
+                    modifier = Modifier.size(22.dp)
+                )
             }
-            Text(
-                text = "${meal.totalCalories.toInt()} kcal",
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.primary
-            )
+
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                Column(modifier = Modifier.fillMaxWidth().padding(top = 18.dp)) {
+                    data class MicroItem(
+                        val label: String,
+                        val value: Double,
+                        val rdi: Double,
+                        val unit: String,
+                        val color: Color
+                    )
+
+                    val microItems = listOf(
+                        MicroItem("Fiber",     fiber,     25.0,   "g",  Color(0xFF059669)), // Emerald
+                        MicroItem("Sugar",     sugar,     25.0,   "g",  Color(0xFFE11D48)), // Rose
+                        MicroItem("Sodium",    sodium,    2300.0, "mg", Color(0xFF4F46E5)), // Indigo
+                        MicroItem("Potassium", potassium, 3500.0, "mg", Color(0xFF7C3AED)), // Violet
+                        MicroItem("Calcium",   calcium,   1000.0, "mg", Color(0xFF0D9488)), // Teal
+                        MicroItem("Iron",      iron,      18.0,   "mg", Color(0xFFEA580C)), // Orange
+                        MicroItem("Vitamin C", vitaminC,  90.0,   "mg", Color(0xFFD97706)), // Amber
+                        MicroItem("Vitamin D", vitaminD,  20.0,   "µg", Color(0xFF0284C7))  // Sky Blue
+                    )
+
+                    microItems.forEachIndexed { idx, item ->
+                        val progress = min(1f, (item.value / item.rdi).toFloat())
+                        val pct = (progress * 100).roundToInt()
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .background(item.color, androidx.compose.foundation.shape.CircleShape)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = item.label,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = Color(0xFF475569) // Slate 600
+                                    )
+                                    Text(
+                                        text = "${"%.1f".format(item.value)}${item.unit}  •  $pct% RDI",
+                                        fontSize = 12.sp,
+                                        color = item.color,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                LinearProgressIndicator(
+                                    progress = { progress },
+                                    modifier = Modifier.fillMaxWidth().height(6.dp).clip(androidx.compose.foundation.shape.CircleShape),
+                                    color = item.color,
+                                    trackColor = item.color.copy(alpha = 0.1f),
+                                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                                )
+                            }
+                        }
+
+                        if (idx < microItems.lastIndex) {
+                            Spacer(modifier = Modifier.height(14.dp))
+                        }
+                    }
+                }
+            }
         }
     }
 }

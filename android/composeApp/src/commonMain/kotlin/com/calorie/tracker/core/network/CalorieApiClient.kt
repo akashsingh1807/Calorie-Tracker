@@ -1,9 +1,11 @@
 package com.calorie.tracker.core.network
 
+import com.calorie.tracker.model.AnalyzeTextResponse
 import com.calorie.tracker.model.AuthResponse
 import com.calorie.tracker.model.LoginRequest
 import com.calorie.tracker.model.Meal
 import com.calorie.tracker.model.RegisterRequest
+import com.calorie.tracker.model.SignupResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -50,11 +52,11 @@ class CalorieApiClient(
         }.body<AuthResponse>()
     }
 
-    suspend fun register(request: RegisterRequest): Result<AuthResponse> = runCatching {
+    suspend fun register(request: RegisterRequest): Result<SignupResponse> = runCatching {
         httpClient.post("$baseUrl/api/v1/auth/register") {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body<AuthResponse>()
+        }.body<SignupResponse>()
     }
 
     // ── Meals ────────────────────────────────────────────────────
@@ -71,6 +73,14 @@ class CalorieApiClient(
             contentType(ContentType.Application.Json)
             setBody(requestBody)
         }
+    }
+
+    suspend fun analyzeText(text: String): Result<AnalyzeTextResponse> = runCatching {
+        httpClient.post("$baseUrl/api/v1/ai/analyze-text") {
+            withAuth()
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("text" to text))
+        }.body<AnalyzeTextResponse>()
     }
 
     suspend fun analyzeMealImage(imageBytes: ByteArray, fileName: String): HttpResponse {

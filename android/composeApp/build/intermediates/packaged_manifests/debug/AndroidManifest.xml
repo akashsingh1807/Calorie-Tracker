@@ -29,7 +29,8 @@
         android:extractNativeLibs="false"
         android:label="Calorie Tracker"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar" >
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:usesCleartextTraffic="true" >
         <activity
             android:name="com.calorie.tracker.MainActivity"
             android:exported="true" >

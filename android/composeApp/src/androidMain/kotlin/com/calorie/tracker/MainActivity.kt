@@ -14,7 +14,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             App(
                 authRepository = app.authRepository,
-                mealRepository = app.mealRepository
+                mealRepository = app.mealRepository,
+                apiClient = app.apiClient,
+                bookmarkRepository = app.bookmarkRepository
             )
         }
     }

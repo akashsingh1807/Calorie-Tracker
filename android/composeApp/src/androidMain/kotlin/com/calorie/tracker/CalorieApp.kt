@@ -6,13 +6,15 @@ import com.calorie.tracker.core.database.AppDatabase
 import com.calorie.tracker.core.network.CalorieApiClient
 import com.calorie.tracker.feature_auth.data.AndroidAuthRepository
 import com.calorie.tracker.feature_auth.domain.AuthRepository
+import com.calorie.tracker.feature_journal.data.local.AndroidBookmarkRepository
 import com.calorie.tracker.feature_journal.data.local.AndroidMealRepository
+import com.calorie.tracker.feature_journal.domain.BookmarkRepository
 import com.calorie.tracker.feature_journal.domain.MealRepository
 
 class CalorieApp : Application() {
 
     // ── Backend URL — change to your deployed URL for prod ──
-    private val BASE_URL = "http://10.0.2.2:8080"   // Android emulator → localhost
+    private val BASE_URL = "http://10.0.2.2:8081"   // Emulator → host machine localhost
 
     val apiClient: CalorieApiClient by lazy {
         CalorieApiClient(baseUrl = BASE_URL)
@@ -22,12 +24,21 @@ class CalorieApp : Application() {
         AndroidAuthRepository(context = applicationContext, apiClient = apiClient)
     }
 
-    val mealRepository: MealRepository by lazy {
-        val database = Room.databaseBuilder(
+    val database: AppDatabase by lazy {
+        Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "calorie_tracker_db"
-        ).build()
+        )
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .build()
+    }
+
+    val mealRepository: MealRepository by lazy {
         AndroidMealRepository(database.mealDao())
+    }
+
+    val bookmarkRepository: BookmarkRepository by lazy {
+        AndroidBookmarkRepository(database.bookmarkedMealDao())
     }
 }

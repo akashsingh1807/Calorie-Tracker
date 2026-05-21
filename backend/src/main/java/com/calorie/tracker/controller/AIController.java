@@ -50,9 +50,8 @@ public class AIController {
     public ResponseEntity<Map<String, Object>> analyzeText(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                            @RequestBody Map<String, String> request) {
         String text = request.get("text");
-        List<FoodItemDto> detectedItems = geminiVisionService.analyzeText(userDetails.getId(), text);
-        List<String> foodNames = detectedItems.stream().map(FoodItemDto::getName).toList();
-        List<FoodItemDto> foods = nutritionService.getNutritionForFoods(foodNames);
+        // Gemini returns items WITH accurate nutrition and serving sizes — use directly
+        List<FoodItemDto> foods = geminiVisionService.analyzeText(userDetails.getId(), text);
         double totalCalories = foods.stream().mapToDouble(FoodItemDto::getCalories).sum();
 
         return ResponseEntity.ok(Map.of(

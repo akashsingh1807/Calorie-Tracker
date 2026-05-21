@@ -15,12 +15,27 @@ data class RegisterRequest(
     val password: String
 )
 
+// Matches backend's AuthResponse (login endpoint)
 @Serializable
 data class AuthResponse(
     val token: String,
-    val userId: Long,
-    val name: String,
-    val email: String
+    val refreshToken: String? = null,
+    val expiresIn: Int = 0
+)
+
+// Matches backend's SignupResponse (register endpoint)
+@Serializable
+data class SignupResponse(
+    val success: Boolean,
+    val message: String? = null,
+    val token: String? = null,
+    val user: SignupUser? = null
+)
+
+@Serializable
+data class SignupUser(
+    val id: Long,
+    val name: String
 )
 
 @Serializable

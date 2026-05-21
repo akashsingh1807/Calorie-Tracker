@@ -127,9 +127,13 @@ public class GeminiVisionService {
         logAiRequest(userId, "IMAGE_DETECTION", 1000);
         
         String promptText = "Analyze this image and identify all food items. " +
-                "For each item, estimate the nutritional values (calories, protein, carbs, fat) and a typical serving size. " +
+                "For each item, estimate all nutritional values including macros AND micronutrients for a typical serving size. " +
                 "Pay special attention to Indian cuisine accuracy. " +
-                "Return ONLY a JSON array of objects with the following keys: 'name', 'servingSize', 'calories', 'protein', 'carbs', 'fat'. " +
+                "Return ONLY a JSON array of objects with these exact keys: " +
+                "'name', 'servingSize', 'calories', 'protein', 'carbs', 'fat', " +
+                "'fiber', 'sugar', 'sodium', 'potassium', 'calcium', 'iron', 'vitaminC', 'vitaminD'. " +
+                "All numeric values must be realistic numbers (not zero or null). " +
+                "Units: calories=kcal, protein/carbs/fat/fiber/sugar=grams, sodium/potassium/calcium/iron/vitaminC=mg, vitaminD=micrograms. " +
                 "Return NOTHING else but the raw JSON array.";
 
         try {
@@ -186,9 +190,33 @@ public class GeminiVisionService {
 
         logAiRequest(userId, "TEXT_ANALYSIS", text.length() / 2);
         
-        String promptText = "Extract food items from this text: '" + text + "'. " +
-                "For each item, estimate the nutritional values (calories, protein, carbs, fat) and serving size. " +
-                "Return ONLY a JSON array of objects with keys: 'name', 'servingSize', 'calories', 'protein', 'carbs', 'fat'.";
+        String promptText = "You are an expert nutritionist specializing in Indian and global cuisine.\n" +
+                "Analyze this food description: '" + text + "'\n\n" +
+                "Instructions:\n" +
+                "1. Extract EACH separate food item mentioned.\n" +
+                "2. If quantities are given (e.g., '200g', '2 eggs', '1 cup'), use those EXACT quantities to calculate nutrition.\n" +
+                "3. If no quantity given, assume a typical single serving.\n" +
+                "4. Provide ACCURATE nutrition for the EXACT quantity specified — NOT per 100g.\n" +
+                "5. Use accurate data for Indian foods (dal, roti, paneer, dahi, ghee, rice, etc.).\n" +
+                "6. All numeric values must be realistic numbers (not zero).\n\n" +
+                "Return ONLY a JSON array of objects. Each object must have these EXACT keys:\n" +
+                "- 'name': food name with quantity (e.g., 'Cooked Dal (200g)')\n" +
+                "- 'servingSize': quantity string (e.g., '200g', '2 medium')\n" +
+                "- 'calories': total kcal for this quantity (number)\n" +
+                "- 'protein': grams of protein (number)\n" +
+                "- 'carbs': grams of carbohydrates (number)\n" +
+                "- 'fat': grams of fat (number)\n" +
+                "- 'fiber': grams of dietary fiber (number)\n" +
+                "- 'sugar': grams of sugar (number)\n" +
+                "- 'sodium': milligrams of sodium (number)\n" +
+                "- 'potassium': milligrams of potassium (number)\n" +
+                "- 'calcium': milligrams of calcium (number)\n" +
+                "- 'iron': milligrams of iron (number)\n" +
+                "- 'vitaminC': milligrams of Vitamin C (number)\n" +
+                "- 'vitaminD': micrograms of Vitamin D (number)\n\n" +
+                "Example for '300g cooked dal':\n" +
+                "[{\"name\":\"Cooked Dal (300g)\",\"servingSize\":\"300g\",\"calories\":345,\"protein\":21,\"carbs\":54,\"fat\":1.5,\"fiber\":9,\"sugar\":3,\"sodium\":30,\"potassium\":630,\"calcium\":60,\"iron\":5.4,\"vitaminC\":3,\"vitaminD\":0}]\n\n" +
+                "Return NOTHING else but the raw JSON array. No markdown, no explanation.";
 
         try {
             var contents = List.of(Map.of("parts", List.of(Map.of("text", promptText))));

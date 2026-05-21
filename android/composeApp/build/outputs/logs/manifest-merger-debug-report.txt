@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-25:12
-INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-25:12
-INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-25:12
-INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-25:12
+ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-26:12
+INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-26:12
+INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-26:12
+INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:2:1-26:12
 MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/1fe9477d519b6f01ea7a1b2c8d4ed125/transformed/appcompat-resources-1.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.appcompat:appcompat:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/fbdc45b5a296e8dce7f91df5718e92d0/transformed/appcompat-1.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.fragment:fragment:1.5.4] /Users/akashsingh/.gradle/caches/8.10/transforms/eda7e882b7bcf49c5ba2e9cc529d6cba/transformed/fragment-1.5.4/AndroidManifest.xml:17:1-24:12
@@ -93,8 +93,8 @@ ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src
 	android:name
 		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:7:22-73
 application
-ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:9:5-23:19
-INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:9:5-23:19
+ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:9:5-24:19
+INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:9:5-24:19
 MERGED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/f534af1948b5fea009552fbed8e7c19c/transformed/library-release/AndroidManifest.xml:7:5-14:19
 MERGED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/f534af1948b5fea009552fbed8e7c19c/transformed/library-release/AndroidManifest.xml:7:5-14:19
 MERGED from [androidx.room:room-runtime:2.6.0] /Users/akashsingh/.gradle/caches/8.10/transforms/41f07ecadbbbbc4fecff651d07ec3e36/transformed/room-runtime-2.6.0/AndroidManifest.xml:23:5-29:19
@@ -123,24 +123,26 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/akashsingh/.gradle/c
 		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:11:9-35
 	android:theme
 		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:14:9-72
+	android:usesCleartextTraffic
+		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:15:9-44
 	android:name
 		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:10:9-35
 activity#com.calorie.tracker.MainActivity
-ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:15:9-22:20
+ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:16:9-23:20
 	android:exported
-		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:17:13-36
+		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:18:13-36
 	android:name
-		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:16:13-41
+		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:17:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:18:13-21:29
+ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:19:13-22:29
 action#android.intent.action.MAIN
-ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:19:17-69
+ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:20:17-69
 	android:name
-		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:19:25-66
+		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:20:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:20:17-77
+ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:21:17-77
 	android:name
-		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:20:27-74
+		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:21:27-74
 uses-sdk
 INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml
