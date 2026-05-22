@@ -97,7 +97,7 @@ fun App(
             } else {
                 ModalNavigationDrawer(
                     drawerState = drawerState,
-                    gesturesEnabled = true,
+                    gesturesEnabled = currentScreen == Screen.Dashboard,
                     drawerContent = {
                         ModalDrawerSheet(
                             modifier = Modifier.width(300.dp),
