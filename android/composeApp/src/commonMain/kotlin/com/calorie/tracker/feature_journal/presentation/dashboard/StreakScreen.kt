@@ -28,6 +28,8 @@ fun StreakScreen(
     caloriesAboveBudget: Int = 1023,
     averageCalories: Int = 1841,
     currentWeightKg: Int = 78,
+    mealRepository: com.calorie.tracker.feature_journal.domain.MealRepository,
+    budgetCalorie: Int,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -140,24 +142,54 @@ fun StreakScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Date row: Sun 17 - Sat 23
+                    // Date row: Last 7 days
+                    var streakDays by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<List<StreakDay>>(emptyList()) }
+                    val timeZone = kotlinx.datetime.TimeZone.currentSystemDefault()
+                    val today = kotlinx.datetime.Clock.System.now().toLocalDateTime(timeZone).date
+                    
+                    androidx.compose.runtime.LaunchedEffect(Unit) {
+                        val startOf7DaysAgo = today.minus(6, kotlinx.datetime.DateTimeUnit.DAY)
+                            .atStartOfDayIn(timeZone).toEpochMilliseconds()
+                        val endOfToday = today.plus(1, kotlinx.datetime.DateTimeUnit.DAY)
+                            .atStartOfDayIn(timeZone).toEpochMilliseconds()
+                            
+                        mealRepository.getMealsForDate(startOf7DaysAgo, endOfToday).collect { allMeals ->
+                            val daysList = mutableListOf<StreakDay>()
+                            for (i in 6 downTo 0) {
+                                val d = today.minus(i, kotlinx.datetime.DateTimeUnit.DAY)
+                                val dStart = d.atStartOfDayIn(timeZone).toEpochMilliseconds()
+                                val dEnd = d.plus(1, kotlinx.datetime.DateTimeUnit.DAY).atStartOfDayIn(timeZone).toEpochMilliseconds()
+                                
+                                val mealsForDay = allMeals.filter { it.timestamp in dStart until dEnd }
+                                val dayTotal = mealsForDay.sumOf { it.totalCalories }.toInt()
+                                val hasMeals = mealsForDay.isNotEmpty()
+                                val isOver = hasMeals && dayTotal > budgetCalorie
+                                val isUnderOrEq = hasMeals && dayTotal <= budgetCalorie
+                                
+                                daysList.add(
+                                    StreakDay(
+                                        name = d.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() },
+                                        dayNum = d.dayOfMonth.toString(),
+                                        isOverBudget = isOver,
+                                        isUnderOrEqualBudget = isUnderOrEq,
+                                        isSelected = (i == 0) // today is selected
+                                    )
+                                )
+                            }
+                            streakDays = daysList
+                        }
+                    }
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        val days = listOf(
-                            StreakDay("Sun", "17", true, false),
-                            StreakDay("Mon", "18", true, false),
-                            StreakDay("Tue", "19", true, false),
-                            StreakDay("Wed", "20", false, true),
-                            StreakDay("Thu", "21", false, false),
-                            StreakDay("Fri", "22", false, false),
-                            StreakDay("Sat", "23", false, false)
-                        )
-                        for (day in days) {
-                            val bgColor = if (day.isLogged) Color(0xFFFFF1F0) else Color.Transparent
+                        for (day in streakDays) {
+                            val bgColor = if (day.isOverBudget) Color(0xFFFFF1F0) else if (day.isUnderOrEqualBudget) Color(0xFFE3F2FD) else Color.Transparent
+                            val textColor = if (day.isOverBudget) Color(0xFFD32F2F) else if (day.isUnderOrEqualBudget) Color(0xFF1976D2) else Color.Gray
+                            
                             val borderColor = if (day.isSelected) {
-                                if (day.isLogged) Color(0xFFD32F2F) else Color.Black
+                                if (day.isOverBudget) Color(0xFFD32F2F) else if (day.isUnderOrEqualBudget) Color(0xFF1976D2) else Color.Black
                             } else {
                                 Color.Transparent
                             }
@@ -172,7 +204,7 @@ fun StreakScreen(
                                     .background(color = bgColor, shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp))
                                     .let { modifier ->
                                         if (borderStroke != null) {
-                                            modifier.border(borderStroke, androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
+                                            modifier.border(borderStroke, androidx.compose.foundation.shape.RoundedCornerShape(24.dp))
                                         } else {
                                             modifier
                                         }
@@ -181,13 +213,13 @@ fun StreakScreen(
                                 Text(
                                     text = day.name,
                                     fontSize = 11.sp,
-                                    color = if (day.isLogged) Color(0xFFD32F2F) else Color.Gray
+                                    color = textColor
                                 )
                                 Text(
                                     text = day.dayNum,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (day.isLogged) Color(0xFFD32F2F) else if (day.isSelected) Color.Black else Color.LightGray
+                                    color = textColor.takeUnless { it == Color.Gray } ?: (if (day.isSelected) Color.Black else Color.LightGray)
                                 )
                             }
                         }

@@ -292,9 +292,9 @@ fun App(
                         }
                         is Screen.Streak -> {
                             StreakScreen(
-                                onBackClick = {
-                                    currentScreen = Screen.Dashboard
-                                }
+                                mealRepository = mealRepository,
+                                budgetCalorie = calorieGoal,
+                                onBackClick = { currentScreen = Screen.Dashboard }
                             )
                         }
                         else -> {}
