@@ -35,12 +35,10 @@ public class AIController {
                                                                    @RequestBody Map<String, String> request) {
         String imageUrl = request.get("imageUrl");
         List<FoodItemDto> detectedItems = geminiVisionService.identifyFoodFromImage(userDetails.getId(), imageUrl);
-        List<String> foodNames = detectedItems.stream().map(FoodItemDto::getName).toList();
-        List<FoodItemDto> foods = nutritionService.getNutritionForFoods(foodNames);
-        double totalCalories = foods.stream().mapToDouble(FoodItemDto::getCalories).sum();
+        double totalCalories = detectedItems.stream().mapToDouble(FoodItemDto::getCalories).sum();
         
         return ResponseEntity.ok(Map.of(
-                "foodItems", foods,
+                "foodItems", detectedItems,
                 "totalCalories", totalCalories
         ));
     }
