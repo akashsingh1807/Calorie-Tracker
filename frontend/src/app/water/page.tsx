@@ -48,7 +48,7 @@ export default function WaterPage() {
 
         <div className="dashboard-grid grid-cols-2">
           {/* Main Controls */}
-          <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+          <div className="raw-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
             <div style={{ position: 'relative', width: 200, height: 200, marginBottom: '2rem' }}>
               {/* Circular Progress (Simplified) */}
               <div style={{
@@ -88,7 +88,7 @@ export default function WaterPage() {
 
           {/* Stats & Info */}
           <div style={{ display: 'grid', gap: '1.25rem' }}>
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
                 <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', background: 'rgba(77,159,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <TrendingUp size={16} color="var(--accent-blue)" />
@@ -120,7 +120,7 @@ export default function WaterPage() {
               </div>
             </div>
 
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                 <Info size={16} color="var(--text-muted)" />
                 <h3 style={{ fontSize: '1rem' }}>Hydration Tip</h3>

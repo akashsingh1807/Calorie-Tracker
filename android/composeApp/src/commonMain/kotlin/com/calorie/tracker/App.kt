@@ -100,7 +100,7 @@ fun App(
                                             .size(40.dp)
                                             .background(
                                                 color = Color(0xFF1976D2),
-                                                shape = RoundedCornerShape(12.dp)
+                                                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
                                             ),
                                         contentAlignment = Alignment.Center
                                     ) {

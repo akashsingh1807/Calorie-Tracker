@@ -60,7 +60,7 @@ export default function AIPage() {
         <div className="dashboard-grid grid-cols-2">
           {/* Input Section */}
           <div style={{ display: 'grid', gap: '1.5rem' }}>
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
                 <Zap size={18} color="var(--accent-blue)" />
                 <h3 style={{ fontSize: '1rem' }}>Smart Text Analysis</h3>
@@ -82,7 +82,7 @@ export default function AIPage() {
               </button>
             </div>
 
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
                 <Camera size={18} color="var(--accent-orange)" />
                 <h3 style={{ fontSize: '1rem' }}>Visual Recognition</h3>
@@ -127,7 +127,7 @@ export default function AIPage() {
           </div>
 
           {/* Results Section */}
-          <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
+          <div className="raw-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
             <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Info size={18} /> Analysis Results
             </h3>

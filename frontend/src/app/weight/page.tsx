@@ -72,11 +72,11 @@ export default function WeightPage() {
         </div>
 
         <div className="dashboard-grid grid-cols-3" style={{ marginBottom: '1.5rem' }}>
-          <div className="glass-card" style={{ padding: '1.25rem' }}>
+          <div className="raw-card" style={{ padding: '1.25rem' }}>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current Weight</span>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '0.5rem' }}>{currentWeight} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>kg</span></div>
           </div>
-          <div className="glass-card" style={{ padding: '1.25rem' }}>
+          <div className="raw-card" style={{ padding: '1.25rem' }}>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total Change</span>
             <div style={{ 
               fontSize: '1.5rem', fontWeight: 800, marginTop: '0.5rem',
@@ -85,7 +85,7 @@ export default function WeightPage() {
               {change > 0 ? '+' : ''}{change.toFixed(1)} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>kg</span>
             </div>
           </div>
-          <div className="glass-card" style={{ padding: '1.25rem' }}>
+          <div className="raw-card" style={{ padding: '1.25rem' }}>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Logs This Month</span>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '0.5rem' }}>{history.length}</div>
           </div>
@@ -93,7 +93,7 @@ export default function WeightPage() {
 
         <div className="dashboard-grid grid-cols-2">
           {/* Chart */}
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
+          <div className="raw-card" style={{ padding: '1.5rem' }}>
             <h3 style={{ fontSize: '1rem', marginBottom: '1.5rem' }}>Weight Trend</h3>
             <div style={{ height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -113,7 +113,7 @@ export default function WeightPage() {
 
           {/* Log & History */}
           <div style={{ display: 'grid', gap: '1.25rem' }}>
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '1.25rem' }}>Quick Log</h3>
               <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.75rem' }}>
                 <input 
@@ -132,7 +132,7 @@ export default function WeightPage() {
               </form>
             </div>
 
-            <div className="glass-card" style={{ padding: '1.5rem', maxHeight: '300px', overflowY: 'auto' }}>
+            <div className="raw-card" style={{ padding: '1.5rem', maxHeight: '300px', overflowY: 'auto' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '1.25rem' }}>Recent History</h3>
               <div style={{ display: 'grid', gap: '0.75rem' }}>
                 {history.map((entry) => (

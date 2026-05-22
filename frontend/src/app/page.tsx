@@ -57,7 +57,7 @@ export default function LandingPage() {
       {/* ── Hero ── */}
       <section style={{ padding: '6rem 1.5rem 4rem', textAlign: 'center', maxWidth: 900, margin: '0 auto' }}>
         <div className="animate-slide-up">
-          <div className="badge badge-green" style={{ marginBottom: '1.5rem', fontSize: '0.8rem' }}>
+          <div className="status-chip success" style={{ marginBottom: '1.5rem', fontSize: '0.8rem' }}>
             <Zap size={12} />
             Powered by Google Gemini 2.5 Flash
           </div>
@@ -113,14 +113,14 @@ export default function LandingPage() {
                 { label: 'Protein', val: '132g', unit: '/ 150g', color: 'var(--accent-blue)' },
                 { label: 'Streak', val: '14', unit: 'days', color: 'var(--accent-purple)' },
               ].map((s) => (
-                <div key={s.label} className="glass-card" style={{ padding: '1rem', textAlign: 'center' }}>
+                <div key={s.label} className="raw-card" style={{ padding: '1rem', textAlign: 'center' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>{s.label}</div>
                   <div style={{ fontSize: '1.4rem', fontWeight: 800, color: s.color }}>{s.val}</div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{s.unit}</div>
                 </div>
               ))}
             </div>
-            <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div className="raw-card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{
                 width: 48, height: 48, borderRadius: 'var(--radius-md)',
                 background: 'rgba(0,214,143,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -131,7 +131,7 @@ export default function LandingPage() {
                 <div style={{ fontWeight: 600, marginBottom: '0.2rem' }}>AI detected: Dal Tadka, Roti, Raita</div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>487 kcal · 18g protein · 62g carbs · 14g fat</div>
               </div>
-              <div className="badge badge-green">✓ Logged</div>
+              <div className="status-chip success">✓ Logged</div>
             </div>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function LandingPage() {
           {features.map((f) => {
             const Icon = f.icon;
             return (
-              <div key={f.title} className="glass-card" style={{ padding: '2rem' }}>
+              <div key={f.title} className="raw-card" style={{ padding: '2rem' }}>
                 <div style={{
                   width: 52, height: 52, borderRadius: 'var(--radius-md)',
                   background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -183,7 +183,7 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-          <div className="glass-card-accent animate-float" style={{ padding: '2rem', textAlign: 'center' }}>
+          <div className="raw-card-elevated " style={{ padding: '2rem', textAlign: 'center' }}>
             <div style={{ fontSize: '3.5rem', marginBottom: '0.5rem' }}>🎯</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-green)', marginBottom: '0.25rem' }}>95%</div>
             <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>AI food detection accuracy</div>
@@ -197,7 +197,7 @@ export default function LandingPage() {
 
       {/* ── CTA ── */}
       <section style={{ padding: '5rem 1.5rem', textAlign: 'center' }}>
-        <div className="glass-card-accent" style={{ maxWidth: 700, margin: '0 auto', padding: '3.5rem 2rem' }}>
+        <div className="raw-card-elevated" style={{ maxWidth: 700, margin: '0 auto', padding: '3.5rem 2rem' }}>
           <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Ready to transform your nutrition?</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
             Join thousands already tracking smarter with AI-powered insights.

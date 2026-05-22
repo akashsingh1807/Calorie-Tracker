@@ -53,7 +53,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="glass-card" style={{ padding: '2rem' }}>
+        <div className="raw-card" style={{ padding: '2rem' }}>
           {error && (
             <div className="alert alert-error" style={{ marginBottom: '1.25rem' }}>
               <AlertCircle size={16} /> {error}

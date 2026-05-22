@@ -72,7 +72,7 @@ fun AuthScreen(
                         Brush.radialGradient(
                             colors = listOf(Color(0xFF4CAF50), Color(0xFF2196F3))
                         ),
-                        shape = RoundedCornerShape(24.dp)
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -100,12 +100,13 @@ fun AuthScreen(
 
             // Card with form
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
+            modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White.copy(alpha = 0.08f)
                 ),
-                elevation = CardDefaults.cardElevation(0.dp)
+                
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -175,10 +176,11 @@ fun AuthScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
-                        onClick = onGoogleSignInClick,
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
+            onClick = onGoogleSignInClick,
                         modifier = Modifier.fillMaxWidth().height(52.dp),
                         enabled = !uiState.isLoading,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
                             contentColor = Color.Black
@@ -191,10 +193,11 @@ fun AuthScreen(
                     uiState.error?.let { error ->
                         Spacer(modifier = Modifier.height(4.dp))
                         Card(
-                            colors = CardDefaults.cardColors(
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
+            colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.errorContainer
                             ),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
                         ) {
                             Text(
                                 text = error,
@@ -220,9 +223,10 @@ private fun TabButton(
     onClick: () -> Unit
 ) {
     Button(
-        onClick = onClick,
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
+            onClick = onClick,
         modifier = modifier.height(44.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isSelected) Color(0xFF4CAF50) else Color.White.copy(alpha = 0.1f),
             contentColor = Color.White
@@ -273,10 +277,11 @@ private fun LoginForm(
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
             onClick = { onLogin(email, password) },
             modifier = Modifier.fillMaxWidth().height(52.dp),
             enabled = !isLoading,
-            shape = RoundedCornerShape(16.dp),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF4CAF50)
             )
@@ -339,10 +344,11 @@ private fun RegisterForm(
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
             onClick = { onRegister(name, email, password) },
             modifier = Modifier.fillMaxWidth().height(52.dp),
             enabled = !isLoading,
-            shape = RoundedCornerShape(16.dp),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF4CAF50)
             )
@@ -379,7 +385,7 @@ private fun AuthTextField(
             imeAction = imeAction
         ),
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White.copy(0.85f),

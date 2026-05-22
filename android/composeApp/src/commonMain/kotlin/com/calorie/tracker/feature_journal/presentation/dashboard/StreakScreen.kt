@@ -55,10 +55,11 @@ fun StreakScreen(
 
             // 1. Logged Days Card
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
+            modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                
             ) {
                 Column(
                     modifier = Modifier
@@ -121,10 +122,11 @@ fun StreakScreen(
 
             // 2. Current Week Card
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
+            modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                
             ) {
                 Column(
                     modifier = Modifier
@@ -169,10 +171,10 @@ fun StreakScreen(
                                 modifier = Modifier
                                     .width(42.dp)
                                     .height(52.dp)
-                                    .background(color = bgColor, shape = RoundedCornerShape(12.dp))
+                                    .background(color = bgColor, shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
                                     .let { modifier ->
                                         if (borderStroke != null) {
-                                            modifier.border(borderStroke, RoundedCornerShape(12.dp))
+                                            modifier.border(borderStroke, androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
                                         } else {
                                             modifier
                                         }

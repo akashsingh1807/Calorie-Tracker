@@ -206,7 +206,7 @@ export default function DashboardPage() {
                 { label: 'Protein', val: `${Math.round(analytics?.protein ?? 0)}g`, unit: '', icon: Zap, color: 'var(--accent-blue)', bg: 'rgba(77,159,255,0.1)' },
                 { label: 'Meals Today', val: meals.length, unit: 'logged', icon: UtensilsCrossed, color: 'var(--accent-purple)', bg: 'rgba(167,139,250,0.1)' },
               ].map(({ label, val, unit, icon: Icon, color, bg }) => (
-                <div key={label} className="glass-card" style={{ padding: '1.25rem' }}>
+                <div key={label} className="raw-card" style={{ padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
                     <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -222,7 +222,7 @@ export default function DashboardPage() {
             {/* Calorie Progress + Macro Chart */}
             <div className="dashboard-grid grid-cols-2" style={{ marginBottom: '1.25rem' }}>
               {/* Calorie bar */}
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div className="raw-card" style={{ padding: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                   <h3 style={{ fontSize: '1rem' }}>Daily Calories</h3>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{Math.round(pct)}% of goal</span>
@@ -251,7 +251,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Macro Pie */}
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div className="raw-card" style={{ padding: '1.5rem' }}>
                 <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Macros Breakdown</h3>
                 {(analytics?.protein ?? 0) + (analytics?.carbs ?? 0) + (analytics?.fats ?? 0) > 0 ? (
                   <div style={{ height: 160 }}>
@@ -283,7 +283,7 @@ export default function DashboardPage() {
             {/* Water + Quick Actions */}
             <div className="dashboard-grid grid-cols-2" style={{ marginBottom: '1.25rem' }}>
               {/* Water */}
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div className="raw-card" style={{ padding: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3 style={{ fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Droplets size={18} color="var(--accent-blue)" /> Hydration
@@ -301,7 +301,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Quick actions */}
-              <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div className="raw-card" style={{ padding: '1.5rem' }}>
                 <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Quick Actions</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                   {[
@@ -324,7 +324,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Meals */}
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                 <h3 style={{ fontSize: '1rem' }}>
                   {getLocalDateString(selectedDate) === getLocalDateString(new Date()) ? "Today's Meals" : `${formatDateLabel(selectedDate)}'s Meals`}

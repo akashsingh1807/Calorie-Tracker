@@ -51,7 +51,7 @@ export default function ProfilePage() {
 
         <div className="dashboard-grid grid-cols-3">
           {/* Sidebar */}
-          <div className="glass-card" style={{ height: 'fit-content' }}>
+          <div className="raw-card" style={{ height: 'fit-content' }}>
             <div style={{ padding: '1.5rem', textAlign: 'center', borderBottom: '1px solid var(--border-subtle)' }}>
               <div style={{ position: 'relative', width: 80, height: 80, margin: '0 auto 1rem' }}>
                 <div className="avatar" style={{ width: '100%', height: '100%', fontSize: '1.5rem' }}>
@@ -79,7 +79,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Form */}
-          <div className="glass-card col-span-2" style={{ padding: '2rem' }}>
+          <div className="raw-card col-span-2" style={{ padding: '2rem' }}>
             <form onSubmit={handleUpdate}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
                 <div className="form-group">

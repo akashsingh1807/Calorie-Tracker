@@ -321,7 +321,7 @@ export default function LogMealPage() {
 
         {/* Meal Type & Date Selectors */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '1.25rem' }}>
-          <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="raw-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <label className="input-label" style={{ marginBottom: '0.6rem', display: 'block' }}>Meal Type</label>
             <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
               {MEAL_TYPES.map(t => (
@@ -332,7 +332,7 @@ export default function LogMealPage() {
             </div>
           </div>
 
-          <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="raw-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <label className="input-label" style={{ marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Calendar size={14} /> Meal Date
             </label>
@@ -347,7 +347,7 @@ export default function LogMealPage() {
         </div>
 
         {/* Mode Toggle */}
-        <div className="glass-card" style={{ padding: '1.25rem', marginBottom: '1.25rem' }}>
+        <div className="raw-card" style={{ padding: '1.25rem', marginBottom: '1.25rem' }}>
           <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.25rem' }}>
             <button onClick={() => setMode('image')} className={`btn btn-sm ${mode === 'image' ? 'btn-primary' : 'btn-ghost'}`}>
               <Camera size={15} /> Photo Scan
@@ -440,7 +440,7 @@ export default function LogMealPage() {
 
         {/* Food Items Editor */}
         {foodItems.length > 0 && (
-          <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '1.25rem' }}>
+          <div className="raw-card" style={{ padding: '1.5rem', marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ fontSize: '1rem' }}>Food Items</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -493,7 +493,7 @@ export default function LogMealPage() {
 
         {/* Manual Add (no AI) */}
         {foodItems.length === 0 && (
-          <div className="glass-card" style={{ padding: '1.25rem', marginBottom: '1.25rem', textAlign: 'center' }}>
+          <div className="raw-card" style={{ padding: '1.25rem', marginBottom: '1.25rem', textAlign: 'center' }}>
             <p style={{ color: 'var(--text-muted)', marginBottom: '0.75rem', fontSize: '0.875rem' }}>Or add food items manually</p>
             <button onClick={addManualItem} className="btn btn-secondary"><Plus size={15} /> Add Food Item</button>
           </div>

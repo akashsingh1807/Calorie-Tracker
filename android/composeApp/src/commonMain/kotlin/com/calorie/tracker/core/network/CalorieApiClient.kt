@@ -19,6 +19,12 @@ import kotlinx.serialization.json.Json
 class CalorieApiClient(
     private val baseUrl: String,
     private val httpClient: HttpClient = HttpClient {
+        expectSuccess = true
+        install(io.ktor.client.plugins.HttpTimeout) {
+            requestTimeoutMillis = 60000
+            connectTimeoutMillis = 60000
+            socketTimeoutMillis = 60000
+        }
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
@@ -90,17 +96,13 @@ class CalorieApiClient(
         }.body<AnalyzeTextResponse>()
     }
 
-    suspend fun analyzeMealImage(imageBytes: ByteArray, fileName: String): HttpResponse {
-        return httpClient.submitFormWithBinaryData(
-            url = "$baseUrl/api/v1/ai/analyze-image",
-            formData = formData {
-                append("file", imageBytes, Headers.build {
-                    append(HttpHeaders.ContentType, "image/jpeg")
-                    append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
-                })
-            }
-        ) {
+    @OptIn(kotlin.io.encoding.ExperimentalEncodingApi::class)
+    suspend fun analyzeMealImage(imageBytes: ByteArray): Result<AnalyzeTextResponse> = runCatching {
+        val base64Image = "data:image/jpeg;base64," + kotlin.io.encoding.Base64.Default.encode(imageBytes)
+        httpClient.post("$baseUrl/api/v1/ai/detect-food") {
             withAuth()
-        }
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("imageUrl" to base64Image))
+        }.body<AnalyzeTextResponse>()
     }
 }

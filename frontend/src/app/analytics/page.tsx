@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
             { label: 'Avg Daily Protein', val: `${avgProtein}g`, icon: Zap, color: 'var(--accent-blue)', bg: 'rgba(77,159,255,0.1)' },
             { label: `Total (${weekly.length} days)`, val: `${totalCalories} kcal`, icon: TrendingUp, color: 'var(--accent-green)', bg: 'rgba(0,214,143,0.1)' },
           ].map(({ label, val, icon: Icon, color, bg }) => (
-            <div key={label} className="glass-card" style={{ padding: '1.25rem' }}>
+            <div key={label} className="raw-card" style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
                 <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -99,14 +99,14 @@ export default function AnalyticsPage() {
             {[1,2,3].map(i => <div key={i} className="skeleton" style={{ height: 280, borderRadius: 'var(--radius-lg)' }} />)}
           </div>
         ) : weekly.length === 0 ? (
-          <div className="glass-card" style={{ padding: '4rem', textAlign: 'center' }}>
+          <div className="raw-card" style={{ padding: '4rem', textAlign: 'center' }}>
             <BarChart3 size={48} color="var(--text-muted)" style={{ marginBottom: '1rem' }} />
             <p style={{ color: 'var(--text-muted)' }}>Start logging meals to see your analytics</p>
           </div>
         ) : (
           <>
             {/* Calorie Trend */}
-            <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '1.25rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem', marginBottom: '1.25rem' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Calorie Trend</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '1.25rem' }}>Daily intake vs. your {goal} kcal goal</p>
               <div style={{ height: 240 }}>
@@ -129,7 +129,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Macro Breakdown */}
-            <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '1.25rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem', marginBottom: '1.25rem' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Macro Breakdown</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '1.25rem' }}>Protein, carbs and fat per day</p>
               <div style={{ height: 240 }}>
@@ -149,7 +149,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Protein Trend Line */}
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="raw-card" style={{ padding: '1.5rem' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Protein Intake</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '1.25rem' }}>Daily protein consumption (g)</p>
               <div style={{ height: 200 }}>
