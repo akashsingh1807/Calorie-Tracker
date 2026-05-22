@@ -1,3 +1,4 @@
+com.calorie.tracker:xml/file_paths = 0x7f0f0000
 com.calorie.tracker:styleable/View = 0x7f0e002e
 com.calorie.tracker:styleable/Toolbar = 0x7f0e002d
 com.calorie.tracker:styleable/TextAppearance = 0x7f0e002c

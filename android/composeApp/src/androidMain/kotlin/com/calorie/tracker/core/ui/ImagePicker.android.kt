@@ -46,13 +46,13 @@ actual fun rememberImagePicker(onImagePicked: (ByteArray?) -> Unit): ImagePicker
     }
 
     val authority = context.packageName + ".fileprovider"
-    var tempUri: Uri? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    val tempUri = remember { androidx.compose.runtime.mutableStateOf<Uri?>(null) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success: Boolean ->
-        if (success && tempUri != null) {
-            val bytes = context.contentResolver.openInputStream(tempUri!!)?.use { it.readBytes() }
+        if (success && tempUri.value != null) {
+            val bytes = context.contentResolver.openInputStream(tempUri.value!!)?.use { it.readBytes() }
             if (bytes != null) {
                 val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 val stream = ByteArrayOutputStream()
@@ -72,7 +72,7 @@ actual fun rememberImagePicker(onImagePicked: (ByteArray?) -> Unit): ImagePicker
             takePhotoLauncher = { 
                 val tempFile = java.io.File.createTempFile("camera_image_", ".jpg", context.cacheDir)
                 val uri = androidx.core.content.FileProvider.getUriForFile(context, authority, tempFile)
-                tempUri = uri
+                tempUri.value = uri
                 cameraLauncher.launch(uri) 
             }
         )
