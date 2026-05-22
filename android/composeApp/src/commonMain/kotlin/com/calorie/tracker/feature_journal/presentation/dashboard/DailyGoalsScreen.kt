@@ -28,7 +28,8 @@ fun DailyGoalsScreen(
     initialProteinPct: Int = 43,
     initialFatPct: Int = 12,
     onBackClick: () -> Unit,
-    onGoalsSaved: (Int, Int, Int, Int) -> Unit
+    onGoalsSaved: (Int, Int, Int, Int) -> Unit,
+    onCalculatorClick: () -> Unit
 ) {
     var caloriesText by remember { mutableStateOf(initialCalories.toString()) }
     var carbsPctText by remember { mutableStateOf(initialCarbsPct.toString()) }
@@ -90,7 +91,7 @@ fun DailyGoalsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { /* Simulate Calculator logic */ }
+                    .clickable { onCalculatorClick() }
                     .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start

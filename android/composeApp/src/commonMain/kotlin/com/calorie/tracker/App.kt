@@ -65,7 +65,10 @@ fun App(
 
     LaunchedEffect(currentScreen) {
         if (currentScreen == Screen.Dashboard) {
-            apiClient?.getProfile()?.onSuccess { profile ->
+            val result = apiClient?.getProfile()
+            println("CalorieApp: getProfile result: $result")
+            result?.onSuccess { profile ->
+                println("CalorieApp: getProfile profile height: ${profile.height}")
                 if (profile.height <= 0.0 && !hasCompletedOnboarding) {
                     currentScreen = Screen.Onboarding
                 } else {
@@ -73,6 +76,14 @@ fun App(
                     carbsGoalPct = profile.dailyCarbsGoal
                     proteinGoalPct = profile.dailyProteinGoal
                     fatGoalPct = profile.dailyFatGoal
+                    hasCompletedOnboarding = true
+                }
+            }?.onFailure { e ->
+                println("CalorieApp: getProfile failed with error: ${e.message}")
+                e.printStackTrace()
+                // If it fails, let's at least check if we have no goals
+                if (!hasCompletedOnboarding && calorieGoal == 1500) {
+                    currentScreen = Screen.Onboarding
                 }
             }
         }
@@ -273,6 +284,9 @@ fun App(
                                     carbsGoalPct = carbs
                                     proteinGoalPct = prot
                                     fatGoalPct = fat
+                                },
+                                onCalculatorClick = {
+                                    currentScreen = Screen.Onboarding
                                 }
                             )
                         }
