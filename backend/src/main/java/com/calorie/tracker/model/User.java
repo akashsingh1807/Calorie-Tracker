@@ -48,6 +48,28 @@ public class User {
     @Column(name = "goal")
     private GoalType goal;
 
+    @Column(name = "age")
+    private Integer age;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "lifestyle")
+    private Lifestyle lifestyle;
+
+    @Column(name = "daily_protein_goal")
+    private Integer dailyProteinGoal;
+
+    @Column(name = "daily_carbs_goal")
+    private Integer dailyCarbsGoal;
+
+    @Column(name = "daily_fat_goal")
+    private Integer dailyFatGoal;
+
+    @Column(name = "persona_preference")
+    private String personaPreference;
+
+    @Column(name = "subscription_tier")
+    private String subscriptionTier;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

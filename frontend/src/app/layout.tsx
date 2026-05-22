@@ -3,12 +3,12 @@ import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 
 export const metadata: Metadata = {
-  title: "NutriAI — AI-Powered Calorie Tracker",
+  title: "Caloriyaan — Minimalist AI Calorie Tracker",
   description: "Track your nutrition intelligently with AI food recognition. Log meals by photo, monitor macros, and reach your fitness goals.",
   keywords: "calorie tracker, AI nutrition, meal logging, macro tracking, fitness app",
   authors: [{ name: "Akash Singh" }],
   openGraph: {
-    title: "NutriAI — AI-Powered Calorie Tracker",
+    title: "Caloriyaan — Minimalist AI Calorie Tracker",
     description: "Track your nutrition intelligently with AI food recognition.",
     type: "website",
   },

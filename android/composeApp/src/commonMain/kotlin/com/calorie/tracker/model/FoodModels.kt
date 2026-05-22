@@ -27,7 +27,8 @@ data class FoodItem(
 data class AddMealRequest(
     val mealType: String,
     val timestamp: String,
-    val foodItems: List<FoodItem>
+    val foodItems: List<FoodItem>,
+    val rawTextInput: String? = null
 )
 
 @Serializable

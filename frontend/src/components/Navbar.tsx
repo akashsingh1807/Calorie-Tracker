@@ -36,7 +36,7 @@ export default function Navbar() {
             <div className="nav-logo-icon">
               <Flame size={18} color="#080d14" strokeWidth={2.5} />
             </div>
-            NutriAI
+            Caloriyaan
           </Link>
 
           {/* Desktop Nav Links */}

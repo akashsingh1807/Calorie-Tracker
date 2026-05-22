@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-56:/values-en-rGB/values-en-rGB.xml",
+            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-57:/values-en-rGB/values-en-rGB.xml",
             "map": [
                 {
                     "source": "/Users/akashsingh/.gradle/caches/8.10/transforms/8308decf7de57d8cf5c1134511f0cf6c/transformed/material3-release/res/values-en-rGB/values-en-rGB.xml",

@@ -17,7 +17,6 @@ MERGED from [com.google.android.gms:play-services-base:18.3.0] /Users/akashsingh
 MERGED from [com.google.android.gms:play-services-tasks:18.1.0] /Users/akashsingh/.gradle/caches/8.10/transforms/af3bd7310481163f3a911a9efdf7b3ce/transformed/play-services-tasks-18.1.0/AndroidManifest.xml:2:1-6:12
 MERGED from [com.google.android.gms:play-services-basement:18.3.0] /Users/akashsingh/.gradle/caches/8.10/transforms/3102325c51102a736286c7113a48ad5c/transformed/play-services-basement-18.3.0/AndroidManifest.xml:16:1-26:12
 MERGED from [androidx.fragment:fragment:1.5.7] /Users/akashsingh/.gradle/caches/8.10/transforms/41f4197772e09b1caa157fb9c2d4d854/transformed/fragment-1.5.7/AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.activity:activity:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/56940041c71818691836ce5ad690218a/transformed/activity-1.9.1/AndroidManifest.xml:17:1-22:12
 MERGED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/23e8c4e1ee631a6d0d2e0e64f88b9106/transformed/library-release/AndroidManifest.xml:2:1-16:12
 MERGED from [androidx.compose.material3:material3-android:1.3.0] /Users/akashsingh/.gradle/caches/8.10/transforms/8308decf7de57d8cf5c1134511f0cf6c/transformed/material3-release/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.compose.animation:animation-core-android:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/65d60c9e4d8e435d37f8b71754363b00/transformed/animation-core-release/AndroidManifest.xml:2:1-7:12
@@ -33,6 +32,8 @@ MERGED from [androidx.compose.ui:ui-text-android:1.7.1] /Users/akashsingh/.gradl
 MERGED from [androidx.compose.material:material-icons-extended-android:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/fcfa631d832bb84ea3c86163760d707d/transformed/material-icons-extended-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-icons-core-android:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/e4156cc2c3f0fbe7c3ce0d3f4a09f3f9/transformed/material-icons-core-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-android:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/c0b942608d4d1152e5078eba723741f0/transformed/ui-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.activity:activity:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/56940041c71818691836ce5ad690218a/transformed/activity-1.9.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.activity:activity-ktx:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/d11ea5de4427ddc066f055098fc4db38/transformed/activity-ktx-1.9.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.activity:activity-compose:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/222cd0715837dc3761b035a76d04a998/transformed/activity-compose-1.9.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.room:room-runtime:2.6.0] /Users/akashsingh/.gradle/caches/8.10/transforms/93e8634fbe71f7d2835db2ddffdd95d3/transformed/room-runtime-2.6.0/AndroidManifest.xml:17:1-31:12
@@ -119,6 +120,8 @@ MERGED from [com.google.android.gms:play-services-basement:18.3.0] /Users/akashs
 MERGED from [com.google.android.gms:play-services-basement:18.3.0] /Users/akashsingh/.gradle/caches/8.10/transforms/3102325c51102a736286c7113a48ad5c/transformed/play-services-basement-18.3.0/AndroidManifest.xml:20:5-24:19
 MERGED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/23e8c4e1ee631a6d0d2e0e64f88b9106/transformed/library-release/AndroidManifest.xml:7:5-14:19
 MERGED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/23e8c4e1ee631a6d0d2e0e64f88b9106/transformed/library-release/AndroidManifest.xml:7:5-14:19
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.room:room-runtime:2.6.0] /Users/akashsingh/.gradle/caches/8.10/transforms/93e8634fbe71f7d2835db2ddffdd95d3/transformed/room-runtime-2.6.0/AndroidManifest.xml:23:5-29:19
 MERGED from [androidx.room:room-runtime:2.6.0] /Users/akashsingh/.gradle/caches/8.10/transforms/93e8634fbe71f7d2835db2ddffdd95d3/transformed/room-runtime-2.6.0/AndroidManifest.xml:23:5-29:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/akashsingh/.gradle/caches/8.10/transforms/b14fd9381cc3dd9a0f3d125fa532f81c/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
@@ -140,7 +143,7 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/akashsingh/.gradle/c
 	android:supportsRtl
 		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:13:9-35
 	android:label
-		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:12:9-40
+		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:12:9-35
 	android:allowBackup
 		ADDED from /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/AndroidManifest.xml:11:9-35
 	android:theme
@@ -195,8 +198,6 @@ MERGED from [com.google.android.gms:play-services-basement:18.3.0] /Users/akashs
 MERGED from [com.google.android.gms:play-services-basement:18.3.0] /Users/akashsingh/.gradle/caches/8.10/transforms/3102325c51102a736286c7113a48ad5c/transformed/play-services-basement-18.3.0/AndroidManifest.xml:18:5-43
 MERGED from [androidx.fragment:fragment:1.5.7] /Users/akashsingh/.gradle/caches/8.10/transforms/41f4197772e09b1caa157fb9c2d4d854/transformed/fragment-1.5.7/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.5.7] /Users/akashsingh/.gradle/caches/8.10/transforms/41f4197772e09b1caa157fb9c2d4d854/transformed/fragment-1.5.7/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.activity:activity:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/56940041c71818691836ce5ad690218a/transformed/activity-1.9.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.activity:activity:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/56940041c71818691836ce5ad690218a/transformed/activity-1.9.1/AndroidManifest.xml:20:5-44
 MERGED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/23e8c4e1ee631a6d0d2e0e64f88b9106/transformed/library-release/AndroidManifest.xml:5:5-44
 MERGED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/23e8c4e1ee631a6d0d2e0e64f88b9106/transformed/library-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.material3:material3-android:1.3.0] /Users/akashsingh/.gradle/caches/8.10/transforms/8308decf7de57d8cf5c1134511f0cf6c/transformed/material3-release/AndroidManifest.xml:20:5-44
@@ -227,6 +228,10 @@ MERGED from [androidx.compose.material:material-icons-core-android:1.7.1] /Users
 MERGED from [androidx.compose.material:material-icons-core-android:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/e4156cc2c3f0fbe7c3ce0d3f4a09f3f9/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-android:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/c0b942608d4d1152e5078eba723741f0/transformed/ui-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-android:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/c0b942608d4d1152e5078eba723741f0/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/56940041c71818691836ce5ad690218a/transformed/activity-1.9.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/56940041c71818691836ce5ad690218a/transformed/activity-1.9.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity-ktx:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/d11ea5de4427ddc066f055098fc4db38/transformed/activity-ktx-1.9.1/AndroidManifest.xml:5:5-44
 MERGED from [androidx.activity:activity-ktx:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/d11ea5de4427ddc066f055098fc4db38/transformed/activity-ktx-1.9.1/AndroidManifest.xml:5:5-44
 MERGED from [androidx.activity:activity-compose:1.9.1] /Users/akashsingh/.gradle/caches/8.10/transforms/222cd0715837dc3761b035a76d04a998/transformed/activity-compose-1.9.1/AndroidManifest.xml:5:5-44
@@ -391,6 +396,12 @@ ADDED from [org.jetbrains.compose.components:components-resources-android:1.7.0]
 		ADDED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/23e8c4e1ee631a6d0d2e0e64f88b9106/transformed/library-release/AndroidManifest.xml:12:13-37
 	android:name
 		ADDED from [org.jetbrains.compose.components:components-resources-android:1.7.0] /Users/akashsingh/.gradle/caches/8.10/transforms/23e8c4e1ee631a6d0d2e0e64f88b9106/transformed/library-release/AndroidManifest.xml:9:13-82
+activity#androidx.activity.ComponentActivity
+ADDED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:23:9-25:39
+	android:exported
+		ADDED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:25:13-36
+	android:name
+		ADDED from [androidx.compose.ui:ui-test-manifest:1.7.1] /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/AndroidManifest.xml:24:13-63
 service#androidx.room.MultiInstanceInvalidationService
 ADDED from [androidx.room:room-runtime:2.6.0] /Users/akashsingh/.gradle/caches/8.10/transforms/93e8634fbe71f7d2835db2ddffdd95d3/transformed/room-runtime-2.6.0/AndroidManifest.xml:24:9-28:63
 	android:exported

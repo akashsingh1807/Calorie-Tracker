@@ -23,7 +23,9 @@ data class MealEntity(
     val totalCalcium: Double = 0.0,
     val totalIron: Double = 0.0,
     val totalVitaminC: Double = 0.0,
-    val totalVitaminD: Double = 0.0
+    val totalVitaminD: Double = 0.0,
+    val rawTextInput: String? = null,
+    val isAiLogged: Boolean = false
 ) {
     fun toDomain(): Meal = Meal(
         id = id,
@@ -42,7 +44,9 @@ data class MealEntity(
         totalCalcium = totalCalcium,
         totalIron = totalIron,
         totalVitaminC = totalVitaminC,
-        totalVitaminD = totalVitaminD
+        totalVitaminD = totalVitaminD,
+        rawTextInput = rawTextInput,
+        isAiLogged = isAiLogged
     )
 
     companion object {
@@ -63,7 +67,9 @@ data class MealEntity(
             totalCalcium = meal.totalCalcium,
             totalIron = meal.totalIron,
             totalVitaminC = meal.totalVitaminC,
-            totalVitaminD = meal.totalVitaminD
+            totalVitaminD = meal.totalVitaminD,
+            rawTextInput = meal.rawTextInput,
+            isAiLogged = meal.isAiLogged
         )
     }
 }

@@ -40,6 +40,13 @@ import androidx.compose.ui.window.Dialog
 import com.calorie.tracker.model.BookmarkedMeal
 import com.calorie.tracker.model.FoodItemDto
 import com.calorie.tracker.model.Meal
+import com.calorie.tracker.ui.components.Flip7Card
+import com.calorie.tracker.ui.components.Flip7CardVariant
+import com.calorie.tracker.ui.components.Flip7Button
+import com.calorie.tracker.ui.components.Flip7ButtonVariant
+import com.calorie.tracker.ui.components.Flip7SectionTitle
+import com.calorie.tracker.ui.theme.CoralPrimary
+import com.calorie.tracker.ui.theme.PrimaryTeal
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlin.math.min
@@ -132,17 +139,18 @@ fun DashboardScreen(
         )
     }
 
+    val imagePicker = com.calorie.tracker.core.ui.rememberImagePicker { bytes ->
+        if (bytes != null) {
+            viewModel.analyzeAndLogMealFromImage(bytes)
+        }
+    }
+
 
     // ── AI Analysis Dialogs ──────────────────────────────────
     when (val state = analysisState) {
         is MealAnalysisState.Analyzing -> {
             Dialog(onDismissRequest = {}) {
-                Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    
-                ) {
+                Flip7Card() {
                     Column(
                         modifier = Modifier.padding(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -168,7 +176,7 @@ fun DashboardScreen(
                 originalText = state.originalText,
                 initialFoodItems = state.foodItems,
                 onConfirm = { items, saveBookmark, bookmarkName ->
-                    viewModel.confirmAndLogMeals(items, saveBookmark, bookmarkName)
+                    viewModel.confirmAndLogMeals(items, state.originalText, saveBookmark, bookmarkName)
                 },
                 onDismiss = { viewModel.dismissAnalysis() }
             )
@@ -292,8 +300,7 @@ fun DashboardScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(52.dp),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                    colors = TextFieldDefaults.colors(
+                                        colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(0xFFF1F3F4),
                         unfocusedContainerColor = Color(0xFFF1F3F4),
                         disabledContainerColor = Color(0xFFF1F3F4),
@@ -332,7 +339,7 @@ fun DashboardScreen(
                             modifier = Modifier.size(24.dp)
                         )
                     }
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { imagePicker.pickImage() }) {
                         Icon(
                             imageVector = Icons.Default.Image,
                             contentDescription = "Gallery",
@@ -340,7 +347,7 @@ fun DashboardScreen(
                             modifier = Modifier.size(24.dp)
                         )
                     }
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { imagePicker.takePhoto() }) {
                         Icon(
                             imageVector = Icons.Default.PhotoCamera,
                             contentDescription = "Camera",
@@ -395,7 +402,7 @@ fun DashboardScreen(
                             modifier = Modifier
                                 .width(42.dp)
                                 .height(52.dp)
-                                .background(color = bgColor, shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
+                                .background(color = bgColor, )
                                 .let {
                                     if (borderStroke != null) {
                                         it.border(borderStroke, androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
@@ -432,10 +439,9 @@ fun DashboardScreen(
                 ) {
                     // Calories Card
                     Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.weight(1f).height(105.dp),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFEAF1FB))
+                        modifier = Modifier.weight(1f).height(105.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize().padding(12.dp),
@@ -458,11 +464,7 @@ fun DashboardScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Column(horizontalAlignment = Alignment.Start) {
-                                    val foodVal = if (selectedDate == LocalDate(2026, 5, 20)) {
-                                        meals.sumOf { it.totalCalories }.roundToInt()
-                                    } else {
-                                        1650
-                                    }
+                                    val foodVal = meals.sumOf { it.totalCalories }.roundToInt()
                                     Text(
                                         text = "$foodVal",
                                         fontSize = 16.sp,
@@ -481,11 +483,8 @@ fun DashboardScreen(
                                     Text("Exercise", fontSize = 10.sp, color = Color.Gray)
                                 }
                                 Column(horizontalAlignment = Alignment.Start) {
-                                    val remaining = if (selectedDate == LocalDate(2026, 5, 20)) {
-                                        calorieGoal - meals.sumOf { it.totalCalories }.roundToInt()
-                                    } else {
-                                        -150
-                                    }
+                                    val foodVal = meals.sumOf { it.totalCalories }.roundToInt()
+                                    val remaining = calorieGoal - foodVal
                                     Text(
                                         text = "$remaining",
                                         fontSize = 16.sp,
@@ -500,10 +499,9 @@ fun DashboardScreen(
 
                     // Macros Card
                     Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.weight(1f).height(105.dp),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFEAF1FB))
+                        modifier = Modifier.weight(1f).height(105.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize().padding(12.dp),
@@ -516,21 +514,21 @@ fun DashboardScreen(
                                 Box(modifier = Modifier.size(16.dp)) {
                                     Canvas(modifier = Modifier.fillMaxSize()) {
                                         drawArc(
-                                            color = Color(0xFFEC407A),
+                                            color = Color.DarkGray,
                                             startAngle = 0f,
                                             sweepAngle = 120f,
                                             useCenter = false,
                                             style = Stroke(width = 3.dp.toPx())
                                         )
                                         drawArc(
-                                            color = Color(0xFF42A5F5),
+                                            color = Color.LightGray,
                                             startAngle = 120f,
                                             sweepAngle = 120f,
                                             useCenter = false,
                                             style = Stroke(width = 3.dp.toPx())
                                         )
                                         drawArc(
-                                            color = Color(0xFF66BB6A),
+                                            color = Color.Black,
                                             startAngle = 240f,
                                             sweepAngle = 120f,
                                             useCenter = false,
@@ -551,11 +549,7 @@ fun DashboardScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Column(horizontalAlignment = Alignment.Start) {
-                                    val carbsVal = if (selectedDate == LocalDate(2026, 5, 20)) {
-                                        meals.sumOf { it.totalCarbs }.roundToInt()
-                                    } else {
-                                        202
-                                    }
+                                    val carbsVal = meals.sumOf { it.totalCarbs }.roundToInt()
                                     Text(
                                         text = buildAnnotatedString {
                                             withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 13.sp)) {
@@ -569,11 +563,7 @@ fun DashboardScreen(
                                     Text("Carbs (g)", fontSize = 10.sp, color = Color.Gray)
                                 }
                                 Column(horizontalAlignment = Alignment.Start) {
-                                    val proteinVal = if (selectedDate == LocalDate(2026, 5, 20)) {
-                                        meals.sumOf { it.totalProtein }.roundToInt()
-                                    } else {
-                                        98
-                                    }
+                                    val proteinVal = meals.sumOf { it.totalProtein }.roundToInt()
                                     Text(
                                         text = buildAnnotatedString {
                                             withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 13.sp)) {
@@ -587,11 +577,7 @@ fun DashboardScreen(
                                     Text("Protein (g)", fontSize = 10.sp, color = Color.Gray)
                                 }
                                 Column(horizontalAlignment = Alignment.Start) {
-                                    val fatVal = if (selectedDate == LocalDate(2026, 5, 20)) {
-                                        meals.sumOf { it.totalFat }.roundToInt()
-                                    } else {
-                                        46
-                                    }
+                                    val fatVal = meals.sumOf { it.totalFat }.roundToInt()
                                     Text(
                                         text = buildAnnotatedString {
                                             withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 13.sp)) {
@@ -619,12 +605,7 @@ fun DashboardScreen(
 
             // Water Tracker Card
             item {
-                Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.fillMaxWidth(),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                ) {
+                Flip7Card(modifier = Modifier.fillMaxWidth(),) {
                     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 16.dp)) {
                         Text(
                             text = "Water: ${currentWaterCups * 0.25}L",
@@ -640,14 +621,17 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(
-                                onClick = { setWaterCups(currentWaterCups - 1) },
-                                modifier = Modifier.size(32.dp)
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .background(CoralPrimary, RoundedCornerShape(8.dp))
+                                    .clickable { setWaterCups(currentWaterCups - 1) },
+                                contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Remove,
                                     contentDescription = "Remove water",
-                                    tint = Color.Gray
+                                    tint = Color.White
                                 )
                             }
 
@@ -665,14 +649,17 @@ fun DashboardScreen(
                                 )
                             }
 
-                            IconButton(
-                                onClick = { setWaterCups(currentWaterCups + 1) },
-                                modifier = Modifier.size(32.dp)
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .background(PrimaryTeal, RoundedCornerShape(8.dp))
+                                    .clickable { setWaterCups(currentWaterCups + 1) },
+                                contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = "Add water",
-                                    tint = Color.Black
+                                    tint = Color.White
                                 )
                             }
                         }
@@ -689,12 +676,7 @@ fun DashboardScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Card 1: Daal ke Farae (100 g)
-                        Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.fillMaxWidth(),
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                        ) {
+                        Flip7Card(modifier = Modifier.fillMaxWidth(),) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(
                                     text = "Daal ke Farae (100 g)",
@@ -787,12 +769,7 @@ fun DashboardScreen(
                         }
 
                         // Card 2: AI parsed list
-                        Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.fillMaxWidth(),
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                        ) {
+                        Flip7Card(modifier = Modifier.fillMaxWidth(),) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(
                                     text = "120 gm dahi 200 gm daal cooked and 200 gm brown rice cooked",
@@ -848,12 +825,7 @@ fun DashboardScreen(
                 // Today's list of meals
                 if (meals.isNotEmpty()) {
                     items(meals) { meal ->
-                        Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.fillMaxWidth(),
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                        ) {
+                        Flip7Card(modifier = Modifier.fillMaxWidth(),) {
                             Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -861,6 +833,17 @@ fun DashboardScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column(modifier = Modifier.weight(1f)) {
+                                        if (meal.rawTextInput != null) {
+                                            Text(
+                                                text = meal.rawTextInput,
+                                                fontSize = 14.sp,
+                                                color = Color.DarkGray,
+                                                modifier = Modifier
+                                                    .background(Color(0xFFEAF1FB), androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                                                    .padding(8.dp)
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                        }
                                         Text(
                                             text = meal.mealType,
                                             fontWeight = FontWeight.SemiBold,
@@ -926,9 +909,7 @@ private fun FoodConfirmationDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+                                    colors = CardDefaults.cardColors(containerColor = Color.White),
             
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -1015,7 +996,7 @@ private fun FoodConfirmationDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { showMicronutrients = !showMicronutrients }
-                        .background(Color(0xFFF5F3FF), androidx.compose.foundation.shape.RoundedCornerShape(0.dp)) // Soft violet background
+                        .background(Color(0xFFFAFAFA), androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
                         .padding(horizontal = 12.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -1024,7 +1005,7 @@ private fun FoodConfirmationDialog(
                         Icon(
                             imageVector = Icons.Default.Science,
                             contentDescription = null,
-                            tint = Color(0xFF7C3AED), // Rich violet
+                            tint = Color.Black,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -1032,13 +1013,13 @@ private fun FoodConfirmationDialog(
                             text = "Micronutrients",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B) // Slate 800
+                            color = Color.Black
                         )
                     }
                     Icon(
                         imageVector = if (showMicronutrients) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                         contentDescription = null,
-                        tint = Color(0xFF94A3B8), // Slate 400
+                        tint = Color.Gray,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -1050,14 +1031,14 @@ private fun FoodConfirmationDialog(
                 ) {
                     Column(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
                         val microRows = listOf(
-                            Triple("Fiber",      "${totalFiber.roundToInt()}g",     Color(0xFF059669)), // Emerald
-                            Triple("Sugar",      "${totalSugar.roundToInt()}g",     Color(0xFFE11D48)), // Rose
-                            Triple("Sodium",     "${totalSodium.roundToInt()}mg",   Color(0xFF4F46E5)), // Indigo
-                            Triple("Potassium",  "${totalPotassium.roundToInt()}mg",Color(0xFF7C3AED)), // Violet
-                            Triple("Calcium",    "${totalCalcium.roundToInt()}mg",  Color(0xFF0D9488)), // Teal
-                            Triple("Iron",       "${totalIron.roundToInt()}mg",     Color(0xFFEA580C)), // Orange
-                            Triple("Vitamin C",  "${totalVitaminC.roundToInt()}mg", Color(0xFFD97706)), // Amber
-                            Triple("Vitamin D",  "${totalVitaminD.roundToInt()}µg", Color(0xFF0284C7))  // Sky Blue
+                            Triple("Fiber",      "${totalFiber.roundToInt()}g",     Color.DarkGray),
+                            Triple("Sugar",      "${totalSugar.roundToInt()}g",     Color.Black),
+                            Triple("Sodium",     "${totalSodium.roundToInt()}mg",   Color.Gray),
+                            Triple("Potassium",  "${totalPotassium.roundToInt()}mg",Color.DarkGray),
+                            Triple("Calcium",    "${totalCalcium.roundToInt()}mg",  Color.Black),
+                            Triple("Iron",       "${totalIron.roundToInt()}mg",     Color.Gray),
+                            Triple("Vitamin C",  "${totalVitaminC.roundToInt()}mg", Color.DarkGray),
+                            Triple("Vitamin D",  "${totalVitaminD.roundToInt()}µg", Color.Black)
                         )
                         microRows.chunked(2).forEach { pair ->
                             Row(
@@ -1138,8 +1119,7 @@ private fun FoodConfirmationDialog(
                         label = { Text("Bookmark name", fontSize = 12.sp) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
+                                                colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF1976D2),
                             unfocusedBorderColor = Color(0xFFDDDDDD)
                         )
@@ -1153,25 +1133,18 @@ private fun FoodConfirmationDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    OutlinedButton(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            onClick = onDismiss,
-                        modifier = Modifier.weight(1f),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
-                    ) {
-                        Text("Cancel", color = Color.Gray)
-                    }
-                    Button(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            onClick = { onConfirm(items, saveAsBookmark, bookmarkName) },
-                        modifier = Modifier.weight(1f),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF1976D2)
-                        )
-                    ) {
-                        Text("Log It ✓", color = Color.White, fontWeight = FontWeight.Bold)
-                    }
+                    Flip7Button(
+                        text = "Cancel",
+                        variant = Flip7ButtonVariant.TEAL,
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Flip7Button(
+                        text = "Log It ✓",
+                        variant = Flip7ButtonVariant.PRIMARY_GOLD,
+                        onClick = { onConfirm(items, saveAsBookmark, bookmarkName) },
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }
@@ -1192,8 +1165,7 @@ private fun BookmarkBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = Color.White,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
-    ) {
+            ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1281,10 +1253,8 @@ private fun BookmarkCard(
     onDelete: () -> Unit
 ) {
     Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.fillMaxWidth(),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F8FF)),
+                        modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F8FF)),
     ) {
         Row(
             modifier = Modifier
@@ -1318,15 +1288,12 @@ private fun BookmarkCard(
             }
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 // Log Now button
-                Button(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            onClick = onLog,
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
-                ) {
-                    Text("Log Now", fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.SemiBold)
-                }
+                Flip7Button(
+                    text = "Log Now",
+                    variant = Flip7ButtonVariant.PRIMARY_GOLD,
+                    onClick = onLog,
+                    modifier = Modifier.width(120.dp)
+                )
                 // Delete button
                 IconButton(
                     onClick = onDelete,
@@ -1417,7 +1384,7 @@ private fun FoodItemDetailRow(
 private fun MacroBadge(label: String, value: String) {
     Box(
         modifier = Modifier
-            .background(color = Color(0xFFF2F2F2), shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
+            .background(color = Color(0xFFF2F2F2), )
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Text(
@@ -1464,10 +1431,8 @@ private fun MicronutrientsCard(meals: List<Meal>) {
     var expanded by remember { mutableStateOf(true) }
 
     Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.fillMaxWidth(),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+                        modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {

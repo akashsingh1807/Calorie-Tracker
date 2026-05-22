@@ -48,6 +48,15 @@ public class Meal {
     @Column(name = "total_fat")
     private Double totalFat;
 
+    @Column(name = "raw_text_input", columnDefinition = "TEXT")
+    private String rawTextInput;
+
+    @Column(name = "confidence_score")
+    private Float confidenceScore;
+
+    @Column(name = "is_ai_logged")
+    private Boolean isAiLogged = false;
+
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<FoodItem> foodItems = new ArrayList<>();

@@ -11,7 +11,7 @@ import com.calorie.tracker.feature_journal.data.local.MealEntity
 
 @Database(
     entities = [MealEntity::class, BookmarkedMealEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -49,6 +49,14 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE meals ADD COLUMN totalIron REAL NOT NULL DEFAULT 0.0")
                 db.execSQL("ALTER TABLE meals ADD COLUMN totalVitaminC REAL NOT NULL DEFAULT 0.0")
                 db.execSQL("ALTER TABLE meals ADD COLUMN totalVitaminD REAL NOT NULL DEFAULT 0.0")
+            }
+        }
+
+        /** Migration 3 → 4: Add rawTextInput and isAiLogged for WhatsApp-style chat UI */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE meals ADD COLUMN rawTextInput TEXT")
+                db.execSQL("ALTER TABLE meals ADD COLUMN isAiLogged INTEGER NOT NULL DEFAULT 0")
             }
         }
     }

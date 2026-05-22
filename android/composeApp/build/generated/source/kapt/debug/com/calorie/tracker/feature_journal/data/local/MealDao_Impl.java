@@ -43,7 +43,7 @@ public final class MealDao_Impl implements MealDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `meals` (`id`,`mealType`,`imageUrl`,`timestamp`,`totalCalories`,`totalProtein`,`totalCarbs`,`totalFat`,`isSynced`,`totalFiber`,`totalSugar`,`totalSodium`,`totalPotassium`,`totalCalcium`,`totalIron`,`totalVitaminC`,`totalVitaminD`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `meals` (`id`,`mealType`,`imageUrl`,`timestamp`,`totalCalories`,`totalProtein`,`totalCarbs`,`totalFat`,`isSynced`,`totalFiber`,`totalSugar`,`totalSodium`,`totalPotassium`,`totalCalcium`,`totalIron`,`totalVitaminC`,`totalVitaminD`,`rawTextInput`,`isAiLogged`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -75,13 +75,20 @@ public final class MealDao_Impl implements MealDao {
         statement.bindDouble(15, entity.getTotalIron());
         statement.bindDouble(16, entity.getTotalVitaminC());
         statement.bindDouble(17, entity.getTotalVitaminD());
+        if (entity.getRawTextInput() == null) {
+          statement.bindNull(18);
+        } else {
+          statement.bindString(18, entity.getRawTextInput());
+        }
+        final int _tmp_1 = entity.isAiLogged() ? 1 : 0;
+        statement.bindLong(19, _tmp_1);
       }
     };
     this.__updateAdapterOfMealEntity = new EntityDeletionOrUpdateAdapter<MealEntity>(__db) {
       @Override
       @NonNull
       protected String createQuery() {
-        return "UPDATE OR ABORT `meals` SET `id` = ?,`mealType` = ?,`imageUrl` = ?,`timestamp` = ?,`totalCalories` = ?,`totalProtein` = ?,`totalCarbs` = ?,`totalFat` = ?,`isSynced` = ?,`totalFiber` = ?,`totalSugar` = ?,`totalSodium` = ?,`totalPotassium` = ?,`totalCalcium` = ?,`totalIron` = ?,`totalVitaminC` = ?,`totalVitaminD` = ? WHERE `id` = ?";
+        return "UPDATE OR ABORT `meals` SET `id` = ?,`mealType` = ?,`imageUrl` = ?,`timestamp` = ?,`totalCalories` = ?,`totalProtein` = ?,`totalCarbs` = ?,`totalFat` = ?,`isSynced` = ?,`totalFiber` = ?,`totalSugar` = ?,`totalSodium` = ?,`totalPotassium` = ?,`totalCalcium` = ?,`totalIron` = ?,`totalVitaminC` = ?,`totalVitaminD` = ?,`rawTextInput` = ?,`isAiLogged` = ? WHERE `id` = ?";
       }
 
       @Override
@@ -113,7 +120,14 @@ public final class MealDao_Impl implements MealDao {
         statement.bindDouble(15, entity.getTotalIron());
         statement.bindDouble(16, entity.getTotalVitaminC());
         statement.bindDouble(17, entity.getTotalVitaminD());
-        statement.bindLong(18, entity.getId());
+        if (entity.getRawTextInput() == null) {
+          statement.bindNull(18);
+        } else {
+          statement.bindString(18, entity.getRawTextInput());
+        }
+        final int _tmp_1 = entity.isAiLogged() ? 1 : 0;
+        statement.bindLong(19, _tmp_1);
+        statement.bindLong(20, entity.getId());
       }
     };
   }
@@ -185,6 +199,8 @@ public final class MealDao_Impl implements MealDao {
           final int _cursorIndexOfTotalIron = CursorUtil.getColumnIndexOrThrow(_cursor, "totalIron");
           final int _cursorIndexOfTotalVitaminC = CursorUtil.getColumnIndexOrThrow(_cursor, "totalVitaminC");
           final int _cursorIndexOfTotalVitaminD = CursorUtil.getColumnIndexOrThrow(_cursor, "totalVitaminD");
+          final int _cursorIndexOfRawTextInput = CursorUtil.getColumnIndexOrThrow(_cursor, "rawTextInput");
+          final int _cursorIndexOfIsAiLogged = CursorUtil.getColumnIndexOrThrow(_cursor, "isAiLogged");
           final List<MealEntity> _result = new ArrayList<MealEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final MealEntity _item;
@@ -232,7 +248,17 @@ public final class MealDao_Impl implements MealDao {
             _tmpTotalVitaminC = _cursor.getDouble(_cursorIndexOfTotalVitaminC);
             final double _tmpTotalVitaminD;
             _tmpTotalVitaminD = _cursor.getDouble(_cursorIndexOfTotalVitaminD);
-            _item = new MealEntity(_tmpId,_tmpMealType,_tmpImageUrl,_tmpTimestamp,_tmpTotalCalories,_tmpTotalProtein,_tmpTotalCarbs,_tmpTotalFat,_tmpIsSynced,_tmpTotalFiber,_tmpTotalSugar,_tmpTotalSodium,_tmpTotalPotassium,_tmpTotalCalcium,_tmpTotalIron,_tmpTotalVitaminC,_tmpTotalVitaminD);
+            final String _tmpRawTextInput;
+            if (_cursor.isNull(_cursorIndexOfRawTextInput)) {
+              _tmpRawTextInput = null;
+            } else {
+              _tmpRawTextInput = _cursor.getString(_cursorIndexOfRawTextInput);
+            }
+            final boolean _tmpIsAiLogged;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsAiLogged);
+            _tmpIsAiLogged = _tmp_1 != 0;
+            _item = new MealEntity(_tmpId,_tmpMealType,_tmpImageUrl,_tmpTimestamp,_tmpTotalCalories,_tmpTotalProtein,_tmpTotalCarbs,_tmpTotalFat,_tmpIsSynced,_tmpTotalFiber,_tmpTotalSugar,_tmpTotalSodium,_tmpTotalPotassium,_tmpTotalCalcium,_tmpTotalIron,_tmpTotalVitaminC,_tmpTotalVitaminD,_tmpRawTextInput,_tmpIsAiLogged);
             _result.add(_item);
           }
           return _result;
@@ -276,6 +302,8 @@ public final class MealDao_Impl implements MealDao {
           final int _cursorIndexOfTotalIron = CursorUtil.getColumnIndexOrThrow(_cursor, "totalIron");
           final int _cursorIndexOfTotalVitaminC = CursorUtil.getColumnIndexOrThrow(_cursor, "totalVitaminC");
           final int _cursorIndexOfTotalVitaminD = CursorUtil.getColumnIndexOrThrow(_cursor, "totalVitaminD");
+          final int _cursorIndexOfRawTextInput = CursorUtil.getColumnIndexOrThrow(_cursor, "rawTextInput");
+          final int _cursorIndexOfIsAiLogged = CursorUtil.getColumnIndexOrThrow(_cursor, "isAiLogged");
           final List<MealEntity> _result = new ArrayList<MealEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final MealEntity _item;
@@ -323,7 +351,17 @@ public final class MealDao_Impl implements MealDao {
             _tmpTotalVitaminC = _cursor.getDouble(_cursorIndexOfTotalVitaminC);
             final double _tmpTotalVitaminD;
             _tmpTotalVitaminD = _cursor.getDouble(_cursorIndexOfTotalVitaminD);
-            _item = new MealEntity(_tmpId,_tmpMealType,_tmpImageUrl,_tmpTimestamp,_tmpTotalCalories,_tmpTotalProtein,_tmpTotalCarbs,_tmpTotalFat,_tmpIsSynced,_tmpTotalFiber,_tmpTotalSugar,_tmpTotalSodium,_tmpTotalPotassium,_tmpTotalCalcium,_tmpTotalIron,_tmpTotalVitaminC,_tmpTotalVitaminD);
+            final String _tmpRawTextInput;
+            if (_cursor.isNull(_cursorIndexOfRawTextInput)) {
+              _tmpRawTextInput = null;
+            } else {
+              _tmpRawTextInput = _cursor.getString(_cursorIndexOfRawTextInput);
+            }
+            final boolean _tmpIsAiLogged;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsAiLogged);
+            _tmpIsAiLogged = _tmp_1 != 0;
+            _item = new MealEntity(_tmpId,_tmpMealType,_tmpImageUrl,_tmpTimestamp,_tmpTotalCalories,_tmpTotalProtein,_tmpTotalCarbs,_tmpTotalFat,_tmpIsSynced,_tmpTotalFiber,_tmpTotalSugar,_tmpTotalSodium,_tmpTotalPotassium,_tmpTotalCalcium,_tmpTotalIron,_tmpTotalVitaminC,_tmpTotalVitaminD,_tmpRawTextInput,_tmpIsAiLogged);
             _result.add(_item);
           }
           return _result;

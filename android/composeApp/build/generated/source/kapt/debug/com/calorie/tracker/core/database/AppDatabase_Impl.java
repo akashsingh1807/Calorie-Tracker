@@ -37,13 +37,13 @@ public final class AppDatabase_Impl extends AppDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(3) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(4) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `meals` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mealType` TEXT NOT NULL, `imageUrl` TEXT, `timestamp` INTEGER NOT NULL, `totalCalories` REAL NOT NULL, `totalProtein` REAL NOT NULL, `totalCarbs` REAL NOT NULL, `totalFat` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `totalFiber` REAL NOT NULL, `totalSugar` REAL NOT NULL, `totalSodium` REAL NOT NULL, `totalPotassium` REAL NOT NULL, `totalCalcium` REAL NOT NULL, `totalIron` REAL NOT NULL, `totalVitaminC` REAL NOT NULL, `totalVitaminD` REAL NOT NULL)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `meals` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mealType` TEXT NOT NULL, `imageUrl` TEXT, `timestamp` INTEGER NOT NULL, `totalCalories` REAL NOT NULL, `totalProtein` REAL NOT NULL, `totalCarbs` REAL NOT NULL, `totalFat` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `totalFiber` REAL NOT NULL, `totalSugar` REAL NOT NULL, `totalSodium` REAL NOT NULL, `totalPotassium` REAL NOT NULL, `totalCalcium` REAL NOT NULL, `totalIron` REAL NOT NULL, `totalVitaminC` REAL NOT NULL, `totalVitaminD` REAL NOT NULL, `rawTextInput` TEXT, `isAiLogged` INTEGER NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `bookmarked_meals` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `totalCalories` REAL NOT NULL, `totalProtein` REAL NOT NULL, `totalCarbs` REAL NOT NULL, `totalFat` REAL NOT NULL, `itemsData` TEXT NOT NULL, `createdAt` INTEGER NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01ac54aeba704de7b319d209452abea9')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2d595ddd15ea7f9d1f5bc86d4f28e5e8')");
       }
 
       @Override
@@ -93,7 +93,7 @@ public final class AppDatabase_Impl extends AppDatabase {
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsMeals = new HashMap<String, TableInfo.Column>(17);
+        final HashMap<String, TableInfo.Column> _columnsMeals = new HashMap<String, TableInfo.Column>(19);
         _columnsMeals.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMeals.put("mealType", new TableInfo.Column("mealType", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMeals.put("imageUrl", new TableInfo.Column("imageUrl", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -111,6 +111,8 @@ public final class AppDatabase_Impl extends AppDatabase {
         _columnsMeals.put("totalIron", new TableInfo.Column("totalIron", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMeals.put("totalVitaminC", new TableInfo.Column("totalVitaminC", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsMeals.put("totalVitaminD", new TableInfo.Column("totalVitaminD", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMeals.put("rawTextInput", new TableInfo.Column("rawTextInput", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMeals.put("isAiLogged", new TableInfo.Column("isAiLogged", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysMeals = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesMeals = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoMeals = new TableInfo("meals", _columnsMeals, _foreignKeysMeals, _indicesMeals);
@@ -140,7 +142,7 @@ public final class AppDatabase_Impl extends AppDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "01ac54aeba704de7b319d209452abea9", "cd43fb1774ca4f99e59d648b18efb28f");
+    }, "2d595ddd15ea7f9d1f5bc86d4f28e5e8", "c17e38fc2517bf5da61cbb049d16655b");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

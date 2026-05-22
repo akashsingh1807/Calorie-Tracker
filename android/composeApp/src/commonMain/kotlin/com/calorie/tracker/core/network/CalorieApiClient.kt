@@ -72,6 +72,21 @@ class CalorieApiClient(
         }.body<AuthResponse>()
     }
 
+    // ── Users ───────────────────────────────────────────────────
+    suspend fun getProfile(): Result<com.calorie.tracker.model.UserProfile> = runCatching {
+        httpClient.get("$baseUrl/api/v1/users/me") {
+            withAuth()
+        }.body<com.calorie.tracker.model.UserProfile>()
+    }
+
+    suspend fun updateProfile(request: com.calorie.tracker.model.UpdateProfileRequest): Result<Unit> = runCatching {
+        httpClient.put("$baseUrl/api/v1/users/me") {
+            withAuth()
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+    }
+
     // ── Meals ────────────────────────────────────────────────────
     suspend fun getDailyMeals(date: String): HttpResponse {
         return httpClient.get("$baseUrl/api/v1/meals/daily") {

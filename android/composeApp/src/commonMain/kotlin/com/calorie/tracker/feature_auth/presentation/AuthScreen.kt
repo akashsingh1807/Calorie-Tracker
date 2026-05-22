@@ -2,37 +2,33 @@ package com.calorie.tracker.feature_auth.presentation
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.calorie.tracker.ui.components.Flip7Button
+import com.calorie.tracker.ui.components.Flip7ButtonVariant
+import com.calorie.tracker.ui.components.Flip7Card
+import com.calorie.tracker.ui.components.Flip7CardVariant
+import com.calorie.tracker.ui.components.Flip7TextField
+import com.calorie.tracker.ui.theme.*
 
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel,
     onAuthenticated: () -> Unit,
-    onGoogleSignInClick: () -> Unit = {} // Add default to not break iOS yet
+    onGoogleSignInClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var isLoginMode by remember { mutableStateOf(true) }
@@ -44,15 +40,7 @@ fun AuthScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1A1A2E),
-                        Color(0xFF16213E),
-                        Color(0xFF0F3460)
-                    )
-                )
-            )
+            .background(SurfaceBase)
     ) {
         Column(
             modifier = Modifier
@@ -64,80 +52,73 @@ fun AuthScreen(
         ) {
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Logo / Icon area
-            Box(
+            // Minimal Logo
+            Column(
                 modifier = Modifier
-                    .size(80.dp)
-                    .background(
-                        Brush.radialGradient(
-                            colors = listOf(Color(0xFF4CAF50), Color(0xFF2196F3))
-                        ),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
-                    ),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("🥗", fontSize = 40.sp)
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .background(Color.Black, RoundedCornerShape(24.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "C",
+                        style = MaterialTheme.typography.displayLarge.copy(
+                            color = Color.White,
+                            fontSize = 48.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Caloriyaan",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        color = Color.Black,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 1.sp
+                    )
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "CalTrack",
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    fontSize = 32.sp
-                )
-            )
-            Text(
-                text = "Your AI-powered nutrition companion",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // Card with form
-            Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            modifier = Modifier.fillMaxWidth(),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.08f)
-                ),
-                
+            Flip7Card(
+                modifier = Modifier.fillMaxWidth(),
+                variant = Flip7CardVariant.MONOCHROME
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     // Tab switcher
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        TabButton(
-                            text = "Sign In",
-                            isSelected = isLoginMode,
+                        Flip7Button(
+                            text = "Log In",
+                            variant = if (isLoginMode) Flip7ButtonVariant.MONOCHROME else Flip7ButtonVariant.GRAY,
                             modifier = Modifier.weight(1f),
                             onClick = { isLoginMode = true }
                         )
-                        TabButton(
+                        Flip7Button(
                             text = "Sign Up",
-                            isSelected = !isLoginMode,
+                            variant = if (!isLoginMode) Flip7ButtonVariant.MONOCHROME else Flip7ButtonVariant.GRAY,
                             modifier = Modifier.weight(1f),
                             onClick = { isLoginMode = false }
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     AnimatedContent(
                         targetState = isLoginMode,
-                        transitionSpec = {
-                            fadeIn() togetherWith fadeOut()
-                        },
+                        transitionSpec = { fadeIn() togetherWith fadeOut() },
                         label = "auth_form"
                     ) { isLogin ->
                         if (isLogin) {
@@ -157,53 +138,30 @@ fun AuthScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                    Row(
+                    Flip7Button(
+                        text = "Sign in with Google",
+                        variant = Flip7ButtonVariant.MONOCHROME,
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.White.copy(alpha = 0.2f))
-                        Text(
-                            text = "OR",
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            color = Color.White.copy(alpha = 0.5f),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.White.copy(alpha = 0.2f))
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            onClick = onGoogleSignInClick,
-                        modifier = Modifier.fillMaxWidth().height(52.dp),
                         enabled = !uiState.isLoading,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color.Black
-                        )
-                    ) {
-                        Text("Continue with Google", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    }
+                        onClick = onGoogleSignInClick
+                    )
 
                     // Error message
                     uiState.error?.let { error ->
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            colors = CardDefaults.cardColors(
+                            colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.errorContainer
                             ),
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+                            shape = RoundedCornerShape(16.dp)
                         ) {
                             Text(
-                                text = error,
+                                text = "Oops, try again! $error",
                                 color = MaterialTheme.colorScheme.onErrorContainer,
-                                modifier = Modifier.padding(12.dp),
-                                style = MaterialTheme.typography.bodySmall
+                                modifier = Modifier.padding(16.dp),
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
@@ -216,81 +174,39 @@ fun AuthScreen(
 }
 
 @Composable
-private fun TabButton(
-    text: String,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Button(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            onClick = onClick,
-        modifier = modifier.height(44.dp),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) Color(0xFF4CAF50) else Color.White.copy(alpha = 0.1f),
-            contentColor = Color.White
-        ),
-        elevation = ButtonDefaults.buttonElevation(0.dp)
-    ) {
-        Text(text, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
-    }
-}
-
-@Composable
 private fun LoginForm(
     isLoading: Boolean,
     onLogin: (email: String, password: String) -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        AuthTextField(
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Flip7TextField(
             value = email,
             onValueChange = { email = it },
-            label = "Email",
-            leadingIcon = { Icon(Icons.Default.Email, null, tint = Color.White.copy(0.7f)) },
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
+            label = "Email Address",
+            modifier = Modifier.fillMaxWidth()
         )
-        AuthTextField(
+        Flip7TextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
-            leadingIcon = { Icon(Icons.Default.Lock, null, tint = Color.White.copy(0.7f)) },
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        null,
-                        tint = Color.White.copy(0.7f)
-                    )
-                }
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            label = "Secret Password",
+            modifier = Modifier.fillMaxWidth(),
+            isPassword = true
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            onClick = { onLogin(email, password) },
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            enabled = !isLoading,
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50)
+        if (isLoading) {
+            CircularProgressIndicator(color = Color.Black, modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+            Flip7Button(
+                text = "Log In",
+                variant = Flip7ButtonVariant.MONOCHROME,
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onLogin(email, password) }
             )
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-            } else {
-                Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            }
         }
     }
 }
@@ -303,96 +219,39 @@ private fun RegisterForm(
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        AuthTextField(
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Flip7TextField(
             value = name,
             onValueChange = { name = it },
-            label = "Full Name",
-            leadingIcon = { Icon(Icons.Default.Person, null, tint = Color.White.copy(0.7f)) },
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next
+            label = "Your Name",
+            modifier = Modifier.fillMaxWidth()
         )
-        AuthTextField(
+        Flip7TextField(
             value = email,
             onValueChange = { email = it },
-            label = "Email",
-            leadingIcon = { Icon(Icons.Default.Email, null, tint = Color.White.copy(0.7f)) },
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
+            label = "Email Address",
+            modifier = Modifier.fillMaxWidth()
         )
-        AuthTextField(
+        Flip7TextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
-            leadingIcon = { Icon(Icons.Default.Lock, null, tint = Color.White.copy(0.7f)) },
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        null,
-                        tint = Color.White.copy(0.7f)
-                    )
-                }
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            label = "Secret Password",
+            modifier = Modifier.fillMaxWidth(),
+            isPassword = true
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
-            onClick = { onRegister(name, email, password) },
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            enabled = !isLoading,
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50)
+        if (isLoading) {
+            CircularProgressIndicator(color = Color.Black, modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+            Flip7Button(
+                text = "Sign Up",
+                variant = Flip7ButtonVariant.MONOCHROME,
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onRegister(name, email, password) }
             )
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-            } else {
-                Text("Create Account", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            }
         }
     }
-}
-
-@Composable
-private fun AuthTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    imeAction: ImeAction = ImeAction.Next
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label, color = Color.White.copy(0.7f)) },
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        visualTransformation = visualTransformation,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            imeAction = imeAction
-        ),
-        modifier = Modifier.fillMaxWidth(),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White.copy(0.85f),
-            focusedBorderColor = Color(0xFF4CAF50),
-            unfocusedBorderColor = Color.White.copy(0.3f),
-            cursorColor = Color(0xFF4CAF50)
-        ),
-        singleLine = true
-    )
 }

@@ -34,7 +34,11 @@ public class AIController {
     public ResponseEntity<Map<String, Object>> detectFoodFromImage(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                    @RequestBody Map<String, String> request) {
         String imageUrl = request.get("imageUrl");
-        List<FoodItemDto> detectedItems = geminiVisionService.identifyFoodFromImage(userDetails.getId(), imageUrl);
+        
+        com.calorie.tracker.model.User user = userRepository.findById(userDetails.getId()).orElse(null);
+        String persona = user != null && user.getPersonaPreference() != null ? user.getPersonaPreference() : "NONE";
+        
+        List<FoodItemDto> detectedItems = geminiVisionService.identifyFoodFromImage(userDetails.getId(), imageUrl, persona);
         double totalCalories = detectedItems.stream().mapToDouble(FoodItemDto::getCalories).sum();
         
         return ResponseEntity.ok(Map.of(
@@ -43,13 +47,20 @@ public class AIController {
         ));
     }
 
+    @Autowired
+    private com.calorie.tracker.repository.UserRepository userRepository;
+
     @PostMapping("/analyze-text")
     @Operation(summary = "Analyze food items from a natural language text description", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Map<String, Object>> analyzeText(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                            @RequestBody Map<String, String> request) {
         String text = request.get("text");
+        
+        com.calorie.tracker.model.User user = userRepository.findById(userDetails.getId()).orElse(null);
+        String persona = user != null && user.getPersonaPreference() != null ? user.getPersonaPreference() : "NONE";
+
         // Gemini returns items WITH accurate nutrition and serving sizes — use directly
-        List<FoodItemDto> foods = geminiVisionService.analyzeText(userDetails.getId(), text);
+        List<FoodItemDto> foods = geminiVisionService.analyzeText(userDetails.getId(), text, persona);
         double totalCalories = foods.stream().mapToDouble(FoodItemDto::getCalories).sum();
 
         return ResponseEntity.ok(Map.of(

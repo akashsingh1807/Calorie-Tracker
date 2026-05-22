@@ -49,14 +49,15 @@ com.calorie.tracker.composeApp-lifecycle-runtime-compose-release-47 /Users/akash
 com.calorie.tracker.composeApp-lifecycle-viewmodel-release-48 /Users/akashsingh/.gradle/caches/8.10/transforms/d8822bcd77f50076aa39def62c076022/transformed/lifecycle-viewmodel-release/res
 com.calorie.tracker.composeApp-material-icons-core-release-49 /Users/akashsingh/.gradle/caches/8.10/transforms/e4156cc2c3f0fbe7c3ce0d3f4a09f3f9/transformed/material-icons-core-release/res
 com.calorie.tracker.composeApp-ui-unit-release-50 /Users/akashsingh/.gradle/caches/8.10/transforms/e937ef028089dd62f5f8430d1549bfcc/transformed/ui-unit-release/res
-com.calorie.tracker.composeApp-material-icons-extended-release-51 /Users/akashsingh/.gradle/caches/8.10/transforms/fcfa631d832bb84ea3c86163760d707d/transformed/material-icons-extended-release/res
-com.calorie.tracker.composeApp-startup-runtime-1.1.1-52 /Users/akashsingh/.gradle/caches/8.10/transforms/ff9522d1361285d6998b867f9e014575/transformed/startup-runtime-1.1.1/res
-com.calorie.tracker.composeApp-pngs-53 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/pngs/debug
-com.calorie.tracker.composeApp-res-54 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/processDebugGoogleServices
-com.calorie.tracker.composeApp-resValues-55 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/resValues/debug
-com.calorie.tracker.composeApp-packageDebugResources-56 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/merged.dir
-com.calorie.tracker.composeApp-packageDebugResources-57 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
-com.calorie.tracker.composeApp-merged_res-58 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/merged_res/debug
-com.calorie.tracker.composeApp-androidMain-59 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/res
-com.calorie.tracker.composeApp-debug-60 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/debug/res
-com.calorie.tracker.composeApp-main-61 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/main/res
+com.calorie.tracker.composeApp-ui-test-manifest-1.7.1-51 /Users/akashsingh/.gradle/caches/8.10/transforms/eddefca35adae9919b9202c411b45cf7/transformed/ui-test-manifest-1.7.1/res
+com.calorie.tracker.composeApp-material-icons-extended-release-52 /Users/akashsingh/.gradle/caches/8.10/transforms/fcfa631d832bb84ea3c86163760d707d/transformed/material-icons-extended-release/res
+com.calorie.tracker.composeApp-startup-runtime-1.1.1-53 /Users/akashsingh/.gradle/caches/8.10/transforms/ff9522d1361285d6998b867f9e014575/transformed/startup-runtime-1.1.1/res
+com.calorie.tracker.composeApp-pngs-54 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/pngs/debug
+com.calorie.tracker.composeApp-res-55 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/processDebugGoogleServices
+com.calorie.tracker.composeApp-resValues-56 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/generated/res/resValues/debug
+com.calorie.tracker.composeApp-packageDebugResources-57 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.calorie.tracker.composeApp-packageDebugResources-58 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.calorie.tracker.composeApp-merged_res-59 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/build/intermediates/merged_res/debug
+com.calorie.tracker.composeApp-androidMain-60 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/androidMain/res
+com.calorie.tracker.composeApp-debug-61 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/debug/res
+com.calorie.tracker.composeApp-main-62 /Users/akashsingh/IdeaProjects/Calorie tracker/android/composeApp/src/main/res

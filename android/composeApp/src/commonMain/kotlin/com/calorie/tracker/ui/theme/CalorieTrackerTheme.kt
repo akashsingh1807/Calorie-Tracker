@@ -1,42 +1,58 @@
 package com.calorie.tracker.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
-private val rawColorScheme = darkColorScheme(
-    primary = Color.Black,
-    onPrimary = Color.White,
-    primaryContainer = Color.White,
-    onPrimaryContainer = Color.Black,
-    secondary = Color.White,
-    onSecondary = Color.Black,
-    secondaryContainer = Color.Black,
-    onSecondaryContainer = Color.White,
-    tertiary = Color(0xFF0000FF), // Blue for links
-    background = Color.White,
-    onBackground = Color.Black,
-    surface = Color.White,
-    onSurface = Color.Black,
-    surfaceVariant = Color(0xFFF0F0F0), // Sunken surface
-    onSurfaceVariant = Color.Black,
-    error = Color.Red,
-    onError = Color.White,
-    errorContainer = Color(0xFFCCCCCC),
-    onErrorContainer = Color.Black,
-    outline = Color.Black
+private val LightColors = lightColorScheme(
+    primary = md_theme_light_primary,
+    onPrimary = md_theme_light_onPrimary,
+    secondary = md_theme_light_secondary,
+    onSecondary = md_theme_light_onSecondary,
+    tertiary = md_theme_light_tertiary,
+    onTertiary = md_theme_light_onTertiary,
+    background = md_theme_light_background,
+    onBackground = md_theme_light_onBackground,
+    surface = md_theme_light_surface,
+    onSurface = md_theme_light_onSurface,
+    error = md_theme_light_error,
+    onError = md_theme_light_onError,
+)
+
+private val DarkColors = darkColorScheme(
+    primary = md_theme_dark_primary,
+    onPrimary = md_theme_dark_onPrimary,
+    secondary = md_theme_dark_secondary,
+    onSecondary = md_theme_dark_onSecondary,
+    tertiary = md_theme_dark_tertiary,
+    onTertiary = md_theme_dark_onTertiary,
+    background = md_theme_dark_background,
+    onBackground = md_theme_dark_onBackground,
+    surface = md_theme_dark_surface,
+    onSurface = md_theme_dark_onSurface,
+    error = md_theme_dark_error,
+    onError = md_theme_dark_onError,
 )
 
 @Composable
 fun CalorieTrackerTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    val colors = if (!useDarkTheme) {
+        LightColors
+    } else {
+        DarkColors // Kept bright per design docs
+    }
+    
+    // Using Flip7 typography
+
     MaterialTheme(
-        colorScheme = rawColorScheme, // Force strictly black-on-white regardless of dark mode preference
-        typography = rawBlockTypography(),
-        shapes = RawBlockShapes,
+        colorScheme = colors,
+        typography = getFlip7Typography(),
+        shapes = Shapes,
         content = content
     )
 }

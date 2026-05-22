@@ -9,7 +9,7 @@
     <application
         android:name=".CalorieApp"
         android:allowBackup="true"
-        android:label="Calorie Tracker"
+        android:label="Caloriyaan"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="true">

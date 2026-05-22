@@ -24,6 +24,7 @@ import com.calorie.tracker.feature_journal.presentation.dashboard.DashboardScree
 import com.calorie.tracker.feature_journal.presentation.dashboard.DashboardViewModel
 import com.calorie.tracker.feature_journal.presentation.dashboard.DailyGoalsScreen
 import com.calorie.tracker.feature_journal.presentation.dashboard.StreakScreen
+import com.calorie.tracker.feature_auth.presentation.OnboardingScreen
 import com.calorie.tracker.ui.theme.CalorieTrackerTheme
 import kotlinx.coroutines.launch
 
@@ -32,6 +33,7 @@ sealed class Screen {
     object Dashboard : Screen()
     object DailyGoals : Screen()
     object Streak : Screen()
+    object Onboarding : Screen()
 }
 
 @Composable
@@ -58,6 +60,21 @@ fun App(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(currentScreen) {
+        if (currentScreen == Screen.Dashboard) {
+            apiClient?.getProfile()?.onSuccess { profile ->
+                if (profile.height <= 0.0) {
+                    currentScreen = Screen.Onboarding
+                } else {
+                    calorieGoal = profile.dailyCalorieGoal
+                    carbsGoalPct = profile.dailyCarbsGoal
+                    proteinGoalPct = profile.dailyProteinGoal
+                    fatGoalPct = profile.dailyFatGoal
+                }
+            }
+        }
+    }
 
     CalorieTrackerTheme {
         Surface(
@@ -100,7 +117,7 @@ fun App(
                                             .size(40.dp)
                                             .background(
                                                 color = Color(0xFF1976D2),
-                                                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+                                                shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
                                             ),
                                         contentAlignment = Alignment.Center
                                     ) {
@@ -169,6 +186,46 @@ fun App(
                     }
                 ) {
                     when (currentScreen) {
+                        is Screen.Onboarding -> {
+                            OnboardingScreen(
+                                onComplete = { age, height, weight, lifestyle, goal ->
+                                    val bmr = 10 * weight + 6.25 * height - 5 * age + 5
+                                    val lifestyleMultiplier = when (lifestyle) {
+                                        "SEDENTARY" -> 1.2
+                                        "LIGHTLY_ACTIVE" -> 1.375
+                                        "MODERATELY_ACTIVE" -> 1.55
+                                        "VERY_ACTIVE" -> 1.725
+                                        "EXTRA_ACTIVE" -> 1.9
+                                        else -> 1.2
+                                    }
+                                    val tdee = bmr * lifestyleMultiplier
+                                    val targetCalories = when (goal) {
+                                        "FAT_LOSS" -> tdee - 500
+                                        "MUSCLE_GAIN" -> tdee + 500
+                                        else -> tdee
+                                    }.toInt()
+
+                                    scope.launch {
+                                        apiClient?.updateProfile(com.calorie.tracker.model.UpdateProfileRequest(
+                                            height = height,
+                                            weight = weight,
+                                            age = age,
+                                            lifestyle = lifestyle,
+                                            goal = goal,
+                                            dailyCalorieGoal = targetCalories,
+                                            dailyProteinGoal = 30,
+                                            dailyCarbsGoal = 50,
+                                            dailyFatGoal = 20
+                                        ))
+                                        calorieGoal = targetCalories
+                                        carbsGoalPct = 50
+                                        proteinGoalPct = 30
+                                        fatGoalPct = 20
+                                        currentScreen = Screen.Dashboard
+                                    }
+                                }
+                            )
+                        }
                         is Screen.Dashboard -> {
                             DashboardScreen(
                                 viewModel = dashboardViewModel,

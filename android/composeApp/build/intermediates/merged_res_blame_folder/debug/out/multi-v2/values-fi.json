@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-56:/values-fi/values-fi.xml",
+            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-57:/values-fi/values-fi.xml",
             "map": [
                 {
                     "source": "/Users/akashsingh/.gradle/caches/8.10/transforms/148b0dbec66b7e556e507dae40a102d2/transformed/foundation-release/res/values-fi/values-fi.xml",

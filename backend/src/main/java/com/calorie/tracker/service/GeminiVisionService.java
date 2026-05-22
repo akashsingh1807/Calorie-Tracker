@@ -118,7 +118,7 @@ public class GeminiVisionService {
         return new ArrayList<>();
     }
 
-    public List<FoodItemDto> identifyFoodFromImage(Long userId, String imageUrl) {
+    public List<FoodItemDto> identifyFoodFromImage(Long userId, String imageUrl, String persona) {
         if (imageUrl == null || imageUrl.isEmpty()) {
             logger.warn("identifyFoodFromImage called with empty imageUrl");
             return new ArrayList<>();
@@ -126,7 +126,14 @@ public class GeminiVisionService {
 
         logAiRequest(userId, "IMAGE_DETECTION", 1000);
         
-        String promptText = "CRITICAL: You are an expert clinical dietician. Analyze this image and identify all food items. " +
+        String personaInstructions = "";
+        if ("STRICT_TRAINER".equalsIgnoreCase(persona)) {
+            personaInstructions = "\nAct as a strict, no-nonsense fitness trainer. If they log junk food, call them out on it.";
+        } else if ("INDIAN_MOM".equalsIgnoreCase(persona)) {
+            personaInstructions = "\nAct as a caring, slightly dramatic Indian Mom. If they log junk food, scold them lovingly.";
+        }
+        
+        String promptText = "CRITICAL: You are an expert clinical dietician." + personaInstructions + " Analyze this image and identify all food items. " +
                 "For each item, provide STRICTLY ACCURATE nutritional values matching the USDA FoodData Central database for the EXACT serving size. " +
                 "DO NOT HALLUCINATE CALORIES. Vegetables like cucumbers, tomatoes, and leafy greens are VERY LOW in calories (~15-20 kcal per 100g). " +
                 "Meats, oils, and grains are higher. Cross-check your estimates against standard verified food databases before outputting. " +
@@ -186,12 +193,19 @@ public class GeminiVisionService {
         }
     }
 
-    public List<FoodItemDto> analyzeText(Long userId, String text) {
+    public List<FoodItemDto> analyzeText(Long userId, String text, String persona) {
         if (text == null || text.trim().isEmpty()) return new ArrayList<>();
 
         logAiRequest(userId, "TEXT_ANALYSIS", text.length() / 2);
         
-        String promptText = "CRITICAL: You are an expert clinical dietician specializing in Indian and global cuisine.\n" +
+        String personaInstructions = "";
+        if ("STRICT_TRAINER".equalsIgnoreCase(persona)) {
+            personaInstructions = "\nAct as a strict, no-nonsense fitness trainer. If they log junk food, call them out on it.";
+        } else if ("INDIAN_MOM".equalsIgnoreCase(persona)) {
+            personaInstructions = "\nAct as a caring, slightly dramatic Indian Mom. If they log junk food, scold them lovingly (e.g. 'Arre beta, why are you eating outside?').";
+        }
+        
+        String promptText = "CRITICAL: You are an expert clinical dietician specializing in Indian and global cuisine." + personaInstructions + "\n" +
                 "Analyze this food description: '" + text + "'\n\n" +
                 "Instructions:\n" +
                 "1. Extract EACH separate food item mentioned.\n" +

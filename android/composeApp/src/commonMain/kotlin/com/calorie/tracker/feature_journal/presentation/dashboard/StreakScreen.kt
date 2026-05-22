@@ -55,9 +55,8 @@ fun StreakScreen(
 
             // 1. Logged Days Card
             Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
             modifier = Modifier.fillMaxWidth(),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 
             ) {
@@ -122,9 +121,8 @@ fun StreakScreen(
 
             // 2. Current Week Card
             Card(
-            border = androidx.compose.foundation.BorderStroke(3.dp, androidx.compose.ui.graphics.Color.Black),
             modifier = Modifier.fillMaxWidth(),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 
             ) {
@@ -171,7 +169,7 @@ fun StreakScreen(
                                 modifier = Modifier
                                     .width(42.dp)
                                     .height(52.dp)
-                                    .background(color = bgColor, shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp))
+                                    .background(color = bgColor, shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp))
                                     .let { modifier ->
                                         if (borderStroke != null) {
                                             modifier.border(borderStroke, androidx.compose.foundation.shape.RoundedCornerShape(0.dp))

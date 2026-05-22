@@ -43,8 +43,26 @@ data class UserProfile(
     val id: Long,
     val name: String,
     val email: String,
+    val height: Double = 0.0,
+    val weight: Double = 0.0,
+    val age: Int = 0,
+    val lifestyle: String = "SEDENTARY",
+    val goal: String = "MAINTENANCE",
     val dailyCalorieGoal: Int = 2000,
     val dailyProteinGoal: Int = 150,
     val dailyCarbsGoal: Int = 200,
     val dailyFatGoal: Int = 65
+)
+
+@Serializable
+data class UpdateProfileRequest(
+    val height: Double? = null,
+    val weight: Double? = null,
+    val age: Int? = null,
+    val lifestyle: String? = null,
+    val goal: String? = null,
+    val dailyCalorieGoal: Int? = null,
+    val dailyProteinGoal: Int? = null,
+    val dailyCarbsGoal: Int? = null,
+    val dailyFatGoal: Int? = null
 )

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-56:/values-xlarge-v4/values-xlarge-v4.xml",
+            "outputFile": "com.calorie.tracker.composeApp-mergeDebugResources-57:/values-xlarge-v4/values-xlarge-v4.xml",
             "map": [
                 {
                     "source": "/Users/akashsingh/.gradle/caches/8.10/transforms/0788c89878af599d88fe8880885ccf3e/transformed/appcompat-1.7.0/res/values-xlarge-v4/values-xlarge-v4.xml",

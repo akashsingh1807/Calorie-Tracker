@@ -1,164 +1,150 @@
 'use client';
 import Link from 'next/link';
-import { Flame, Zap, BarChart3, Camera, ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Leaf, Activity, Sparkles, Camera, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const features = [
   {
     icon: Camera,
-    title: 'AI Food Recognition',
-    description: 'Snap a photo of any meal and our Gemini 2.5 Flash AI identifies every ingredient instantly.',
-    color: 'var(--accent-green)',
-    bg: 'rgba(0,214,143,0.1)',
+    title: 'AI Food Tracking',
+    description: 'Instantly identify and log meals with precise calorie and macro breakdown using advanced vision AI.',
+    color: 'var(--primary-color)',
+    bg: '#E0F2FE',
   },
   {
-    icon: BarChart3,
+    icon: Activity,
     title: 'Smart Analytics',
-    description: 'Beautiful charts tracking calories, macros, weight, and hydration over time.',
-    color: 'var(--accent-blue)',
-    bg: 'rgba(77,159,255,0.1)',
+    description: 'Monitor your progress with beautiful, intuitive charts for weight, hydration, and nutrition goals.',
+    color: 'var(--accent-green)',
+    bg: '#D1FAE5',
   },
   {
-    icon: Zap,
-    title: 'Goal-Based Plans',
-    description: 'AI tailors daily calorie goals and meal suggestions for fat loss, muscle gain, or maintenance.',
-    color: 'var(--accent-purple)',
-    bg: 'rgba(167,139,250,0.1)',
+    icon: Sparkles,
+    title: 'Goal-Based Guidance',
+    description: 'Receive tailored daily calorie targets and meal suggestions whether you want to lose fat or build muscle.',
+    color: 'var(--warning)',
+    bg: '#FEF3C7',
   },
 ];
 
 const benefits = [
-  'Log meals in seconds with AI photo analysis',
-  'Track protein, carbs, and fat automatically',
-  'Monitor hydration and fasting windows',
-  'Weight progress charts and trend analysis',
-  'Personalised AI meal recommendations',
-  'Works seamlessly on mobile and desktop',
+  'Log meals in seconds with photo analysis',
+  'Automatic protein, carbs, and fat tracking',
+  'Water intake and hydration monitoring',
+  'Visual weight progress and trend charts',
+  'Clean, distraction-free materialistic UI',
 ];
 
 export default function LandingPage() {
   return (
     <div className="page-wrapper">
-      {/* ── Hero Nav ── */}
+      {/* ── Nav ── */}
       <nav className="nav">
         <div className="nav-inner">
-          <Link href="/" className="nav-logo">
-            <div className="nav-logo-icon">
-              <Flame size={18} color="#080d14" strokeWidth={2.5} />
-            </div>
-            NutriAI
+          <Link href="/" className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Leaf size={24} color="var(--primary-color)" />
+            Caloriyaan
           </Link>
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <Link href="/auth/login" className="btn btn-ghost btn-sm">Sign In</Link>
-            <Link href="/auth/register" className="btn btn-primary btn-sm">Get Started</Link>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <Link href="/auth/login" className="btn btn-ghost btn-sm">Log In</Link>
+            <Link href="/auth/register" className="btn btn-primary btn-sm">Sign Up</Link>
           </div>
         </div>
       </nav>
 
       {/* ── Hero ── */}
-      <section style={{ padding: '6rem 1.5rem 4rem', textAlign: 'center', maxWidth: 900, margin: '0 auto' }}>
-        <div className="animate-slide-up">
-          <div className="status-chip success" style={{ marginBottom: '1.5rem', fontSize: '0.8rem' }}>
-            <Zap size={12} />
-            Powered by Google Gemini 2.5 Flash
+      <section style={{ padding: '80px 24px 60px', textAlign: 'center', maxWidth: 900, margin: '0 auto' }}>
+        <div>
+          <div className="status-chip success" style={{ marginBottom: '24px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <Sparkles size={14} />
+            Powered by Gemini AI
           </div>
-          <h1 style={{
-            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
-            fontWeight: 900,
-            lineHeight: 1.1,
-            marginBottom: '1.5rem',
-            letterSpacing: '-0.02em',
-          }}>
-            Track Nutrition with{' '}
-            <span style={{
-              background: 'var(--gradient-primary)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
-              AI Precision
-            </span>
+          <h1 style={{ marginBottom: '24px' }}>
+            Nutrition tracking, <br />
+            <span style={{ color: 'var(--primary-color)' }}>made beautiful.</span>
           </h1>
           <p style={{
-            fontSize: '1.2rem', color: 'var(--text-secondary)', maxWidth: 600,
-            margin: '0 auto 2.5rem', lineHeight: 1.7,
+            fontSize: '18px', color: 'var(--text-secondary)', maxWidth: 600,
+            margin: '0 auto 40px', lineHeight: 1.7,
           }}>
-            Snap a photo of your meal, and NutriAI identifies every food item,
-            calculates macros, and helps you hit your fitness goals — effortlessly.
+            Snap a photo. Let AI calculate the calories and macros. Caloriyaan makes achieving your fitness goals effortless and visually stunning.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/auth/register" className="btn btn-primary btn-lg">
-              Start Free <ArrowRight size={18} />
-            </Link>
-            <Link href="/auth/login" className="btn btn-secondary btn-lg">
-              Sign In
+              Start Tracking <ArrowRight size={18} />
             </Link>
           </div>
         </div>
 
         {/* Hero Visual */}
-        <div className="animate-slide-up" style={{ marginTop: '4rem', position: 'relative' }}>
+        <div style={{ marginTop: '64px', position: 'relative' }}>
           <div style={{
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-xl)',
-            padding: '1.5rem',
-            boxShadow: '0 40px 80px rgba(0,0,0,0.5), 0 0 60px rgba(0,214,143,0.05)',
-            maxWidth: 760,
+            background: 'var(--surface-color)',
+            border: 'var(--border-light)',
+            borderRadius: '24px',
+            padding: '24px',
+            boxShadow: 'var(--shadow-lg)',
+            maxWidth: 720,
             margin: '0 auto',
           }}>
             {/* Mock Dashboard Preview */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
               {[
-                { label: 'Calories', val: '1,842', unit: '/ 2,000', color: 'var(--accent-green)' },
-                { label: 'Protein', val: '132g', unit: '/ 150g', color: 'var(--accent-blue)' },
-                { label: 'Streak', val: '14', unit: 'days', color: 'var(--accent-purple)' },
+                { label: 'Calories', val: '1,842', unit: '/ 2,000 kcal', color: 'var(--primary-color)' },
+                { label: 'Protein', val: '132g', unit: '/ 150g', color: 'var(--accent-green)' },
+                { label: 'Streak', val: '14', unit: 'Days', color: 'var(--warning)' },
               ].map((s) => (
-                <div key={s.label} className="raw-card" style={{ padding: '1rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>{s.label}</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: s.color }}>{s.val}</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{s.unit}</div>
+                <div key={s.label} style={{
+                  padding: '16px', textAlign: 'center', background: 'var(--bg-color)', borderRadius: '16px',
+                }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '8px' }}>{s.label}</div>
+                  <div style={{ fontSize: '24px', fontWeight: 700, color: s.color }}>{s.val}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{s.unit}</div>
                 </div>
               ))}
             </div>
-            <div className="raw-card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            
+            <div style={{ 
+              padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', 
+              background: 'var(--bg-color)', borderRadius: '16px' 
+            }}>
               <div style={{
-                width: 48, height: 48, borderRadius: 'var(--radius-md)',
-                background: 'rgba(0,214,143,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 48, height: 48, borderRadius: '12px',
+                background: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Camera size={22} color="var(--accent-green)" />
+                <Camera size={24} color="var(--primary-color)" />
               </div>
               <div style={{ flex: 1, textAlign: 'left' }}>
-                <div style={{ fontWeight: 600, marginBottom: '0.2rem' }}>AI detected: Dal Tadka, Roti, Raita</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>487 kcal · 18g protein · 62g carbs · 14g fat</div>
+                <div style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-primary)', marginBottom: '4px' }}>AI Match: Grilled Chicken Salad</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>487 kcal · 32g protein · 12g carbs · 14g fat</div>
               </div>
-              <div className="status-chip success">✓ Logged</div>
+              <div className="status-chip success">Logged</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ── Features ── */}
-      <section style={{ padding: '5rem 1.5rem', maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: '2.2rem', marginBottom: '0.75rem' }}>Everything you need to succeed</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem' }}>
-            Intelligent tools that make healthy eating simple
+      <section style={{ padding: '80px 24px', maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <h2 style={{ marginBottom: '12px' }}>Intelligent Tools</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '18px' }}>
+            Everything you need to succeed, designed with clarity.
           </p>
         </div>
         <div className="dashboard-grid grid-cols-3">
           {features.map((f) => {
             const Icon = f.icon;
             return (
-              <div key={f.title} className="raw-card" style={{ padding: '2rem' }}>
+              <div key={f.title} className="raw-card" style={{ padding: '32px' }}>
                 <div style={{
-                  width: 52, height: 52, borderRadius: 'var(--radius-md)',
+                  width: 56, height: 56, borderRadius: '16px',
                   background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  marginBottom: '1.25rem',
+                  marginBottom: '24px',
                 }}>
-                  <Icon size={24} color={f.color} />
+                  <Icon size={28} color={f.color} />
                 </div>
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.6rem' }}>{f.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>{f.description}</p>
+                <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>{f.title}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.6 }}>{f.description}</p>
               </div>
             );
           })}
@@ -166,57 +152,57 @@ export default function LandingPage() {
       </section>
 
       {/* ── Benefits ── */}
-      <section style={{ padding: '4rem 1.5rem', maxWidth: 900, margin: '0 auto' }}>
+      <section style={{ padding: '60px 24px', maxWidth: 1000, margin: '0 auto' }}>
         <div style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'center',
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center',
         }}>
           <div>
-            <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', lineHeight: 1.2 }}>
-              Built for real people,<br />not just fitness nerds
+            <h2 style={{ marginBottom: '24px' }}>
+              Built for real people.
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {benefits.map((b) => (
-                <div key={b} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
-                  <CheckCircle2 size={18} color="var(--accent-green)" strokeWidth={2} style={{ flexShrink: 0 }} />
+                <div key={b} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)', fontSize: '16px' }}>
+                  <CheckCircle2 size={20} color="var(--primary-color)" strokeWidth={2} style={{ flexShrink: 0 }} />
                   {b}
                 </div>
               ))}
             </div>
           </div>
-          <div className="raw-card-elevated " style={{ padding: '2rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '3.5rem', marginBottom: '0.5rem' }}>🎯</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-green)', marginBottom: '0.25rem' }}>95%</div>
-            <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>AI food detection accuracy</div>
-            <div className="divider" style={{ margin: '1.25rem 0' }} />
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>⚡</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-blue)', marginBottom: '0.25rem' }}>&lt; 3s</div>
-            <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Average analysis time</div>
+          <div className="raw-card-elevated" style={{ padding: '40px', textAlign: 'center' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎯</div>
+            <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--primary-color)', marginBottom: '8px' }}>95%</div>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>AI food detection accuracy</div>
+            <div className="divider" style={{ margin: '32px 0' }} />
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚡</div>
+            <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--accent-green)', marginBottom: '8px' }}>&lt; 3s</div>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Average photo analysis time</div>
           </div>
         </div>
       </section>
 
       {/* ── CTA ── */}
-      <section style={{ padding: '5rem 1.5rem', textAlign: 'center' }}>
-        <div className="raw-card-elevated" style={{ maxWidth: 700, margin: '0 auto', padding: '3.5rem 2rem' }}>
-          <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Ready to transform your nutrition?</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-            Join thousands already tracking smarter with AI-powered insights.
+      <section style={{ padding: '80px 24px', textAlign: 'center' }}>
+        <div className="raw-card-elevated" style={{ maxWidth: 700, margin: '0 auto', padding: '56px 32px' }}>
+          <h2 style={{ marginBottom: '16px' }}>Ready to transform your habits?</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '16px' }}>
+            Join thousands already tracking smarter with Caloriyaan.
           </p>
           <Link href="/auth/register" className="btn btn-primary btn-lg">
-            Get Started Free <ChevronRight size={18} />
+            Create Free Account
           </Link>
         </div>
       </section>
 
       {/* ── Footer ── */}
       <footer style={{
-        padding: '2rem 1.5rem',
+        padding: '32px 24px',
         textAlign: 'center',
-        borderTop: '1px solid var(--border-subtle)',
+        borderTop: 'var(--border-light)',
         color: 'var(--text-muted)',
-        fontSize: '0.85rem',
+        fontSize: '14px',
       }}>
-        <p>© 2025 NutriAI · Built by Akash Singh · Powered by Gemini AI</p>
+        <p>© 2026 Caloriyaan · Minimalistic & Materialistic Tracker</p>
       </footer>
     </div>
   );

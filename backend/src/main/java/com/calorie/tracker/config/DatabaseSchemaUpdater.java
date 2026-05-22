@@ -25,6 +25,22 @@ public class DatabaseSchemaUpdater {
             
             // Add google_id column if it doesn't exist
             jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE");
+
+            // Add new onboarding columns
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS age INTEGER");
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS lifestyle VARCHAR(255)");
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_protein_goal INTEGER");
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_carbs_goal INTEGER");
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_fat_goal INTEGER");
+            
+            // Add AI & Gamification columns (Phase 1)
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS persona_preference VARCHAR(255) DEFAULT 'STRICT_TRAINER'");
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_tier VARCHAR(255) DEFAULT 'FREE'");
+            
+            jdbcTemplate.execute("ALTER TABLE meals ADD COLUMN IF NOT EXISTS raw_text_input TEXT");
+            jdbcTemplate.execute("ALTER TABLE meals ADD COLUMN IF NOT EXISTS meal_image_url VARCHAR(1024)");
+            jdbcTemplate.execute("ALTER TABLE meals ADD COLUMN IF NOT EXISTS confidence_score FLOAT");
+            jdbcTemplate.execute("ALTER TABLE meals ADD COLUMN IF NOT EXISTS is_ai_logged BOOLEAN DEFAULT FALSE");
             
             logger.info("Database schema update completed successfully!");
         } catch (Exception e) {

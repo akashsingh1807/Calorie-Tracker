@@ -153,8 +153,35 @@ class DashboardViewModel(
         }
     }
 
+    fun analyzeAndLogMealFromImage(imageBytes: ByteArray) {
+        viewModelScope.launch {
+            _analysisState.value = MealAnalysisState.Analyzing
+            try {
+                if (apiClient != null) {
+                    val result = apiClient.analyzeMealImage(imageBytes)
+                    result.onSuccess { response ->
+                        if (response.foodItems.isNotEmpty()) {
+                            _analysisState.value = MealAnalysisState.PendingConfirmation(
+                                originalText = "📷 Photo Logged",
+                                foodItems = response.foodItems
+                            )
+                        } else {
+                            _analysisState.value = MealAnalysisState.Error("Could not recognize food in the image.")
+                        }
+                    }.onFailure {
+                        _analysisState.value = MealAnalysisState.Error("Network error: ${it.message}")
+                    }
+                } else {
+                    _analysisState.value = MealAnalysisState.Error("API client not configured for image upload.")
+                }
+            } catch (e: Exception) {
+                _analysisState.value = MealAnalysisState.Error("Analysis failed: ${e.message}")
+            }
+        }
+    }
+
     /** Called when user confirms the food items in the dialog */
-    fun confirmAndLogMeals(foodItems: List<FoodItemDto>, saveAsBookmark: Boolean = false, bookmarkName: String = "") {
+    fun confirmAndLogMeals(foodItems: List<FoodItemDto>, originalText: String? = null, saveAsBookmark: Boolean = false, bookmarkName: String = "") {
         viewModelScope.launch {
             val timeZone = TimeZone.currentSystemDefault()
             val date = _selectedDate.value
@@ -193,7 +220,9 @@ class DashboardViewModel(
                 totalCalcium = foodItems.sumOf { it.calcium },
                 totalIron = foodItems.sumOf { it.iron },
                 totalVitaminC = foodItems.sumOf { it.vitaminC },
-                totalVitaminD = foodItems.sumOf { it.vitaminD }
+                totalVitaminD = foodItems.sumOf { it.vitaminD },
+                rawTextInput = originalText,
+                isAiLogged = originalText != null
             )
             mealRepository.insertMeal(meal)
 

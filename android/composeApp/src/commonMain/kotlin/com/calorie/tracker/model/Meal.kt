@@ -21,5 +21,7 @@ data class Meal(
     val totalCalcium: Double = 0.0,
     val totalIron: Double = 0.0,
     val totalVitaminC: Double = 0.0,
-    val totalVitaminD: Double = 0.0
+    val totalVitaminD: Double = 0.0,
+    val rawTextInput: String? = null,
+    val isAiLogged: Boolean = false
 )

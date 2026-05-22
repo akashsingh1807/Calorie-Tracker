@@ -27,7 +27,7 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="false"
-        android:label="Calorie Tracker"
+        android:label="Caloriyaan"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="true" >
@@ -88,6 +88,10 @@
             android:enabled="true"
             android:exported="false" >
         </provider>
+
+        <activity
+            android:name="androidx.activity.ComponentActivity"
+            android:exported="true" />
 
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"

@@ -59,7 +59,7 @@ export default function RegisterPage() {
             <div className="nav-logo-icon" style={{ width: 40, height: 40 }}>
               <Flame size={22} color="#080d14" strokeWidth={2.5} />
             </div>
-            NutriAI
+            Caloriyaan
           </Link>
           <div style={{ marginTop: '1.25rem' }}>
             <h1 style={{ fontSize: '1.6rem', marginBottom: '0.4rem' }}>Create your account</h1>

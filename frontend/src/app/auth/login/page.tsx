@@ -44,7 +44,7 @@ export default function LoginPage() {
             <div className="nav-logo-icon" style={{ width: 40, height: 40 }}>
               <Flame size={22} color="#080d14" strokeWidth={2.5} />
             </div>
-            NutriAI
+            Caloriyaan
           </Link>
           <div style={{ marginTop: '1.5rem' }}>
             <h1 style={{ fontSize: '1.75rem', marginBottom: '0.4rem' }}>Welcome back</h1>

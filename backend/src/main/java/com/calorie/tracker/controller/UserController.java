@@ -26,20 +26,40 @@ public class UserController {
         User user = userRepository.findById(userDetails.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        return ResponseEntity.ok(java.util.Map.of(
-                "id", user.getId(),
-                "name", user.getName(),
-                "email", user.getEmail(),
-                "height", user.getHeight() != null ? user.getHeight() : 0,
-                "weight", user.getCurrentWeight() != null ? user.getCurrentWeight() : 0,
-                "goal", user.getGoal() != null ? user.getGoal().name() : "MAINTENANCE",
-                "dailyCalorieGoal", user.getDailyCalorieGoal() != null ? user.getDailyCalorieGoal() : 2000
+        return ResponseEntity.ok(java.util.Map.ofEntries(
+                java.util.Map.entry("id", user.getId()),
+                java.util.Map.entry("name", user.getName()),
+                java.util.Map.entry("email", user.getEmail()),
+                java.util.Map.entry("height", user.getHeight() != null ? user.getHeight() : 0.0),
+                java.util.Map.entry("weight", user.getCurrentWeight() != null ? user.getCurrentWeight() : 0.0),
+                java.util.Map.entry("age", user.getAge() != null ? user.getAge() : 0),
+                java.util.Map.entry("lifestyle", user.getLifestyle() != null ? user.getLifestyle().name() : "SEDENTARY"),
+                java.util.Map.entry("goal", user.getGoal() != null ? user.getGoal().name() : "MAINTENANCE"),
+                java.util.Map.entry("dailyCalorieGoal", user.getDailyCalorieGoal() != null ? user.getDailyCalorieGoal() : 2000),
+                java.util.Map.entry("dailyProteinGoal", user.getDailyProteinGoal() != null ? user.getDailyProteinGoal() : 150),
+                java.util.Map.entry("dailyCarbsGoal", user.getDailyCarbsGoal() != null ? user.getDailyCarbsGoal() : 200),
+                java.util.Map.entry("dailyFatGoal", user.getDailyFatGoal() != null ? user.getDailyFatGoal() : 65)
         ));
     }
 
     @PutMapping("/me")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody java.util.Map<String, Object> updates) {
-        // Implement full profile update logic later
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (updates.containsKey("name")) user.setName((String) updates.get("name"));
+        if (updates.containsKey("height")) user.setHeight(((Number) updates.get("height")).doubleValue());
+        if (updates.containsKey("weight")) user.setCurrentWeight(((Number) updates.get("weight")).doubleValue());
+        if (updates.containsKey("age")) user.setAge(((Number) updates.get("age")).intValue());
+        if (updates.containsKey("lifestyle")) user.setLifestyle(com.calorie.tracker.model.Lifestyle.valueOf((String) updates.get("lifestyle")));
+        if (updates.containsKey("goal")) user.setGoal(com.calorie.tracker.model.GoalType.valueOf((String) updates.get("goal")));
+        if (updates.containsKey("dailyCalorieGoal")) user.setDailyCalorieGoal(((Number) updates.get("dailyCalorieGoal")).intValue());
+        if (updates.containsKey("dailyProteinGoal")) user.setDailyProteinGoal(((Number) updates.get("dailyProteinGoal")).intValue());
+        if (updates.containsKey("dailyCarbsGoal")) user.setDailyCarbsGoal(((Number) updates.get("dailyCarbsGoal")).intValue());
+        if (updates.containsKey("dailyFatGoal")) user.setDailyFatGoal(((Number) updates.get("dailyFatGoal")).intValue());
+
+        userRepository.save(user);
+
         return ResponseEntity.ok(java.util.Map.of("success", true, "message", "Profile updated successfully"));
     }
 
