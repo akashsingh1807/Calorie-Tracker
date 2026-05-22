@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.datetime.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -328,6 +329,7 @@ fun StreakScreen(
 private data class StreakDay(
     val name: String,
     val dayNum: String,
-    val isLogged: Boolean,
+    val isOverBudget: Boolean,
+    val isUnderOrEqualBudget: Boolean,
     val isSelected: Boolean
 )
