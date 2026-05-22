@@ -113,24 +113,39 @@ class DashboardViewModel(
                             )
                         } else {
                             // Fallback if AI returned empty
-                            _analysisState.value = MealAnalysisState.PendingConfirmation(
-                                originalText = text,
-                                foodItems = listOf(buildFallbackItem(text))
-                            )
+                            val fallback = buildFallbackItem(text)
+                            if (fallback != null) {
+                                _analysisState.value = MealAnalysisState.PendingConfirmation(
+                                    originalText = text,
+                                    foodItems = listOf(fallback)
+                                )
+                            } else {
+                                _analysisState.value = MealAnalysisState.Error("Could not recognize food. Please try a different spelling.")
+                            }
                         }
                     }.onFailure {
                         // Fallback to local parse on network error
-                        _analysisState.value = MealAnalysisState.PendingConfirmation(
-                            originalText = text,
-                            foodItems = listOf(buildFallbackItem(text))
-                        )
+                        val fallback = buildFallbackItem(text)
+                        if (fallback != null) {
+                            _analysisState.value = MealAnalysisState.PendingConfirmation(
+                                originalText = text,
+                                foodItems = listOf(fallback)
+                            )
+                        } else {
+                            _analysisState.value = MealAnalysisState.Error("Network error. Connect to internet for full food database.")
+                        }
                     }
                 } else {
                     // No API client (test/local mode), use local parser
-                    _analysisState.value = MealAnalysisState.PendingConfirmation(
-                        originalText = text,
-                        foodItems = listOf(buildFallbackItem(text))
-                    )
+                    val fallback = buildFallbackItem(text)
+                    if (fallback != null) {
+                        _analysisState.value = MealAnalysisState.PendingConfirmation(
+                            originalText = text,
+                            foodItems = listOf(fallback)
+                        )
+                    } else {
+                        _analysisState.value = MealAnalysisState.Error("Could not recognize food locally.")
+                    }
                 }
             } catch (e: Exception) {
                 _analysisState.value = MealAnalysisState.Error("Analysis failed: ${e.message}")
@@ -331,7 +346,7 @@ class DashboardViewModel(
      * Uses per-100g nutrient tables for common Indian and global foods,
      * now including micronutrients (fiber, sugar, sodium, potassium, calcium, iron, vitaminC, vitaminD).
      */
-    private fun buildFallbackItem(query: String): FoodItemDto {
+    private fun buildFallbackItem(query: String): FoodItemDto? {
         val lower = query.lowercase().trim()
 
         // Try to extract quantity from string like "200g chicken" or "2 eggs"
@@ -407,16 +422,7 @@ class DashboardViewModel(
             )
         }
 
-        // Generic fallback
-        val cal = quantityGrams?.let { it * 2.0 } ?: 350.0
-        return FoodItemDto(
-            name = query.take(40),
-            servingSize = if (quantityGrams != null) "${quantityGrams}g" else "1 serving",
-            calories = cal,
-            protein = cal * 0.15 / 4.0,
-            carbs = cal * 0.50 / 4.0,
-            fat = cal * 0.30 / 9.0
-        )
+        return null
     }
 
     private fun extractGrams(text: String): Double? {
