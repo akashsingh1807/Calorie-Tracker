@@ -61,10 +61,12 @@ fun App(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    var hasCompletedOnboarding by remember { mutableStateOf(false) }
+
     LaunchedEffect(currentScreen) {
         if (currentScreen == Screen.Dashboard) {
             apiClient?.getProfile()?.onSuccess { profile ->
-                if (profile.height <= 0.0) {
+                if (profile.height <= 0.0 && !hasCompletedOnboarding) {
                     currentScreen = Screen.Onboarding
                 } else {
                     calorieGoal = profile.dailyCalorieGoal
@@ -206,7 +208,7 @@ fun App(
                                     }.toInt()
 
                                     scope.launch {
-                                        apiClient?.updateProfile(com.calorie.tracker.model.UpdateProfileRequest(
+                                        val result = apiClient?.updateProfile(com.calorie.tracker.model.UpdateProfileRequest(
                                             height = height,
                                             weight = weight,
                                             age = age,
@@ -217,11 +219,23 @@ fun App(
                                             dailyCarbsGoal = 50,
                                             dailyFatGoal = 20
                                         ))
-                                        calorieGoal = targetCalories
-                                        carbsGoalPct = 50
-                                        proteinGoalPct = 30
-                                        fatGoalPct = 20
-                                        currentScreen = Screen.Dashboard
+                                        
+                                        if (result?.isSuccess == true || apiClient == null) {
+                                            hasCompletedOnboarding = true
+                                            calorieGoal = targetCalories
+                                            carbsGoalPct = 50
+                                            proteinGoalPct = 30
+                                            fatGoalPct = 20
+                                            currentScreen = Screen.Dashboard
+                                        } else {
+                                            // Fallback local navigation if backend fails
+                                            hasCompletedOnboarding = true
+                                            calorieGoal = targetCalories
+                                            carbsGoalPct = 50
+                                            proteinGoalPct = 30
+                                            fatGoalPct = 20
+                                            currentScreen = Screen.Dashboard
+                                        }
                                     }
                                 }
                             )
