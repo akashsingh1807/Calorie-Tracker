@@ -34,6 +34,10 @@ sealed class Screen {
     object DailyGoals : Screen()
     object Streak : Screen()
     object Onboarding : Screen()
+    object WeightTracker : Screen()
+    object Reminders : Screen()
+    object WaterTracker : Screen()
+    object Account : Screen()
 }
 
 @Composable
@@ -153,11 +157,11 @@ fun App(
                                 val menuItems = listOf(
                                     DrawerItem("Daily Goals", Icons.Default.Flag, Screen.DailyGoals),
                                     DrawerItem("Weekly Summary", Icons.Default.Assessment, Screen.Streak),
-                                    DrawerItem("Weight Tracker", Icons.Default.TrendingUp, Screen.Streak),
-                                    DrawerItem("Reminders", Icons.Default.Notifications, null),
-                                    DrawerItem("Water Tracker", Icons.Default.Opacity, null),
+                                    DrawerItem("Weight Tracker", Icons.Default.TrendingUp, Screen.WeightTracker),
+                                    DrawerItem("Reminders", Icons.Default.Notifications, Screen.Reminders),
+                                    DrawerItem("Water Tracker", Icons.Default.Opacity, Screen.WaterTracker),
                                     DrawerItem("Groups", Icons.Default.People, null),
-                                    DrawerItem("Account", Icons.Default.Person, null),
+                                    DrawerItem("Account", Icons.Default.Person, Screen.Account),
                                     DrawerItem("Refer a Friend", Icons.Default.Share, null),
                                     DrawerItem("Feedback & Support", Icons.Default.Feedback, null),
                                     DrawerItem("Settings", Icons.Default.Settings, null)
@@ -295,6 +299,31 @@ fun App(
                                 mealRepository = mealRepository,
                                 budgetCalorie = calorieGoal,
                                 onBackClick = { currentScreen = Screen.Dashboard }
+                            )
+                        }
+                        is Screen.WeightTracker -> {
+                            com.calorie.tracker.feature_journal.presentation.dashboard.WeightTrackerScreen(
+                                onBackClick = { currentScreen = Screen.Dashboard }
+                            )
+                        }
+                        is Screen.Reminders -> {
+                            com.calorie.tracker.feature_journal.presentation.dashboard.RemindersScreen(
+                                onBackClick = { currentScreen = Screen.Dashboard }
+                            )
+                        }
+                        is Screen.WaterTracker -> {
+                            com.calorie.tracker.feature_journal.presentation.dashboard.WaterTrackerScreen(
+                                onBackClick = { currentScreen = Screen.Dashboard }
+                            )
+                        }
+                        is Screen.Account -> {
+                            com.calorie.tracker.feature_journal.presentation.dashboard.AccountScreen(
+                                onBackClick = { currentScreen = Screen.Dashboard },
+                                onLogoutClick = {
+                                    scope.launch { drawerState.close() }
+                                    authRepository.clearToken()
+                                    currentScreen = Screen.Auth
+                                }
                             )
                         }
                         else -> {}
