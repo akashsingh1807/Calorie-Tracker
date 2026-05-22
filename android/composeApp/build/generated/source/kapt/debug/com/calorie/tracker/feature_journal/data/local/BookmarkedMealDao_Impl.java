@@ -80,7 +80,7 @@ public final class BookmarkedMealDao_Impl implements BookmarkedMealDao {
 
   @Override
   public Object insertBookmark(final BookmarkedMealEntity meal,
-      final Continuation<? super Long> arg1) {
+      final Continuation<? super Long> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Long>() {
       @Override
       @NonNull
@@ -94,11 +94,11 @@ public final class BookmarkedMealDao_Impl implements BookmarkedMealDao {
           __db.endTransaction();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
-  public Object deleteBookmark(final long id, final Continuation<? super Unit> arg1) {
+  public Object deleteBookmark(final long id, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -119,7 +119,7 @@ public final class BookmarkedMealDao_Impl implements BookmarkedMealDao {
           __preparedStmtOfDeleteBookmark.release(_stmt);
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @Override
@@ -184,7 +184,7 @@ public final class BookmarkedMealDao_Impl implements BookmarkedMealDao {
   }
 
   @Override
-  public Object countByName(final String name, final Continuation<? super Integer> arg1) {
+  public Object countByName(final String name, final Continuation<? super Integer> $completion) {
     final String _sql = "SELECT COUNT(*) FROM bookmarked_meals WHERE name = ?";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
@@ -218,7 +218,7 @@ public final class BookmarkedMealDao_Impl implements BookmarkedMealDao {
           _statement.release();
         }
       }
-    }, arg1);
+    }, $completion);
   }
 
   @NonNull

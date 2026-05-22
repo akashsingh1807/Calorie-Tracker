@@ -144,7 +144,7 @@ fun StreakScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Date row: Last 7 days
-                    var streakDays by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<List<StreakDay>>(emptyList()) }
+                    val streakDays = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<List<StreakDay>>(emptyList()) }
                     val timeZone = kotlinx.datetime.TimeZone.currentSystemDefault()
                     val today = kotlinx.datetime.Clock.System.now().toLocalDateTime(timeZone).date
                     
@@ -177,7 +177,7 @@ fun StreakScreen(
                                     )
                                 )
                             }
-                            streakDays = daysList
+                            streakDays.value = daysList
                         }
                     }
 
@@ -185,7 +185,7 @@ fun StreakScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        for (day in streakDays) {
+                        for (day in streakDays.value) {
                             val bgColor = if (day.isOverBudget) Color(0xFFFFF1F0) else if (day.isUnderOrEqualBudget) Color(0xFFE3F2FD) else Color.Transparent
                             val textColor = if (day.isOverBudget) Color(0xFFD32F2F) else if (day.isUnderOrEqualBudget) Color(0xFF1976D2) else Color.Gray
                             
