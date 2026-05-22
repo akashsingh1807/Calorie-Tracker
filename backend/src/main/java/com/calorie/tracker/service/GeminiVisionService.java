@@ -126,13 +126,14 @@ public class GeminiVisionService {
 
         logAiRequest(userId, "IMAGE_DETECTION", 1000);
         
-        String promptText = "Analyze this image and identify all food items. " +
-                "For each item, estimate all nutritional values including macros AND micronutrients for a typical serving size. " +
-                "Pay special attention to Indian cuisine accuracy. " +
+        String promptText = "CRITICAL: You are an expert clinical dietician. Analyze this image and identify all food items. " +
+                "For each item, provide STRICTLY ACCURATE nutritional values matching the USDA FoodData Central database for the EXACT serving size. " +
+                "DO NOT HALLUCINATE CALORIES. Vegetables like cucumbers, tomatoes, and leafy greens are VERY LOW in calories (~15-20 kcal per 100g). " +
+                "Meats, oils, and grains are higher. Cross-check your estimates against standard verified food databases before outputting. " +
                 "Return ONLY a JSON array of objects with these exact keys: " +
                 "'name', 'servingSize', 'calories', 'protein', 'carbs', 'fat', " +
                 "'fiber', 'sugar', 'sodium', 'potassium', 'calcium', 'iron', 'vitaminC', 'vitaminD'. " +
-                "All numeric values must be realistic numbers (not zero or null). " +
+                "All numeric values must be highly accurate numbers (not zero or null). " +
                 "Units: calories=kcal, protein/carbs/fat/fiber/sugar=grams, sodium/potassium/calcium/iron/vitaminC=mg, vitaminD=micrograms. " +
                 "Return NOTHING else but the raw JSON array.";
 
@@ -190,15 +191,16 @@ public class GeminiVisionService {
 
         logAiRequest(userId, "TEXT_ANALYSIS", text.length() / 2);
         
-        String promptText = "You are an expert nutritionist specializing in Indian and global cuisine.\n" +
+        String promptText = "CRITICAL: You are an expert clinical dietician specializing in Indian and global cuisine.\n" +
                 "Analyze this food description: '" + text + "'\n\n" +
                 "Instructions:\n" +
                 "1. Extract EACH separate food item mentioned.\n" +
-                "2. If quantities are given (e.g., '200g', '2 eggs', '1 cup'), use those EXACT quantities to calculate nutrition.\n" +
-                "3. If no quantity given, assume a typical single serving.\n" +
-                "4. Provide ACCURATE nutrition for the EXACT quantity specified — NOT per 100g.\n" +
-                "5. Use accurate data for Indian foods (dal, roti, paneer, dahi, ghee, rice, etc.).\n" +
-                "6. All numeric values must be realistic numbers (not zero).\n\n" +
+                "2. Use STRICTLY ACCURATE nutritional data matching the USDA FoodData Central database.\n" +
+                "3. DO NOT HALLUCINATE CALORIES. Vegetables (like cucumbers, lettuce) are VERY LOW in calories (~15 kcal per medium cucumber). Only oils, grains, meats, and sweets are high calorie.\n" +
+                "4. If quantities are given (e.g., '200g', '2 eggs', '1 cup'), use those EXACT quantities to calculate nutrition.\n" +
+                "5. If no quantity given, assume a typical single serving (e.g. 1 medium cucumber = 300g = 45 kcal).\n" +
+                "6. Provide ACCURATE nutrition for the EXACT quantity specified — NOT per 100g.\n" +
+                "7. All numeric values must be scientifically accurate numbers based on verified food databases.\n\n" +
                 "Return ONLY a JSON array of objects. Each object must have these EXACT keys:\n" +
                 "- 'name': food name with quantity (e.g., 'Cooked Dal (200g)')\n" +
                 "- 'servingSize': quantity string (e.g., '200g', '2 medium')\n" +
