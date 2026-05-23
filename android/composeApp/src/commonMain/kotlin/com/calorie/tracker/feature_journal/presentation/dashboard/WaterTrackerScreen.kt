@@ -21,12 +21,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WaterTrackerScreen(
+    waterRepository: com.calorie.tracker.feature_journal.domain.WaterRepository? = null,
     onBackClick: () -> Unit
 ) {
-    var waterGlasses by remember { mutableStateOf(3) }
+    val scope = rememberCoroutineScope()
+    
+    val todayStr = remember {
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+    }
+    
+    val waterLog by produceState<com.calorie.tracker.feature_journal.domain.WaterEntry?>(initialValue = null, waterRepository) {
+        waterRepository?.getWaterLogByDate(todayStr)?.collect {
+            value = it
+        }
+    }
+    
+    val waterGlasses = waterLog?.glasses ?: 0
     val targetGlasses = 8
     
     val progress by animateFloatAsState(
@@ -96,7 +114,17 @@ fun WaterTrackerScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FilledIconButton(
-                    onClick = { if (waterGlasses > 0) waterGlasses-- },
+                    onClick = { 
+                        if (waterGlasses > 0) {
+                            scope.launch {
+                                waterRepository?.addGlasses(
+                                    glasses = -1,
+                                    dateStr = todayStr,
+                                    timestamp = Clock.System.now().toEpochMilliseconds()
+                                )
+                            }
+                        }
+                    },
                     modifier = Modifier.size(64.dp),
                     colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color(0xFFF5F5F5), contentColor = Color.Black),
                     shape = CircleShape
@@ -105,7 +133,15 @@ fun WaterTrackerScreen(
                 }
                 
                 FilledIconButton(
-                    onClick = { waterGlasses++ },
+                    onClick = { 
+                        scope.launch {
+                            waterRepository?.addGlasses(
+                                glasses = 1,
+                                dateStr = todayStr,
+                                timestamp = Clock.System.now().toEpochMilliseconds()
+                            )
+                        }
+                    },
                     modifier = Modifier.size(64.dp),
                     colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color(0xFF2196F3), contentColor = Color.White),
                     shape = CircleShape

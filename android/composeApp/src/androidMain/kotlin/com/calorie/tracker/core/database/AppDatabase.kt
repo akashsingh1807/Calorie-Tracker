@@ -8,15 +8,26 @@ import com.calorie.tracker.feature_journal.data.local.BookmarkedMealDao
 import com.calorie.tracker.feature_journal.data.local.BookmarkedMealEntity
 import com.calorie.tracker.feature_journal.data.local.MealDao
 import com.calorie.tracker.feature_journal.data.local.MealEntity
+import com.calorie.tracker.feature_journal.data.local.WaterDao
+import com.calorie.tracker.feature_journal.data.local.WaterEntity
+import com.calorie.tracker.feature_journal.data.local.WeightDao
+import com.calorie.tracker.feature_journal.data.local.WeightEntity
 
 @Database(
-    entities = [MealEntity::class, BookmarkedMealEntity::class],
-    version = 4,
+    entities = [
+        MealEntity::class,
+        BookmarkedMealEntity::class,
+        WeightEntity::class,
+        WaterEntity::class
+    ],
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun mealDao(): MealDao
     abstract fun bookmarkedMealDao(): BookmarkedMealDao
+    abstract fun weightDao(): WeightDao
+    abstract fun waterDao(): WaterDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -57,6 +68,32 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE meals ADD COLUMN rawTextInput TEXT")
                 db.execSQL("ALTER TABLE meals ADD COLUMN isAiLogged INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        /** Migration 4 → 5: Add weight_logs and water_logs tables */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `weight_logs` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `weightKg` REAL NOT NULL,
+                        `dateStr` TEXT NOT NULL,
+                        `timestamp` INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `water_logs` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `glasses` INTEGER NOT NULL,
+                        `dateStr` TEXT NOT NULL,
+                        `timestamp` INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
             }
         }
     }

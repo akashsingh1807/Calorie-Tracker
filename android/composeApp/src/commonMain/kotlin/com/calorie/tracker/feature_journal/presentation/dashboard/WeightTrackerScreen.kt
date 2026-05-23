@@ -14,13 +14,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeightTrackerScreen(
+    weightRepository: com.calorie.tracker.feature_journal.domain.WeightRepository? = null,
     onBackClick: () -> Unit
 ) {
-    var weightInput by remember { mutableStateOf("78.5") }
+    var weightInput by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
     
+    val todayStr = remember {
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+    }
+    
+    // Load today's weight
+    val latestWeight by produceState<Double?>(initialValue = null, weightRepository) {
+        weightRepository?.getLatestWeight()?.let {
+            value = it.weightKg
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -52,7 +70,7 @@ fun WeightTrackerScreen(
             )
             
             Text(
-                text = "$weightInput kg",
+                text = latestWeight?.let { "$it kg" } ?: "-- kg",
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -83,7 +101,19 @@ fun WeightTrackerScreen(
                     )
                     
                     Button(
-                        onClick = { /* Save to DB */ },
+                        onClick = { 
+                            val weightKg = weightInput.toDoubleOrNull()
+                            if (weightKg != null) {
+                                scope.launch {
+                                    weightRepository?.insertWeight(
+                                        weightKg = weightKg,
+                                        dateStr = todayStr,
+                                        timestamp = Clock.System.now().toEpochMilliseconds()
+                                    )
+                                    weightInput = "" // Clear input after saving
+                                }
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth().height(50.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Black)

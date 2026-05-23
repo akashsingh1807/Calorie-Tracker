@@ -26,6 +26,8 @@ class MainActivity : ComponentActivity() {
                 mealRepository = app.mealRepository,
                 apiClient = app.apiClient,
                 bookmarkRepository = app.bookmarkRepository,
+                weightRepository = app.weightRepository,
+                waterRepository = app.waterRepository,
                 onGoogleSignInClick = { onTokenReceived, onError ->
                     lifecycleScope.launch {
                         try {

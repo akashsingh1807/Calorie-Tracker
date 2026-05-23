@@ -15,6 +15,10 @@ import com.calorie.tracker.feature_journal.data.local.BookmarkedMealDao;
 import com.calorie.tracker.feature_journal.data.local.BookmarkedMealDao_Impl;
 import com.calorie.tracker.feature_journal.data.local.MealDao;
 import com.calorie.tracker.feature_journal.data.local.MealDao_Impl;
+import com.calorie.tracker.feature_journal.data.local.WaterDao;
+import com.calorie.tracker.feature_journal.data.local.WaterDao_Impl;
+import com.calorie.tracker.feature_journal.data.local.WeightDao;
+import com.calorie.tracker.feature_journal.data.local.WeightDao_Impl;
 import java.lang.Class;
 import java.lang.Override;
 import java.lang.String;
@@ -34,22 +38,30 @@ public final class AppDatabase_Impl extends AppDatabase {
 
   private volatile BookmarkedMealDao _bookmarkedMealDao;
 
+  private volatile WeightDao _weightDao;
+
+  private volatile WaterDao _waterDao;
+
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(4) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(5) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `meals` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mealType` TEXT NOT NULL, `imageUrl` TEXT, `timestamp` INTEGER NOT NULL, `totalCalories` REAL NOT NULL, `totalProtein` REAL NOT NULL, `totalCarbs` REAL NOT NULL, `totalFat` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `totalFiber` REAL NOT NULL, `totalSugar` REAL NOT NULL, `totalSodium` REAL NOT NULL, `totalPotassium` REAL NOT NULL, `totalCalcium` REAL NOT NULL, `totalIron` REAL NOT NULL, `totalVitaminC` REAL NOT NULL, `totalVitaminD` REAL NOT NULL, `rawTextInput` TEXT, `isAiLogged` INTEGER NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `bookmarked_meals` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `totalCalories` REAL NOT NULL, `totalProtein` REAL NOT NULL, `totalCarbs` REAL NOT NULL, `totalFat` REAL NOT NULL, `itemsData` TEXT NOT NULL, `createdAt` INTEGER NOT NULL)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `weight_logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weightKg` REAL NOT NULL, `dateStr` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `water_logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `glasses` INTEGER NOT NULL, `dateStr` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2d595ddd15ea7f9d1f5bc86d4f28e5e8')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '03fe41fc383cd2670ccf78fc81833beb')");
       }
 
       @Override
       public void dropAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS `meals`");
         db.execSQL("DROP TABLE IF EXISTS `bookmarked_meals`");
+        db.execSQL("DROP TABLE IF EXISTS `weight_logs`");
+        db.execSQL("DROP TABLE IF EXISTS `water_logs`");
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
           for (RoomDatabase.Callback _callback : _callbacks) {
@@ -140,9 +152,37 @@ public final class AppDatabase_Impl extends AppDatabase {
                   + " Expected:\n" + _infoBookmarkedMeals + "\n"
                   + " Found:\n" + _existingBookmarkedMeals);
         }
+        final HashMap<String, TableInfo.Column> _columnsWeightLogs = new HashMap<String, TableInfo.Column>(4);
+        _columnsWeightLogs.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsWeightLogs.put("weightKg", new TableInfo.Column("weightKg", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsWeightLogs.put("dateStr", new TableInfo.Column("dateStr", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsWeightLogs.put("timestamp", new TableInfo.Column("timestamp", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysWeightLogs = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesWeightLogs = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoWeightLogs = new TableInfo("weight_logs", _columnsWeightLogs, _foreignKeysWeightLogs, _indicesWeightLogs);
+        final TableInfo _existingWeightLogs = TableInfo.read(db, "weight_logs");
+        if (!_infoWeightLogs.equals(_existingWeightLogs)) {
+          return new RoomOpenHelper.ValidationResult(false, "weight_logs(com.calorie.tracker.feature_journal.data.local.WeightEntity).\n"
+                  + " Expected:\n" + _infoWeightLogs + "\n"
+                  + " Found:\n" + _existingWeightLogs);
+        }
+        final HashMap<String, TableInfo.Column> _columnsWaterLogs = new HashMap<String, TableInfo.Column>(4);
+        _columnsWaterLogs.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsWaterLogs.put("glasses", new TableInfo.Column("glasses", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsWaterLogs.put("dateStr", new TableInfo.Column("dateStr", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsWaterLogs.put("timestamp", new TableInfo.Column("timestamp", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysWaterLogs = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesWaterLogs = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoWaterLogs = new TableInfo("water_logs", _columnsWaterLogs, _foreignKeysWaterLogs, _indicesWaterLogs);
+        final TableInfo _existingWaterLogs = TableInfo.read(db, "water_logs");
+        if (!_infoWaterLogs.equals(_existingWaterLogs)) {
+          return new RoomOpenHelper.ValidationResult(false, "water_logs(com.calorie.tracker.feature_journal.data.local.WaterEntity).\n"
+                  + " Expected:\n" + _infoWaterLogs + "\n"
+                  + " Found:\n" + _existingWaterLogs);
+        }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "2d595ddd15ea7f9d1f5bc86d4f28e5e8", "c17e38fc2517bf5da61cbb049d16655b");
+    }, "03fe41fc383cd2670ccf78fc81833beb", "9d3cd5d89570d2b29c90e4ed26fb280d");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;
@@ -153,7 +193,7 @@ public final class AppDatabase_Impl extends AppDatabase {
   protected InvalidationTracker createInvalidationTracker() {
     final HashMap<String, String> _shadowTablesMap = new HashMap<String, String>(0);
     final HashMap<String, Set<String>> _viewTables = new HashMap<String, Set<String>>(0);
-    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "meals","bookmarked_meals");
+    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "meals","bookmarked_meals","weight_logs","water_logs");
   }
 
   @Override
@@ -164,6 +204,8 @@ public final class AppDatabase_Impl extends AppDatabase {
       super.beginTransaction();
       _db.execSQL("DELETE FROM `meals`");
       _db.execSQL("DELETE FROM `bookmarked_meals`");
+      _db.execSQL("DELETE FROM `weight_logs`");
+      _db.execSQL("DELETE FROM `water_logs`");
       super.setTransactionSuccessful();
     } finally {
       super.endTransaction();
@@ -180,6 +222,8 @@ public final class AppDatabase_Impl extends AppDatabase {
     final HashMap<Class<?>, List<Class<?>>> _typeConvertersMap = new HashMap<Class<?>, List<Class<?>>>();
     _typeConvertersMap.put(MealDao.class, MealDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(BookmarkedMealDao.class, BookmarkedMealDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(WeightDao.class, WeightDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(WaterDao.class, WaterDao_Impl.getRequiredConverters());
     return _typeConvertersMap;
   }
 
@@ -222,6 +266,34 @@ public final class AppDatabase_Impl extends AppDatabase {
           _bookmarkedMealDao = new BookmarkedMealDao_Impl(this);
         }
         return _bookmarkedMealDao;
+      }
+    }
+  }
+
+  @Override
+  public WeightDao weightDao() {
+    if (_weightDao != null) {
+      return _weightDao;
+    } else {
+      synchronized(this) {
+        if(_weightDao == null) {
+          _weightDao = new WeightDao_Impl(this);
+        }
+        return _weightDao;
+      }
+    }
+  }
+
+  @Override
+  public WaterDao waterDao() {
+    if (_waterDao != null) {
+      return _waterDao;
+    } else {
+      synchronized(this) {
+        if(_waterDao == null) {
+          _waterDao = new WaterDao_Impl(this);
+        }
+        return _waterDao;
       }
     }
   }

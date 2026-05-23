@@ -30,7 +30,12 @@ class CalorieApp : Application() {
             AppDatabase::class.java,
             "calorie_tracker_db"
         )
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2,
+                AppDatabase.MIGRATION_2_3,
+                AppDatabase.MIGRATION_3_4,
+                AppDatabase.MIGRATION_4_5
+            )
             .build()
     }
 
@@ -40,5 +45,13 @@ class CalorieApp : Application() {
 
     val bookmarkRepository: BookmarkRepository by lazy {
         AndroidBookmarkRepository(database.bookmarkedMealDao())
+    }
+
+    val weightRepository: com.calorie.tracker.feature_journal.domain.WeightRepository by lazy {
+        com.calorie.tracker.feature_journal.data.local.AndroidWeightRepository(database.weightDao())
+    }
+
+    val waterRepository: com.calorie.tracker.feature_journal.domain.WaterRepository by lazy {
+        com.calorie.tracker.feature_journal.data.local.AndroidWaterRepository(database.waterDao())
     }
 }

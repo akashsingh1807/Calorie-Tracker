@@ -46,6 +46,8 @@ fun App(
     mealRepository: MealRepository,
     apiClient: CalorieApiClient? = null,
     bookmarkRepository: BookmarkRepository? = null,
+    weightRepository: com.calorie.tracker.feature_journal.domain.WeightRepository? = null,
+    waterRepository: com.calorie.tracker.feature_journal.domain.WaterRepository? = null,
     onGoogleSignInClick: (onTokenReceived: (String) -> Unit, onError: (String) -> Unit) -> Unit = { _, _ -> }
 ) {
     val authViewModel = remember { AuthViewModel(authRepository) }
@@ -303,6 +305,7 @@ fun App(
                         }
                         is Screen.WeightTracker -> {
                             com.calorie.tracker.feature_journal.presentation.dashboard.WeightTrackerScreen(
+                                weightRepository = weightRepository,
                                 onBackClick = { currentScreen = Screen.Dashboard }
                             )
                         }
@@ -313,6 +316,7 @@ fun App(
                         }
                         is Screen.WaterTracker -> {
                             com.calorie.tracker.feature_journal.presentation.dashboard.WaterTrackerScreen(
+                                waterRepository = waterRepository,
                                 onBackClick = { currentScreen = Screen.Dashboard }
                             )
                         }
