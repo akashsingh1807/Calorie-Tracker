@@ -34,3 +34,6 @@ build/
 
 # Local Application Properties
 application-local.yml
+__pycache__/
+*.py[cod]
+*.class
