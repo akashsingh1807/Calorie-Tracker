@@ -145,6 +145,15 @@ fun DashboardScreen(
         }
     }
 
+    val speechRecognizer = com.calorie.tracker.core.ui.rememberSpeechRecognizer(
+        onResult = { text -> submitMealText(text) },
+        onError = { errorMsg -> 
+            scope.launch {
+                snackbarHostState.showSnackbar(errorMsg)
+            }
+        }
+    )
+
 
     // ── AI Analysis Dialogs ──────────────────────────────────
     when (val state = analysisState) {
@@ -352,6 +361,14 @@ fun DashboardScreen(
                             imageVector = Icons.Default.PhotoCamera,
                             contentDescription = "Camera",
                             tint = Color.DarkGray,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = { speechRecognizer.startListening() }) {
+                        Icon(
+                            imageVector = Icons.Default.Mic,
+                            contentDescription = "Voice Input",
+                            tint = Color(0xFF1976D2),
                             modifier = Modifier.size(24.dp)
                         )
                     }
